@@ -1,0 +1,6 @@
+/Debug/
+*.vcd
+.cproject
+.settings
+doc/html
+.project
