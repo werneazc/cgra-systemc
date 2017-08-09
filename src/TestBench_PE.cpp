@@ -30,53 +30,53 @@ cgra::TestBench::TestBench(): sc_core::sc_module(sc_core::sc_module_name("TestBe
 void cgra::TestBench::stimuli() {
 	wait(10, sc_core::SC_NS);
 	s_enable.write("10");
-	std::cout << "@" << sc_core::sc_time_stamp() << " Disabled" << std::endl;
-	print();
+//	std::cout << "@" << sc_core::sc_time_stamp() << " Disabled" << std::endl;
+//	print();
 
 	wait(5, sc_core::SC_NS);
 	s_enable.write("01");
-	std::cout << "@" << sc_core::sc_time_stamp() << " Disabled"  << std::endl;
-	print();
+//	std::cout << "@" << sc_core::sc_time_stamp() << " Disabled"  << std::endl;
+//	print();
 
 	wait(5, sc_core::SC_NS);
 	s_enable.write("11");
-	std::cout << "@" << sc_core::sc_time_stamp() << " Disabled"  << std::endl;
-	print();
+//	std::cout << "@" << sc_core::sc_time_stamp() << " Disabled"  << std::endl;
+//	print();
 
 	wait();
 	s_op.write(Processing_Element<8,8>::OP::MUL);
-	std::cout << "@" << sc_core::sc_time_stamp() << " ADD"  << std::endl;
-	print();
+//	std::cout << "@" << sc_core::sc_time_stamp() << " ADD"  << std::endl;
+//	print();
 
 	wait();
 	s_op.write(Processing_Element<8,8>::OP::IDIV);
-	std::cout << "@" << sc_core::sc_time_stamp() << " MUL"  << std::endl;
-	print();
+//	std::cout << "@" << sc_core::sc_time_stamp() << " MUL"  << std::endl;
+//	print();
 
 	wait();
 	s_op.write(Processing_Element<8,8>::OP::SUB);
-	std::cout << "@" << sc_core::sc_time_stamp() << " IDIV"  << std::endl;
-	print();
+//	std::cout << "@" << sc_core::sc_time_stamp() << " IDIV"  << std::endl;
+//	print();
 
 	wait();
 	s_op.write(Processing_Element<8,8>::OP::GRE);
-	std::cout << "@" << sc_core::sc_time_stamp() << " SUB"  << std::endl;
-	print();
+//	std::cout << "@" << sc_core::sc_time_stamp() << " SUB"  << std::endl;
+//	print();
 
 	wait();
 	s_op.write(Processing_Element<8,8>::OP::EQU);
-	std::cout << "@" << sc_core::sc_time_stamp() << " GRE"  << std::endl;
-	print();
+//	std::cout << "@" << sc_core::sc_time_stamp() << " GRE"  << std::endl;
+//	print();
 
 	wait();
 	s_op.write(Processing_Element<8,8>::OP::BUF);
-	std::cout << "@" << sc_core::sc_time_stamp() << " EQU"  << std::endl;
-	print();
+//	std::cout << "@" << sc_core::sc_time_stamp() << " EQU"  << std::endl;
+//	print();
 
 
 	wait();
-	std::cout << "@" << sc_core::sc_time_stamp() << " BUF"  << std::endl;
-	print();
+//	std::cout << "@" << sc_core::sc_time_stamp() << " BUF"  << std::endl;
+//	print();
 	sc_core::sc_stop();
 
 }
