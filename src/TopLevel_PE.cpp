@@ -6,8 +6,8 @@ cgra::TopLevel::TopLevel(sc_core::sc_module_name nameA) : sc_core::sc_module(nam
 
 	using namespace cgra;
 
-	pe = new Processing_Element<8,8>("whatthehell", pe_generation_counter++);
-	tb = new TestBench();
+	pe = new Processing_Element<8,8>("PE_DUT", pe_generation_counter++);
+	tb = new TestBench_PE();
 
 	pe->clk.bind(s_clk);
 	pe->conf.bind(s_op);

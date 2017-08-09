@@ -1,10 +1,10 @@
 
-#include "TestBench_PE.h"
+#include <TestBenchPE_PE.h>
 #include "ProcessingElement.h"
 
 
 
-std::ostream& operator<<(std::ostream& os, const cgra::TestBench& tb)
+std::ostream& operator<<(std::ostream& os, const cgra::TestBench_PE& tb)
 {
 
 	os << "Signal " << tb.s_op.name() << ":\t\t" << std::hex << tb.s_op.read() << "\n";
@@ -17,7 +17,7 @@ std::ostream& operator<<(std::ostream& os, const cgra::TestBench& tb)
 	return os;
 }
 
-cgra::TestBench::TestBench(): sc_core::sc_module(sc_core::sc_module_name("TestBench_PE")) {
+cgra::TestBench_PE::TestBench_PE(): sc_core::sc_module(sc_core::sc_module_name("TestBench_PE")) {
 	SC_THREAD(stimuli);
 	sensitive << s_valid.pos();
 
@@ -27,7 +27,7 @@ cgra::TestBench::TestBench(): sc_core::sc_module(sc_core::sc_module_name("TestBe
 	s_enable.initialize("00");
 }
 
-void cgra::TestBench::stimuli() {
+void cgra::TestBench_PE::stimuli() {
 	wait(10, sc_core::SC_NS);
 	s_enable.write("10");
 //	std::cout << "@" << sc_core::sc_time_stamp() << " Disabled" << std::endl;
@@ -81,7 +81,7 @@ void cgra::TestBench::stimuli() {
 
 }
 
-void cgra::TestBench::print() {
+void cgra::TestBench_PE::print(std::ostream& os) {
 
 	using namespace std;
 
