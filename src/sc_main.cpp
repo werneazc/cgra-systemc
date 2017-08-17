@@ -8,11 +8,13 @@
 #include <cstdlib>
 #include <systemc>
 #include <array>
+#include "ConfigurationCache.h"
 #include "TopLevel_PE.h"
 #include "Multiplexer.h"
 #include "TestBenchMUX.h"
 #include "VirtualChannel.h"
 #include "TestBenchVC.h"
+#include "TestBenchCC.h"
 
 int sc_main(int argc, char* arcv[])
 {
@@ -24,6 +26,10 @@ int sc_main(int argc, char* arcv[])
 	auto tb_mux = new cgra::TestBench_MUX{"TB_MUX"};
 	auto vc = new cgra::VirtualChannel<4, 8, 8, 8, 2>{"DUT_VC"};
 	auto tb_vc = new cgra::TestBenchVC{"TB_VC"};
+	typedef cgra::ConfigurationCache<cgra::VirtualChannel<4, 8, 8, 8, 2>::conf_type_t, 2, 4> cache_type_t;
+	auto cc = new cache_type_t{"CC", 16};
+	auto tb_cc = new cgra::TestBench_CC{"TB_CC"};
+
 
 	//signals
 	std::array<sc_core::sc_signal<cgra::Multiplexer<4,3>::data_type_t>, 4> data_lines;
@@ -39,6 +45,14 @@ int sc_main(int argc, char* arcv[])
 	std::array<sc_core::sc_signal<cgra::VirtualChannel<4, 8, 8, 8, 2>::output_type_t>, 8> output_lines;
 	std::array<sc_core::sc_signal<cgra::VirtualChannel<4, 8, 8, 8, 2>::valid_type_t>, 4> valid_lines_vc;
 	std::array<sc_core::sc_signal<cgra::VirtualChannel<4, 8, 8, 8, 2>::input_type_t>, 4> input_lines;
+	//-----------------------------------------------------------------------------------------------
+	sc_core::sc_signal<cache_type_t::stream_type_t> config_stream{"config_stream"};
+	sc_core::sc_signal<cache_type_t::write_enable_type_t> write_enable{"cache_write_enable"};
+	sc_core::sc_signal<cache_type_t::config_type_t> configuration_outstream{"configuration_out"};
+	sc_core::sc_signal<cache_type_t::select_type_t> select_cache_out{"select_cache_out"};
+	sc_core::sc_signal<cache_type_t::select_type_t> select_cache_in{"select_cache_in"};
+	sc_core::sc_signal<cache_type_t::config_type_t> config_cache_out{"configuration_cache_output"};
+	sc_core::sc_signal<cache_type_t::ack_type_t> ack{"ack"};
 
 	//bind mux and testbench ports
 	for(uint8_t i = 0; i < 4; ++i)
@@ -81,11 +95,28 @@ int sc_main(int argc, char* arcv[])
 	vc->rst.bind(rst_line);
 	tb_vc->s_rst.bind(rst_line);
 
+	//bind config-cache ports
+	cc->currentConfig.bind(config_cache_out);
+	cc->clk.bind(clk);
+	cc->dataInStream.bind(config_stream);
+	cc->slt_in.bind(select_cache_in);
+	cc->slt_out.bind(select_cache_out);
+	cc->write.bind(write_enable);
+	cc->ack.bind(ack);
+	tb_cc->r_current_configuration.bind(config_cache_out);
+	tb_cc->clk.bind(clk);
+	tb_cc->s_stream_data_out.bind(config_stream);
+	tb_cc->s_slt_in.bind(select_cache_in);
+	tb_cc->s_slt_out.bind(select_cache_out);
+	tb_cc->s_write_enable.bind(write_enable);
+	tb_cc->r_ack.bind(ack);
+
 
 	//create and setup trace file;
 	auto fp_mux = sc_core::sc_create_vcd_trace_file("mux_test");
 	auto fp_vc = sc_core::sc_create_vcd_trace_file("vc_test");
 	auto fp_pe = sc_core::sc_create_vcd_trace_file("pe_test");
+	auto fp_cc = sc_core::sc_create_vcd_trace_file("cc_test");
 
 	sc_core::sc_trace(fp_pe, TopLevel.pe->clk, "clock");
 	sc_core::sc_trace(fp_pe, TopLevel.pe->in1, "in1");
@@ -134,12 +165,21 @@ int sc_main(int argc, char* arcv[])
 	sc_core::sc_trace(fp_vc, vc->conf, "configuration");
 	sc_core::sc_trace(fp_vc, vc->rst, "reset");
 	sc_core::sc_trace(fp_vc, vc->clk, "clock");
+	//-----------------------------------------------------------------
+	sc_core::sc_trace(fp_cc, cc->clk, "clock");
+	sc_core::sc_trace(fp_cc, cc->write, "write_enable");
+	sc_core::sc_trace(fp_cc, cc->currentConfig, "currentConfig");
+	sc_core::sc_trace(fp_cc, cc->dataInStream, "dataInStream");
+	sc_core::sc_trace(fp_cc, cc->slt_in, "slt_in");
+	sc_core::sc_trace(fp_cc, cc->slt_out, "slt_out");
+	sc_core::sc_trace(fp_cc, cc->ack, "ack");
 
 	sc_core::sc_start(100, sc_core::SC_NS);
 
 	sc_core::sc_close_vcd_trace_file(fp_mux);
 	sc_core::sc_close_vcd_trace_file(fp_vc);
 	sc_core::sc_close_vcd_trace_file(fp_pe);
+	sc_core::sc_close_vcd_trace_file(fp_cc);
 
 	return EXIT_SUCCESS;
 };
