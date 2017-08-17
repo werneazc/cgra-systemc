@@ -87,7 +87,7 @@ public:
 	 *
 	 * \param nameA Nume of the VC within the simulation
 	 */
-	VirtualChannel(sc_core::sc_module_name nameA) : sc_core::sc_module(nameA)
+	VirtualChannel(const sc_core::sc_module_name& nameA) : sc_core::sc_module(nameA)
 	{
 		//Register SystemC methods at simulator
 		SC_METHOD(buffer_input);
@@ -137,6 +137,13 @@ public:
 			channel_outputs[i].write(0);;
 			enables[i].write(0);
 		}
+	}
+
+	/*!
+	 * \brief Print kind of SystemC-module
+	 */
+	virtual const char* kind() const override {
+		return "Virtual Channel";
 	}
 
 	//Processes

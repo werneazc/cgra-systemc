@@ -71,6 +71,13 @@ public:
 	}
 
 	/*!
+	 * \brief Print kind of SystemC-module
+	 */
+	virtual const char* kind() const override {
+		return "Multiplexer";
+	}
+
+	/*!
 	 * \brief Defaulted Destructor
 	 */
 	virtual ~Multiplexer() = default;

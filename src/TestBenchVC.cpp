@@ -20,7 +20,7 @@ void TestBenchVC::stimuli() {
 //	using namespace std;
 //
 //	cout << "Initial Values:\n" << "=========================" << std::endl;
-//	print(cout);
+//	dump(cout);
 
 	// Rotate configuration left
 	{
@@ -40,7 +40,7 @@ void TestBenchVC::stimuli() {
 					r_enables[7].value_changed_event());
 
 //			cout << "Values with configuration " << i << "\n====================================" << endl;
-//			print(cout);
+//			dump(cout);
 
 			tmp_val = s_config.read().range(15,14);
 			tmp_config = s_config.read();
@@ -107,23 +107,22 @@ void TestBenchVC::end_of_elaboration() {
 
 }
 
-void TestBenchVC::print(std::ostream& os) {
+void TestBenchVC::dump(std::ostream& os) const {
 
-	sc_module::print(os);
+	os << name() << ":\t" << kind() << std::endl;
+	os << "================================================================================\n";
 
-	os << "\n------------------------------------------" << std::endl;
-
-	os << s_rst.name() << ": " << s_rst.read() << "\n";
-	os << s_config.name() << ": " << s_config.read().to_string() << "\n";
+	os << s_rst.basename() << ": " << s_rst.read() << "\n";
+	os << s_config.basename() << ": " << s_config.read().to_string() << "\n";
 	for(uint8_t i = 0; i < 4; ++i)
 	{
-		os << s_inData[i].name() << ": " << s_inData[i].read().to_string() << "\n";
-		os << s_inValid[i].name() << ": " << s_inValid[i].read() << "\n";
+		os << "dataIn.port" << static_cast<short>(i) << "(" << s_inData[i].name() << "): " << s_inData[i].read().to_string() << "\n";
+		os << "inValid.port" << static_cast<short>(i) << "(" << s_inValid[i].name() << "): " << s_inValid[i].read() << "\n";
 	}
 	for(uint8_t i = 0; i < 8; ++i)
 	{
-		os << r_outData[i].name() << ": " << r_outData[i].read().to_string() << "\n";
-		os << r_enables[i].name() << ": " << r_enables[i].read() << "\n";
+		os << "outData.port" << static_cast<short>(i) << "("<< r_outData[i].name() << "): " << r_outData[i].read().to_string() << "\n";
+		os << "enables." << static_cast<short>(i) << "(" << r_enables[i].name() << "): " << r_enables[i].read() << "\n";
 	}
 
 	os << std::endl;

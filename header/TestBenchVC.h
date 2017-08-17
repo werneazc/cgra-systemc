@@ -70,6 +70,19 @@ public:
 	 */
 	virtual void end_of_elaboration() override;
 
+	/*!
+	 * \brief Return kind of SystemC module
+	 */
+	virtual const char* kind() const override
+	{ return "Test bench for a virtual channel"; }
+
+	/*!
+	 * \brief print current signal values
+	 *
+	 * \param os Output stream to write information to
+	 */
+	void dump(std::ostream& os = ::std::cout) const override;
+
 private:
 	//Forbidden Constructors
 	TestBenchVC() = delete;
@@ -78,10 +91,6 @@ private:
 	TestBenchVC(TestBenchVC&& src) = delete;
 	TestBenchVC& operator=(TestBenchVC&& src) = delete;
 
-	/*!
-	 * \brief print current signal values
-	 */
-	void print(std::ostream& os = ::std::cout);
 };
 
 } /* namespace cgra */

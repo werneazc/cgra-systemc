@@ -67,7 +67,7 @@ class Processing_Element : public sc_core::sc_module
 
 	//Constructor
 	SC_HAS_PROCESS(Processing_Element);
-	Processing_Element(sc_core::sc_module_name nameA, const uint32_t pe_numberA) : sc_module(nameA), m_peId{pe_numberA}
+	Processing_Element(const sc_core::sc_module_name& nameA, const uint32_t pe_numberA) : sc_module(nameA), m_peId{pe_numberA}
 	{
 		SC_METHOD(perform);
 		sensitive << clk;
@@ -84,6 +84,13 @@ class Processing_Element : public sc_core::sc_module
 
 		m_invalues[0].write(0);
 		m_invalues[1].write(0);
+	}
+
+	/*!
+	 * \brief Print kind of SystemC-module
+	 */
+	virtual const char* kind() const override {
+		return "Processing Element";
 	}
 
 	//process

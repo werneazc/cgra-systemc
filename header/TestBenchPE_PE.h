@@ -47,16 +47,24 @@ public:
 
 	/*!
 	 * \brief write current signals to output
+	 *
+	 * \param os Output stream to write information to
+	 * \param tb Constant reference to a test bench module for a PE
 	 */
 	friend std::ostream& operator<<(std::ostream& os, const TestBench_PE& tb);
 
-private:
+	/*!
+	 * \brief Return kind of SystemC module
+	 */
+	virtual const char* kind() const override
+	{ return "Test bench for PE module"; }
+
 	/*!
 	 * \brief Print current status of PE signals
 	 *
 	 * \param os out-stream where to write to (default: std::cout)
 	 */
-	void print(std::ostream& os = ::std::cout);
+	void dump(std::ostream& os = ::std::cout) const override;
 };
 
 } // end namespace cgra
