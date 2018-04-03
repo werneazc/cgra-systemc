@@ -31,8 +31,11 @@ class Multiplexer : public sc_core::sc_module {
 
 public:
 	typedef sc_dt::sc_int<N> data_type_t;
+	//!< \brief Type of multiplexed data
 	typedef bool valid_type_t;
+	//!< \brief Valid signal type
 	typedef sc_dt::sc_lv<L> select_type_t;
+	//!< \brief Select type for Multiplexer input signals
 
 	//Entity ports:
 	std::array<sc_core::sc_in<data_type_t>, K> data_inputs;
@@ -48,7 +51,7 @@ public:
 
 	SC_HAS_PROCESS(Multiplexer);
 	/*!
-	 * \brief General Contructor
+	 * \brief General Constructor
 	 *
 	 * \param nameA Name of the Multiplexer as a SystemC Module
 	 */

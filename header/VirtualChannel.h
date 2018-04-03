@@ -15,12 +15,12 @@ namespace cgra {
  *
  * \details
  * A VCGRA consists of alternating levels of processing elements (PE) and
- * virtual channels (VC). VCs are used to reroute data from predecessing
+ * virtual channels (VC). VCs are used to reroute data from preceding
  * PEs to its succeeding PEs depending on the configuration bitstream conf.
  * A VC buffers his inputs and outputs during one clock cycle. It consists
  * of a number of Multiplexers  which are parameterized by the conf-input
  * of a VC. The number of bits to parameterize a Multiplexer within the
- * VC depends on the number of inputs of a VC. The necessary bitwith for
+ * VC depends on the number of inputs of a VC. The necessary bitwidth for
  * a select-input of a Multiplexer must be fixed during design-time and set
  * as a Template-parameter.
  * The input- and output-data-bitwidth can differ. However, the internal bitwidth
@@ -37,17 +37,27 @@ template <uint32_t R, uint32_t S, uint32_t T, uint32_t U, uint32_t L, uint32_t N
 class VirtualChannel : public sc_core::sc_module {
 private:
 	typedef sc_dt::sc_int<N> internal_type_t;
+	//!< \brief Type for internal signals (max(S,U))
 	typedef Multiplexer<R, L, N> mux_type_t;
+	//!< \brief Type of internal Multiplexer
 
 public:
 	typedef sc_dt::sc_int<S> input_type_t;
+	//!< \brief Type of VirtualChannel data inputs
 	typedef bool clock_type_t;
+	//!< \brief Clock type
 	typedef bool reset_type_t;
+	//!< \brief Reset type
 	typedef sc_dt::sc_lv<T * L> conf_type_t;
+	//!< \brief Type of VirtualChannel configuration port
 	typedef typename mux_type_t::valid_type_t valid_type_t;
+	//!< \brief Type of VirtualChannel valid signals
 	typedef typename mux_type_t::valid_type_t enables_type_t;
+	//!< \brief Type of VirtualChannel enable signals
 	typedef typename mux_type_t::select_type_t select_type_t;
+	//!< \brief Type of VirtualChannel Multiplexer select signals
 	typedef sc_dt::sc_int<U> output_type_t;
+	//!< \brief Type of VirtualChannel data output
 
 	//Entity ports
 	sc_core::sc_in<clock_type_t> clk{"clk"};
@@ -83,9 +93,9 @@ private:
 public:
 	SC_HAS_PROCESS(VirtualChannel);
 	/*!
-	 * \brief Named Ctor for a VC
+	 * \brief Named C'tor for a VC
 	 *
-	 * \param nameA Nume of the VC within the simulation
+	 * \param nameA Name of the VC within the simulation
 	 */
 	VirtualChannel(const sc_core::sc_module_name& nameA) : sc_core::sc_module(nameA)
 	{
@@ -146,6 +156,32 @@ public:
 		return "Virtual Channel";
 	}
 
+	/*!
+	 * \brief Print VirtualChannel name
+	 */
+	virtual void print(std::ostream& os = ::std::cout) const override
+	{
+		os << name();
+	}
+
+	/*!
+	 * \brief Dump VirtualChannel information
+	 */
+	virtual void dump(std::ostream& os = ::std::cout) const override
+	{
+		os << name() << "\t" << kind() << std::endl;
+		os << "Number of Inputs:\t" << channel_inputs.size() << "\n";
+		os << "Input bitwidth:\t\t" << S << "\n";
+		os << "Number of Outputs:\t" << channel_inputs.size() << "\n";
+		os << "Output bitwidth:\t" << U << "\n";
+		os << "Internal bitwidth:\t" << N << "\n";
+
+		if(conf.size())
+		{
+			os << "Current Configuration:\t" << conf.read().to_string(sc_dt::SC_HEX,true) << std::endl;
+		}
+	}
+
 	//Processes
 	/*!
 	 * \brief Buffer VC inputs in internal buffers for one clock cycle
@@ -195,7 +231,7 @@ public:
 	 *
 	 * | data_mux_0 | data_mux_1 | data_mux_n-1 | data_mux_n |
 	 *
-	 * The config-bit oder within the config.-bitstream is reverse.
+	 * The config-bit order within the config.-bitstream is reverse.
 	 *
 	 * | data_mux_n | data_mux_n-1| ... | data_mux_1 | data_mux_0 |
 	 *
