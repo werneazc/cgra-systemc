@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <array>
 #include <string>
+#include <iomanip>
 
 namespace cgra
 {
@@ -27,18 +28,25 @@ namespace cgra
 //! process them.
 //!
 //! \tparam N Bitwidth of incoming data
-//! \tparam O Bitwidth of outgoing data
+//! \tparam K Bitwidth of outgoing data
+//! \tparam L Bitwidth of configuration data
 /************************************************************************/
 template <uint16_t N = 8, uint16_t K = 8, uint16_t L = 4>
 class Processing_Element : public sc_core::sc_module
 {
   public:
 	typedef sc_dt::sc_int<N> input_type_t;
+	//!< \brief Type of Processing_Elements data inputs
 	typedef sc_dt::sc_lv<L> config_type_t;
+	//!< \brief Type of Processing_Elements configuration input
 	typedef sc_dt::sc_int<K> output_type_t;
+	//!< \brief Type of Processing_Elements data output
 	typedef sc_dt::sc_lv<2> enable_type_t;
+	//!< \brief Type of Processing_Elements enable inputs
 	typedef bool clock_type_t;
+	//!< \brief Clock type
 	typedef bool valid_type_t;
+	//!< \brief Valid type
 
 	//! \enum OP
 	//! \brief Operations of a processing element
@@ -57,12 +65,12 @@ class Processing_Element : public sc_core::sc_module
 
 	//interfaces
 	sc_core::sc_in<input_type_t> in1{"In1"};  		//!< \brief input one
-	sc_core::sc_in<input_type_t> in2{"In2"};   	//!< \brief input two
+	sc_core::sc_in<input_type_t> in2{"In2"};   		//!< \brief input two
 	sc_core::sc_in<config_type_t> conf{"conf"};   	//!< \brief configuration of PE (operation)
 	sc_core::sc_in<clock_type_t> clk{"clk"};		//!< \brief clock
-	sc_core::sc_in<enable_type_t> enable{"enable"}; 	//!< \brief synchronization of inputs
+	sc_core::sc_in<enable_type_t> enable{"enable"}; //!< \brief synchronization of inputs
 
-	sc_core::sc_out<output_type_t> res{"res"}; 	//!< \brief operation result
+	sc_core::sc_out<output_type_t> res{"res"}; 		//!< \brief operation result
 	sc_core::sc_out<valid_type_t> valid{"valid"};	//!< \brief synchronization of output
 
 	//Constructor
@@ -91,6 +99,79 @@ class Processing_Element : public sc_core::sc_module
 	 */
 	virtual const char* kind() const override {
 		return "Processing Element";
+	}
+
+	/*!
+	 *  \brief Print PE name
+	 */
+	virtual void print(std::ostream& os = ::std::cout) const override
+	{
+		os << name();
+	}
+
+	/*!
+	 * \brief Dump PE information
+	 */
+	virtual void dump(std::ostream& os = ::std::cout) const override
+	{
+		os << name() << "\t\t" << kind() << "\tID: " << std::setw(3) <<  m_peId << std::endl;
+		os << "Input bitwidth:\t\t" << std::setw(3) << N << "\n";
+		os << "Output bitwidth:\t" << std::setw(3) << K << "\n";
+		os << "Current status:\t\t";
+		switch (m_current_state)
+		{
+		case AWAIT_DATA:
+			os << "AWAIT_DATA\n";
+			break;
+		case PROCESS_DATA:
+			os << "PROCESS_DATA\n";
+			break;
+		case VALID_DATA:
+			os << "VALID_DATA\n";
+			break;
+		default:
+			os << "ERROR\n";
+		}
+
+		os << "Current Operation:\t";
+		if(conf.size()) //Check for port-binding status?
+		{
+			switch (conf.read().to_uint())
+			{
+			case OP::NONE:
+				os << "NONE";
+				break;
+			case OP::ADD:
+				os << "ADD";
+				break;
+			case OP::SUB:
+				os << "SUB";
+				break;
+			case OP::MUL:
+				os << "MUL";
+				break;
+			case OP::IDIV:
+				os << "IDIV";
+				break;
+			case OP::MDL:
+				os << "MDL";
+				break;
+			case OP::GRE:
+				os << "GRE";
+				break;
+			case OP::EQU:
+				os << "EQU";
+				break;
+			case OP::BUF:
+				os << "BUF";
+				break;
+			default:
+				os << "ERROR";
+			}
+			os << std::endl;
+		}
+		else
+			os << "NONE" << std::endl;
 	}
 
 	//process
@@ -125,7 +206,7 @@ class Processing_Element : public sc_core::sc_module
 					this->m_current_state = STATE::AWAIT_DATA;
 				break;
 
-case STATE::PROCESS_DATA:
+			case STATE::PROCESS_DATA:
 
 //				std::cout << "@ " << sc_core::sc_time_stamp() << " STATE=PROCESS_DATA" << std::endl;
 
@@ -199,8 +280,8 @@ case STATE::PROCESS_DATA:
 
 	//private member:
 	std::array<sc_core::sc_buffer<input_type_t>, 2> m_invalues; 	//!< \brief Input buffers
-	const uint32_t m_peId;										//!< \brief A processing element's unique ID
-	STATE m_current_state{STATE::AWAIT_DATA};						//!< \brief The internal state of the processin element
+	const uint32_t m_peId;											//!< \brief A processing element's unique ID
+	STATE m_current_state{STATE::AWAIT_DATA};						//!< \brief The internal state of the processing element
 
 	//forbidden constructor
 	Processing_Element() = delete;
@@ -229,10 +310,14 @@ case STATE::PROCESS_DATA:
 	}
 	/*!
 	 * \brief Multiplies the two inputs
+	 *
+	 * \details
+	 * Internally, SystemC Integer data type is managed as int64.
+	 * Thus, input data bitwidth is limited to 32 bit, each.
 	 */
 	inline void multiplication()
 	{
-		sc_assert(m_invalues[0].read() <= 32 || m_invalues[1].read().length() <= 32);
+		sc_assert(m_invalues[0].read().length() <= 32 || m_invalues[1].read().length() <= 32);
 		res.write(m_invalues[0].read() * m_invalues[1].read());
 	}
 	/*!
