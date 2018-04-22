@@ -41,7 +41,7 @@ class Processing_Element : public sc_core::sc_module
 	//!< \brief Type of Processing_Elements configuration input
 	typedef sc_dt::sc_int<K> output_type_t;
 	//!< \brief Type of Processing_Elements data output
-	typedef sc_dt::sc_lv<2> enable_type_t;
+	typedef bool enable_type_t;
 	//!< \brief Type of Processing_Elements enable inputs
 	typedef bool clock_type_t;
 	//!< \brief Clock type
@@ -64,14 +64,13 @@ class Processing_Element : public sc_core::sc_module
 	};
 
 	//interfaces
-	sc_core::sc_in<input_type_t> in1{"In1"};  		//!< \brief input one
-	sc_core::sc_in<input_type_t> in2{"In2"};   		//!< \brief input two
-	sc_core::sc_in<config_type_t> conf{"conf"};   	//!< \brief configuration of PE (operation)
-	sc_core::sc_in<clock_type_t> clk{"clk"};		//!< \brief clock
-	sc_core::sc_in<enable_type_t> enable{"enable"}; //!< \brief synchronization of inputs
-
-	sc_core::sc_out<output_type_t> res{"res"}; 		//!< \brief operation result
-	sc_core::sc_out<valid_type_t> valid{"valid"};	//!< \brief synchronization of output
+	sc_core::sc_in<input_type_t> in1{"In1"};  			//!< \brief input one
+	sc_core::sc_in<input_type_t> in2{"In2"};   			//!< \brief input two
+	sc_core::sc_in<config_type_t> conf{"conf"};   		//!< \brief configuration of PE (operation)
+	sc_core::sc_in<clock_type_t> clk{"clk"};			//!< \brief clock
+	std::array<sc_core::sc_in<enable_type_t>,2> enable; //!< \brief synchronization of inputs
+	sc_core::sc_out<output_type_t> res{"res"}; 			//!< \brief operation result
+	sc_core::sc_out<valid_type_t> valid{"valid"};		//!< \brief synchronization of output
 
 	//Constructor
 	SC_HAS_PROCESS(Processing_Element);
@@ -200,7 +199,7 @@ class Processing_Element : public sc_core::sc_module
 
 				this->valid.write(false);
 
-				if (this->enable.read() == "11")
+				if (this->enable[0] == true && this->enable[1] == true)
 					this->m_current_state = STATE::PROCESS_DATA;
 				else
 					this->m_current_state = STATE::AWAIT_DATA;
