@@ -12,8 +12,10 @@ cgra::TopLevel::TopLevel(sc_core::sc_module_name nameA) : sc_core::sc_module(nam
 	pe->clk.bind(s_clk);
 	pe->conf.bind(s_op);
 	tb->s_op.bind(s_op);
-	pe->enable.bind(s_enable);
-	tb->s_enable.bind(s_enable);
+	pe->enable[0].bind(s_enable[0]);
+	pe->enable[1].bind(s_enable[1]);
+	tb->s_enable[0].bind(s_enable[0]);
+	tb->s_enable[1].bind(s_enable[1]);
 	pe->in1.bind(s_in1);
 	pe->in2.bind(s_in2);
 	pe->res.bind(s_res);

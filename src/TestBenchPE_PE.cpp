@@ -14,7 +14,8 @@ std::ostream& operator<<(std::ostream& os, const cgra::TestBench_PE& tb)
 	os << "Signal " << tb.s_in2.name() << ":\t\t" << std::dec << tb.s_in2.read() << "\n";
 	os << "Signal " << tb.s_res.name() << ":\t\t" << std::dec << tb.s_res.read() << "\n";
 	os << "Signal " << tb.s_valid.name() << ":\t\t" << std::hex << tb.s_valid.read() << "\n";
-	os << "Signal " << tb.s_enable.name() << ":\t" << tb.s_enable.read().to_string() << std::endl;
+	os << "Signal " << "s_enables" << ":\t" << (tb.s_enable[0].read() ? "1" : "0");
+	os << (tb.s_enable[1].read() ? "1" : "0") << std::endl;
 
 	return os;
 }
@@ -26,22 +27,25 @@ cgra::TestBench_PE::TestBench_PE(): sc_core::sc_module(sc_core::sc_module_name("
 	s_in1.initialize(5);
 	s_in2.initialize(5);
 	s_op.initialize(Processing_Element<8,8>::OP::ADD);
-	s_enable.initialize("00");
+	s_enable[0].initialize(false);
+	s_enable[1].initialize(false);
 }
 
 void cgra::TestBench_PE::stimuli() {
 	wait(10, sc_core::SC_NS);
-	s_enable.write("10");
+	s_enable[1].write(true);
 //	std::cout << "@" << sc_core::sc_time_stamp() << " Disabled" << std::endl;
 //	dump();
 
 	wait(5, sc_core::SC_NS);
-	s_enable.write("01");
+	s_enable[1].write(false);
+	s_enable[0].write(true);
 //	std::cout << "@" << sc_core::sc_time_stamp() << " Disabled"  << std::endl;
 //	dump();
 
 	wait(5, sc_core::SC_NS);
-	s_enable.write("11");
+	s_enable[1].write(true);
+	s_enable[0].write(true);
 //	std::cout << "@" << sc_core::sc_time_stamp() << " Disabled"  << std::endl;
 //	dump();
 
@@ -93,5 +97,6 @@ void cgra::TestBench_PE::dump(std::ostream& os) const{
 	os << "Signal " << s_in2.basename() << ":\t\t" << std::dec << s_in2.read() << "\n";
 	os << "Signal " << s_res.basename() << ":\t\t" << std::dec << s_res.read() << "\n";
 	os << "Signal " << s_valid.basename() << ":\t\t" << std::hex << s_valid.read() << "\n";
-	os << "Signal " << s_enable.basename() << ":\t" << s_enable.read().to_string() << std::endl;
+	os << "Signal " << "s_enables" << ":\t" << (s_enable[0].read() ? "1" : "0");
+	os << (s_enable[1].read() ? "1" : "0") << std::endl;
 }

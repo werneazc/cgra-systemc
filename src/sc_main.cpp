@@ -49,8 +49,8 @@ int sc_main(int argc, char* arcv[])
 	sc_core::sc_signal<cache_type_t::stream_type_t> config_stream{"config_stream"};
 	sc_core::sc_signal<cache_type_t::write_enable_type_t> write_enable{"cache_write_enable"};
 	sc_core::sc_signal<cache_type_t::config_type_t> configuration_outstream{"configuration_out"};
-	sc_core::sc_signal<cache_type_t::select_type_t> select_cache_out{"select_cache_out"};
-	sc_core::sc_signal<cache_type_t::select_type_t> select_cache_in{"select_cache_in"};
+	sc_core::sc_signal<cache_type_t::select_type_t> select_cache_out{"select_cache_out"}; // @suppress("Abstract class cannot be instantiated")
+	sc_core::sc_signal<cache_type_t::select_type_t> select_cache_in{"select_cache_in"}; // @suppress("Abstract class cannot be instantiated")
 	sc_core::sc_signal<cache_type_t::config_type_t> config_cache_out{"configuration_cache_output"};
 	sc_core::sc_signal<cache_type_t::ack_type_t> ack{"ack"};
 
@@ -123,7 +123,8 @@ int sc_main(int argc, char* arcv[])
 	sc_core::sc_trace(fp_pe, TopLevel.pe->in2, "in2");
 	sc_core::sc_trace(fp_pe, TopLevel.pe->res, "res");
 	sc_core::sc_trace(fp_pe, TopLevel.pe->valid, "valid");
-	sc_core::sc_trace(fp_pe, TopLevel.pe->enable, "enable");
+	sc_core::sc_trace(fp_pe, TopLevel.pe->enable[0], "enable[0]");
+	sc_core::sc_trace(fp_pe, TopLevel.pe->enable[1], "enable[1]");
 	sc_core::sc_trace(fp_pe, TopLevel.pe->conf, "conf");
 	//----------------------------------------------------------------
 	sc_core::sc_trace(fp_mux, mux->data_inputs[0], "data_line_0");

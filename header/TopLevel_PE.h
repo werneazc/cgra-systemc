@@ -37,7 +37,7 @@ private:
 	//!< \brief Connects PE and TB operation-select
 	sc_core::sc_clock s_clk{"clk", 2, sc_core::SC_NS};
 	//!< \brief Clock for the PE
-	sc_core::sc_signal<Processing_Element<8,8>::enable_type_t> s_enable{"Enable"};
+	std::array<sc_core::sc_signal<Processing_Element<8,8>::enable_type_t>,2> s_enable;
 	//!< \brief Connects PE and TB enable ports
 	sc_core::sc_signal<Processing_Element<8,8>::valid_type_t> s_valid{"Valid"};
 	//!< \brief Connects PE and TB valid ports

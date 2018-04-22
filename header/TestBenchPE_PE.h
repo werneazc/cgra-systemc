@@ -3,6 +3,7 @@
 
 #include <systemc>
 #include <iostream>
+#include <array>
 
 namespace cgra {
 
@@ -25,7 +26,7 @@ public:
 	//!< \brief Input signal for operand two of a PE
 	sc_core::sc_in<sc_dt::sc_int<8>> s_res{"s_res"};
 	//!< \brief Output signal for result of a PE
-	sc_core::sc_out<sc_dt::sc_lv<2>> s_enable{"s_enable"};
+	std::array<sc_core::sc_out<bool>,2> s_enable;
 	//!< \brief Input signals of a PE to mark an input as valid
 	sc_core::sc_in<bool> s_valid{"s_valid"};
 	//!< \brief Output signal of a PE to mark current value as valid
