@@ -107,8 +107,10 @@ public:
 	 */
 	void demultiplex()
 	{
-		for (uint32_t i = 0, j = m_start; m_length > i; ++i, j += M)
+		for (uint32_t i = 0, j = m_start; N > i; ++i, j += M)
 			config_parts.at(i).write(config_input.read()(j, j + M - 1));
+
+		return;
 	}
 
 private:
