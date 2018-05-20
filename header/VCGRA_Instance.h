@@ -39,13 +39,13 @@ class VCGRA : public sc_core::sc_module
 public:
 	typedef Processing_Element<16,16> pe_type_t;
 	//!< \brief Type of all Processing_Elements within the VCGRA
-	typedef VirtualChannel<8,16,8,16,3,8> input_channel_type_t;
+	typedef VirtualChannel<8,16,8,16,3> input_channel_type_t;
 	//!< \brief Type of the first VirtualChannel for external communication
-	typedef VirtualChannel<4,16,8,16,2,16> general_channel_type_t;
+	typedef VirtualChannel<4,16,8,16,2> general_channel_type_t;
 	//!< \brief General VirtualChannel type for internal channels
 	typedef ConfigurationCache<sc_dt::sc_lv<48>,1,2,8> pe_config_cache_type_t;
 	//!< \brief Type for Processing_Element configuration cache
-	typedef ConfigurationCache<sc_dt::sc_lv<60>,1,2,8> ch_config_cache_type_t;
+	typedef ConfigurationCache<sc_dt::sc_lv<64>,1,2,8> ch_config_cache_type_t;
 	//!< \brief Type for VirtualChannel configuration cache
 	typedef bool clock_type_t;
 	//!< \brief Clock type definition
@@ -141,7 +141,6 @@ public:
 	{
 		//#TODO: Include checks for design
 #ifdef DEBUG
-		dump();
 #endif
 	}
 
@@ -175,11 +174,11 @@ private:
 	//Private member:
 	pe_config_demux_type_t m_pe_config_demux{"PE_Config_Demux"};
 	//!< \brief Demultiplexer to split PE configuration vector into parts
-	in_ch_config_selector_type_t m_in_ch_config_selector{"In_Channel_Config_Selector", 0};
+	in_ch_config_selector_type_t m_in_ch_config_selector{"In_Channel_Config_Selector", 0, 64};
 	//!< \brief Selector to select input channel configuration from channel configuration vector
-	ch_config_selector_type_t m_ch_config_selector{"Channel_Config_Selector", 24};
+	ch_config_selector_type_t m_ch_config_selector{"Channel_Config_Selector", 24, 64};
 	//!< \brief Selector to distribute general channel configurations from channel configuration vector
-	sync_selector_type_t m_sync_selector{"Sync_Selector", 56};
+	sync_selector_type_t m_sync_selector{"Sync_Selector", 56, 64};
 	//!< \brief Selector to select Synchronizer configuration from channel configuration vector
 	sc_core::sc_vector<pe_type_t> m_pe_array{"VCGRA_PEs"};
 	//!< \brief Vector of all Processing_Elements in the VCGRA
@@ -189,7 +188,7 @@ private:
 	//!< \brief Vector of further VirtualChannels within the array
 	pe_config_cache_type_t m_pe_cc{"PE_Config_Cache", 48};
 	//!< \brief Instantiation of Processing_Element configuration cache
-	ch_config_cache_type_t m_ch_cc{"Channel_Config_Cache", 56};
+	ch_config_cache_type_t m_ch_cc{"Channel_Config_Cache", 64};
 	//!< \brief Instantiation of VirtualChannel configuration cache
 	synchronizer_type_t m_sync{"Sync"};
 	//!< \brief Instantiation of VCGRA caller Synchronizer
@@ -204,11 +203,15 @@ private:
 	std::array<sc_core::sc_signal<pe_config_demux_type_t::configpart_type_t>, 12> m_pe_conf_part_signals;
 	//!< \brief Signal vector to connect configuration signals of PE configuration cache and PEs
 	sc_core::sc_signal<sync_selector_type_t::configpart_type_t> m_sync_config_signal{"m_sync_config"};
-	//!< \brief Signal to connect configuration signals of PE configuration cache and PEs
+	//!< \brief Signal for Synchronizer configuration
+	sc_core::sc_signal<input_channel_type_t::conf_type_t> m_input_ch_config_signal{"m_input_ch_config"};
+	//!< \brief Signal for input VirtualChannel configuration
+	std::array<sc_core::sc_signal<general_channel_type_t::conf_type_t>, 2> m_vCh_config_signals;
+	//!< \brief Signal for Synchronizer configuration
 	sc_core::sc_signal<pe_config_cache_type_t::config_type_t> m_pe_cc_current_config_signal{"m_ch_pe_current_config"};
 	//!< \brief Signal to connect configuration cache output of PEs to Demultiplexer
 	sc_core::sc_signal<ch_config_cache_type_t::config_type_t> m_ch_cc_current_config_signal{"m_ch_cc_current_config"};
-	//!< \brief Signal to connect configuration cache output configuration to Selectors
+	//!< \brief Signal to connect configuration cache output for VirtualChannels to configuration Selectors
 
 
 	/*!

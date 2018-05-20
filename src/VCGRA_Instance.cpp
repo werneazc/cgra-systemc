@@ -15,6 +15,15 @@ namespace cgra {
 	//!< \brief Index for VirtualChannel of second level
 	static constexpr uint8_t vCh_third_level{1};
 	//!< \brief Index for VirtualChannel of third level
+	static constexpr uint8_t pe_enable_In1{0};
+	//!< \brief Index of enable signal for first input of a Processing_Element
+	static constexpr uint8_t pe_enable_In2{1};
+	//!< \brief Index of enable signal for second input of a Processing_Element
+	static constexpr uint8_t num_of_PE{12};
+	//!< \brief Number of PEs in VCGRA instance
+	static constexpr uint8_t PEs_per_level{4};
+	//!< \brief Number of PEs in each level of the VCGRA instance
+
 };
 
 std::ostream& operator<<(std::ostream& os, const cgra::VCGRA& vcgra)
@@ -27,22 +36,84 @@ std::ostream& operator<<(std::ostream& os, const cgra::VCGRA& vcgra)
 
 cgra::VCGRA::VCGRA(const sc_core::sc_module_name& name) : sc_core::sc_module(name)
 {
-	//Create Processing elements of VCGRA
-	m_pe_array.init(12,pe_creator(cgra::pe_unique_id_start_value));
 
-	//Connect input channel inputs with VCGRA inputs
+	//Processin Elements:
+	//-------------------
+
+	//Create Processing elements of VCGRA
+	m_pe_array.init(cgra::num_of_PE,pe_creator(cgra::pe_unique_id_start_value));
+
+	for (uint8_t i, j = 0; 2 * cgra::num_of_PE > j; j += 2, ++i)
+	{
+		auto& t_pe = m_pe_array.at(i);
+		t_pe.in1.bind(m_ch_outputs_signals.at(j));
+		t_pe.in2.bind(m_ch_outputs_signals.at(j+1));
+		t_pe.enable.at(cgra::pe_enable_In1).bind(m_ch_enable_signals.at(j));
+		t_pe.enable.at(cgra::pe_enable_In2).bind(m_ch_enable_signals.at(j+1));
+		t_pe.clk.bind(clk);
+		t_pe.conf.bind(m_pe_conf_part_signals.at(i));
+		t_pe.valid.bind(m_valid_signals.at(i));
+		if(2 * cgra::PEs_per_level > i)
+			t_pe.res.bind(m_res_signals.at(i));
+	}
+
+
+	//Input Channel:
+	//--------------
+
+	//Connect input channel inputs with VCGRA inputs and start signal
 	for (auto& v : m_input_ch.valids)
 		v.bind(start);
 	for (uint8_t i = 0; 8 > i; ++i)
 		m_input_ch.channel_inputs.at(i).bind(inputs.at(i));
 
-	//Connect VirtualChannel rst-ports and clk-ports
+	//Connect Input VirtualChannel rst-ports and clk-ports
 	m_input_ch.rst.bind(rst);
 	m_input_ch.clk.bind(clk);
-	m_ch_array[cgra::vCh_second_level].rst.bind(rst);
-	m_ch_array[cgra::vCh_second_level].clk.bind(clk);
-	m_ch_array[cgra::vCh_third_level].rst.bind(rst);
-	m_ch_array[cgra::vCh_third_level].clk.bind(clk);
+
+	//Connect input channel enable and output signals
+	for (uint8_t i, j = 0; 2 * cgra::PEs_per_level > j; j += 2, ++i)
+	{
+		m_input_ch.channel_outputs.at(j).bind(m_ch_outputs_signals.at(j));
+		m_input_ch.enables.at(j).bind(m_ch_enable_signals.at(j));
+		m_input_ch.channel_outputs.at(j+1).bind(m_ch_outputs_signals.at(j+1));
+		m_input_ch.enables.at(j+1).bind(m_ch_enable_signals.at(j+1));
+	}
+
+	//Connect Configuration of Input VirtualChannel
+	m_input_ch.conf.bind(m_input_ch_config_signal);
+
+
+	//General VirtualChannels:
+	//------------------------
+
+	uint8_t t_level_count{1}; // temporary variable to count the number of PE levels for indexing
+
+	//For all VCGRA channels connect...
+	for(auto& ch : m_ch_array)
+	{
+		//Connect VirtualChannel rst-ports and clk-ports
+		ch.clk.bind(clk);
+		ch.rst.bind(rst);
+		ch.conf.bind(m_ch_config_selector.config_parts.at(t_level_count - 1));
+
+		//Connect VirtualChannel input and output signals
+		for (uint8_t j = 0, i = 0; 2 * cgra::PEs_per_level > j; j += 2, ++i)
+		{
+			ch.channel_inputs.at(i).bind(m_res_signals.at((t_level_count - 1) * cgra::PEs_per_level + i));
+			ch.valids.at(i).bind(m_valid_signals.at((t_level_count - 1) * cgra::PEs_per_level + i));
+
+			ch.channel_outputs.at(j).bind(m_ch_outputs_signals.at(t_level_count * 2 * cgra::PEs_per_level + j));
+			ch.channel_outputs.at(j+1).bind(m_ch_outputs_signals.at(t_level_count * 2 * cgra::PEs_per_level + j + 1));
+			ch.enables.at(j).bind(m_ch_enable_signals.at(t_level_count * 2 * cgra::PEs_per_level + j));
+			ch.enables.at(j+1).bind(m_ch_enable_signals.at(t_level_count * 2 * cgra::PEs_per_level + j + 1));
+		}
+
+		++t_level_count;
+	}
+
+	//Configuration Caches:
+	//---------------------
 
 	//Connect Configuration Cache control signals
 	m_ch_cc.ack.bind(ack_ch_cc);
@@ -58,75 +129,13 @@ cgra::VCGRA::VCGRA(const sc_core::sc_module_name& name) : sc_core::sc_module(nam
 	m_pe_cc.slt_out.bind(slct_out_pe_cc);
 	m_pe_cc.write.bind(write_pe_cc);
 
-	//Connect input_channel outputs to its succeeding PEs
-	//and connect PEs outputs to first general channel (first level)
-	for (uint8_t i, j = 0; 8 > j; j += 2, ++i)
-	{
-		auto& t_pe = m_pe_array.at(i);
-		t_pe.in1.bind(m_ch_outputs_signals.at(j));
-		m_input_ch.channel_outputs.at(j).bind(m_ch_outputs_signals.at(j));
-		t_pe.in2.bind(m_ch_outputs_signals.at(j+1));
-		m_input_ch.channel_outputs.at(j+1).bind(m_ch_outputs_signals.at(j+1));
-		t_pe.enable.at(0).bind(m_ch_enable_signals.at(j));
-		m_input_ch.enables.at(j).bind(m_ch_enable_signals.at(j));
-		t_pe.enable.at(1).bind(m_ch_enable_signals.at(j+1));
-		m_input_ch.enables.at(j+1).bind(m_ch_enable_signals.at(j+1));
-		t_pe.clk.bind(clk);
-	}
-
-
-	//Connect second and third level
-	//Connect channel outputs to succeeding PEs
-	{
-		uint32_t i = 4;
-		for (auto& c : m_ch_array)
-		{
-			for (uint8_t j = 0; 8 > j; j += 2)
-			{
-				auto& t_pe = m_pe_array.at(i++);
-				t_pe.in1.bind(m_ch_outputs_signals.at(8+j));
-				c.channel_outputs.at(j).bind(m_ch_outputs_signals.at(8+j));
-				t_pe.in2.bind(m_ch_outputs_signals.at(8+j+1));
-				c.channel_outputs.at(j+1).bind(m_ch_outputs_signals.at(8+j+1));
-				t_pe.enable.at(0).bind(m_ch_enable_signals.at(8+j));
-				c.enables.at(j).bind(m_ch_enable_signals.at(8+j));
-				t_pe.enable.at(1).bind(m_ch_enable_signals.at(8+j+1));
-				c.enables.at(j+1).bind(m_ch_enable_signals.at(8+j+1));
-				t_pe.clk.bind(clk);
-			}
-		}
-	}
-
-	//Connect channel inputs from preceding PEs
-	for (uint8_t j = 0, c = 0; 2 > j; ++j)
-		for (uint8_t i = 0; 4 > i; ++i)
-		{
-			m_ch_array.at(j).channel_inputs.at(i).bind(m_res_signals.at(j * 4 + i));
-			m_pe_array.at(c).res.bind(m_res_signals.at(j * 4 + i));
-			m_ch_array.at(j).valids.at(i).bind(m_valid_signals.at(j * 4 + i));
-			m_pe_array.at(c++).valid.bind(m_valid_signals.at(j * 4 + i));
-		}
-
-	//Connect outputs of last PE level to VCGRA outputs
-	for (uint8_t i = 0; 4 > i; ++i)
-	{
-		auto& t_pe = m_pe_array.at(8 + i);
-		t_pe.res.bind(m_res_signals.at(8 + i));
-		results.at(i).bind(m_res_signals.at(8 + i));
-		t_pe.valid.bind(m_valid_signals.at(8 + i));
-		m_sync.valid_inputs.at(i).bind(m_valid_signals.at(8 + i));
-	}
-
 	//Connect CC of PE's to PE's
 	//(Configuration bitstream is separated to parts for each PE)
 	m_pe_cc.currentConfig.bind(m_pe_cc_current_config_signal);
 	m_pe_config_demux.config_input.bind(m_pe_cc_current_config_signal);
 
 	for (uint32_t i = 0; 12 > i; ++i)
-	{
-		m_pe_array.at(i).conf.bind(m_pe_conf_part_signals.at(i));
 		m_pe_config_demux.config_parts.at(i).bind(m_pe_conf_part_signals.at(i));
-	}
 
 	//Connect VirtualChannel configuration cache's current configuration
 	m_ch_cc.currentConfig.bind(m_ch_cc_current_config_signal);
@@ -134,19 +143,32 @@ cgra::VCGRA::VCGRA(const sc_core::sc_module_name& name) : sc_core::sc_module(nam
 	//Connect CC of channels to virtual channels
 	//(From CC of channel a range of bits is selected and separated into parts)
 	m_in_ch_config_selector.config_input.bind(m_ch_cc_current_config_signal);
-	m_input_ch.conf.bind(m_in_ch_config_selector.config_parts.at(0));
+	m_in_ch_config_selector.config_parts.at(0).bind(m_input_ch_config_signal);
 	m_ch_config_selector.config_input.bind(m_ch_cc_current_config_signal);
-	m_ch_array.at(cgra::vCh_second_level).conf.bind(m_ch_config_selector.config_parts.at(0));
-	m_ch_array.at(cgra::vCh_third_level).conf.bind(m_ch_config_selector.config_parts.at(1));
+	m_ch_config_selector.config_parts.at(cgra::vCh_second_level).bind(m_vCh_config_signals.at(cgra::vCh_second_level));
+	m_ch_config_selector.config_parts.at(cgra::vCh_third_level).bind(m_vCh_config_signals.at(cgra::vCh_third_level));
 
 	//Connect CC of channels to Synchronizer
 	m_sync_selector.config_input.bind(m_ch_cc_current_config_signal);
-	m_sync.conf.bind(m_sync_config_signal);
 	m_sync_selector.config_parts.at(0).bind(m_sync_config_signal);
 
-	//Connect ports for clocking and sync' status
+
+	//Synchronizer for VCGRA:
+	//-----------------------
+
+	//Connect valid signals of last PE level to Synchronizer
+	for (uint8_t i = 0; cgra::PEs_per_level > i; ++i)
+		m_sync.valid_inputs.at(i).bind(m_valid_signals.at(2 * cgra::PEs_per_level  + i));
+
+	//Connect ports for clocking, configuration and sync' status
+	m_sync.conf.bind(m_sync_config_signal);
 	m_sync.clk.bind(clk);
 	m_sync.ready.bind(ready);
+
+	//Connect outputs of last PE level to VCGRA outputs
+	//-------------------------------------------------
+	for (uint8_t i = 0; cgra::PEs_per_level > i; ++i)
+		m_pe_array.at(2 * PEs_per_level + i).res.bind(results.at(i));
 
 #ifdef DEBUG
 	for(auto& pe : m_pe_array)
@@ -279,10 +301,34 @@ void cgra::VCGRA::dump(std::ostream& os) const
 	m_pe_cc.dump(os);
 	os << std::endl;
 
-	//PE configuration cache information information
+	//Channel configuration cache information information
+	os << "Information about demultiplexer for PEs configuration\n";
+	os << "-----------------------------------------------------\n";
+	m_pe_config_demux.dump(os);
+	os << std::endl;
+
+	//Channel configuration cache information information
 	os << "channel configuration cache information\n";
 	os << "---------------------------------------\n";
 	m_ch_cc.dump(os);
+	os << std::endl;
+
+	//Channel configuration cache information information
+	os << "Information about Selector for input channel configuration\n";
+	os << "----------------------------------------------------------\n";
+	m_in_ch_config_selector.dump(os);
+	os << std::endl;
+
+	//Channel configuration cache information information
+	os << "Information about Selector for general channel configuration\n";
+	os << "------------------------------------------------------------\n";
+	m_ch_config_selector.dump(os);
+	os << std::endl;
+
+	//Channel configuration cache information information
+	os << "Information about Selector for synchronizer configuration\n";
+	os << "------------------------------------------------------------\n";
+	m_sync_selector.dump(os);
 	os << std::endl;
 
 	return;
