@@ -32,6 +32,8 @@ namespace cgra {
  * cache line and which linked it to the output.
  * slt_in and slt_out always have to differ. Thus, a current
  * configuration can not be overwritten while it is used.
+ * "T" needs to be a data type with a vector which has is an
+ * integer multiple of "stream_type_t".
  *
  * \tparam T Type of stored configuration (e.g. bitwidth)
  * \tparam N Bitwidth of serial configuration input
@@ -102,7 +104,7 @@ public:
 		currentConfig.write(0);
 		for (uint32_t i = 0; i < L; ++i)
 			m_cachelines[i].write(0);
-		ack.write(0);
+		ack.write(false);
 	}
 
 	/*!
@@ -168,6 +170,8 @@ public:
 		os << "Number of cache lines:\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
 		os << "Cache line length:\t\t" << std::setw(3) << static_cast<uint32_t>(size()) << std::endl;
 		os << "Bitwidth serial input:\t\t" << std::setw(3) << static_cast<uint32_t>(N) << std::endl;
+		os << "Selected input cache line:\t\t" << std::setw(3) << slt_in.read().to_string() << std::endl;
+		os << "Selected output cache line:\t\t" << std::setw(3) << slt_out.read().to_string() << std::endl;
 
 		os << "Cache content\n";
 		os << "=============\n";
