@@ -135,6 +135,7 @@ public:
 			m_multiplexers[i].sel_data.bind(m_outputBuffers[i]);
 			m_multiplexers[i].sel_valid.bind(m_enablesBuffer[i]);
 		}
+
 	}
 
 	/*!
@@ -175,11 +176,17 @@ public:
 		os << "Number of Outputs:\t" << channel_inputs.size() << "\n";
 		os << "Output bitwidth:\t" << U << "\n";
 		os << "Internal bitwidth:\t" << N << "\n";
+		os << "Length of configuration bitstream:\t" << (L*T) << std::endl;
 
 		if(conf.size())
 		{
 			os << "Current Configuration:\t" << conf.read().to_string(sc_dt::SC_HEX,true) << std::endl;
 		}
+
+		os << "\n-----------------------------------------\n" << name() << "_Multiplexers:" << std::endl;
+		for(auto& mul : m_multiplexers)
+			mul.dump(os);
+
 	}
 
 	//Processes
@@ -231,36 +238,17 @@ public:
 	 *
 	 * | data_mux_0 | data_mux_1 | data_mux_n-1 | data_mux_n |
 	 *
-	 * The config-bit order within the config.-bitstream is reverse.
+	 * The config-bit order within the config.-bitstream is:
 	 *
-	 * | data_mux_n | data_mux_n-1| ... | data_mux_1 | data_mux_0 |
+	 * | data_mux_0 | data_mux_1 | ... | data_mux_n-1 | data_mux_n |
 	 *
-	 * However, the select-bits for a multiplexer have little-endian
-	 * byte order. For instance a configuration with 2bit select-inputs
-	 * and eight outputs will have a 16bits configuration-bitstream as follows:
-	 *
-	 * |77|66|55|44|33|22|11|00|
-	 *
-	 * Imagine you want the following configuration:
-	 *
-	 *  - input_0 -> output_0: 00
-	 *	- input_0 -> output_1: 00
-	 *	- input_1 -> output_2: 01
-	 *	- input_1 -> output_3: 01
-	 *	- input_2 -> output_4: 10
-	 *	- input_2 -> output_5: 10
-	 *	- input_3 -> output_6: 11
-	 *	- input_3 -> output_7: 11
-	 *
-	 *	|11|11|10|10|01|01|00|00|
+	 * with bitstream parts interpreted with little endian.
 	 *
 	 */
 	void split_select()
 	{
-		for(uint32_t i = 0; i < T; ++i){
-			m_selectLines[i].write(conf.read().range((i + 1) * L - 1, i * L));
-//			std::cout << conf.read().range((i + 1) * L - 1, i * L) << std::endl;
-		}
+		for(uint32_t i = 0; i < T; ++i)
+			m_selectLines[i].write(conf.read().range(this->m_config_length - 1 - i * L, this->m_config_length - (i + 1) * L));
 	}
 
 private:
@@ -270,6 +258,9 @@ private:
 	VirtualChannel& operator=(const VirtualChannel& src) = delete;
 	VirtualChannel(VirtualChannel&& src) = delete;
 	VirtualChannel& operator=(VirtualChannel&& src) = delete;
+
+	uint16_t m_config_length{L * T};
+	//!< \brief Bitstream length of configuration for VirtualChannel
 
 };
 
