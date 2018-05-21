@@ -81,6 +81,28 @@ public:
 	}
 
 	/*!
+	 * \brief Dump Multiplexer information
+	 */
+	virtual void dump(std::ostream& os = std::cout) const override
+	{
+		os << name() << "\t\t" << kind() << std::endl;
+		os << "Selected port:\t\t" << select.read().to_string() << std::endl;
+		os << "Selected data:\t\t" << sel_data.read().to_string() << std::endl;
+		os << "Selected valid:\t\t" << sel_valid.read() << std::endl;
+
+		os << "Data & valid inputs\n";
+		os << "===================" << std::endl;
+
+		uint32_t i = 0;
+		for(auto& in : data_inputs)
+			os << "input_" << ++i << ":\t\t" << in.read().to_string() << std::endl;
+		i = 0;
+		for(auto& val : valid_inputs)
+			os << "valid_" << ++i << ":\t\t" << val.read() << std::endl;
+	}
+
+
+	/*!
 	 * \brief Defaulted Destructor
 	 */
 	virtual ~Multiplexer() = default;
