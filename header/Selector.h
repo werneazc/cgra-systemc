@@ -64,14 +64,16 @@ public:
 	 *
 	 * \param nameA 	Name of the Selector as a SystemC Module
 	 * \param start 	Start position on selection range (index starts with zero)
+	 * \param length	Length of input configuration bitstream
 	 */
-	Selector(const sc_core::sc_module_name& nameA, uint32_t start)
+	Selector(const sc_core::sc_module_name& nameA, uint32_t start, uint32_t length)
 	: sc_core::sc_module(nameA)
 	{
-		sc_assert(start >= 0);
+		sc_assert(start >= 0 && length >= start);
 
 		m_start = start;
 		m_length = array_size(L, N, M) * M;
+		m_config_length = length;
 
 		SC_METHOD(demultiplex);
 		sensitive << config_input;
@@ -94,6 +96,25 @@ public:
 	}
 
 	/*!
+	 * \brief Dump Selector information
+	 */
+	virtual void dump(std::ostream& os = std::cout) const override
+	{
+		os << name() << "\t\t" << kind() << std::endl;
+		os << "Configuration input:\t\t" << std::setw(3) << config_input.read().to_string(sc_dt::SC_HEX,true) << std::endl;
+		os << "Number of output parts:\t\t" << std::setw(3) << static_cast<int>(N) << std::endl;
+
+		os << "Parts content\n";
+		os << "=============\n" << std::endl;
+
+		uint32_t i = 0;
+		for(auto& part : config_parts)
+			os << "part_" << ++i << ":\t\t" << part.read().to_string(sc_dt::SC_HEX,true) << std::endl;
+
+		os << std::endl;
+	}
+
+	/*!
 	 * \brief Defaulted Destructor
 	 */
 	virtual ~Selector() = default;
@@ -107,9 +128,8 @@ public:
 	 */
 	void demultiplex()
 	{
-		for (uint32_t i = 0, j = m_start; N > i; ++i, j += M)
-			config_parts.at(i).write(config_input.read()(j, j + M - 1));
-
+		for (uint32_t i = 0; m_length / M > i; ++i)
+			config_parts.at(i).write(config_input.read()((m_config_length - m_start - 1) - i * M, (m_config_length - m_start) - (i + 1) * M));
 		return;
 	}
 
@@ -125,6 +145,8 @@ private:
 	//!< \brief Start bit index in input bit vector (indexing starts with zero)
 	uint32_t m_length{0};
 	//!< \brief Length of selected bits from start bit
+	uint32_t m_config_length{0};
+	//!< \brief Length of input configuration bitstream
 
 };
 
