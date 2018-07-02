@@ -14,6 +14,10 @@
 #include <string>
 #include <iomanip>
 
+/*!
+ * \namespace cgra
+ * \brief Namespace of VCGRA elements and functions
+ */
 namespace cgra
 {
 
