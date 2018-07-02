@@ -7,6 +7,20 @@
 
 namespace cgra {
 
+/*! Enumeration for available ManagementUnit operations */
+enum class COMMANDS : uint8_t
+{
+	NOOP = 0x00,		/*!< No operation */
+	START,				/*!< Start execution of VCGRA */
+	WAIT_READY,			/*!< Wait until VCGRA sends ready signal */
+	LOADD,				/*!< Load single data from shared memory to data cache */
+	LOADDA,				/*!< Load range of data from shared memory to line of data cache */
+	STORED,				/*!< Store single data of data cache to shared memory */
+	STOREDA,			/*!< Store line of data cache to shared memory */
+	LOADPC,				/*!< Load configuration cache for PE */
+	LOADCC 				/*!< Load configuration cache for vCh */
+};
+
 /*!
  * \class CommandInterpreter
  *
