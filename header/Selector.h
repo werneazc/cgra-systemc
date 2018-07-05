@@ -11,9 +11,11 @@ namespace cgra {
 /*!
  * \brief Calculate size for part vector
  *
- * \param length		Selection range of input bit vector
- * \param numOfParts 	Number of parts from selection
- * \param partWidth 	A parts bit width
+ * \param [in] length		Selection range of input bit vector
+ * \param [in] numOfParts 	Number of parts from selection
+ * \param [in] partWidth 	A parts bit width
+ *
+ * \return Necessary size for selected bitstream length
  */
 static constexpr uint32_t array_size(uint32_t length, uint32_t numOfParts, uint32_t partWidth)
 {
