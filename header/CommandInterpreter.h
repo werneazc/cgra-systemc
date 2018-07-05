@@ -106,7 +106,7 @@ public:
 	 *  [31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|10|09|08|07|06|05|04|03|02|01|00]
 	 *	- Address: 31 ... 16 [max 64KiB memory]
 	 *	- Line: 15 ... 13 [max 8 Lines]
-	 *	- Place: 12 ... 06 [max 128 Place]
+	 *	- Place: 12 ... 06 [max 126 Places, '0b1111111'(127d) decodes whole cache line]
 	 *	- command: 05 ... 00 [max 32 Commands]
 	 *
 	 */
