@@ -13,8 +13,24 @@
 #include <array>
 #include <iostream>
 #include <iomanip>
+#include "Typedef.h"
 
 namespace cgra {
+
+//Forward declaration of ConfigurationCache template class
+template <typename T, uint8_t M, uint8_t L, uint8_t N>
+class ConfigurationCache;
+
+//Cache Definitions for VCGRA instance
+//------------------------------------
+typedef ConfigurationCache<sc_dt::sc_lv<cgra::cPeConfigBitWidth>,
+		cgra::cSelectLineBitwidthPeConfCache,
+		cgra::cNumberOfPeCacheLines,cgra::cSelectLineBitwidthPeConfCache> pe_config_cache_type_t;
+//!< \brief Type for Processing_Element configuration cache
+typedef ConfigurationCache<sc_dt::sc_lv<cgra::cVChConfigBitWidth>,
+		cgra::cSelectLineBitwidthVChConfCache,
+		cgra::cNumberOfVChCacheLines,
+		cgra::cBitWidthOfSerialInterfaceVChConfCache> ch_config_cache_type_t;
 
 
 /*!
@@ -36,16 +52,16 @@ namespace cgra {
  * integer multiple of "stream_type_t".
  *
  * \tparam T Type of stored configuration (e.g. bitwidth)
- * \tparam N Bitwidth of serial configuration input
  * \tparam M Bitwidth of select interfaces
  * \tparam L Number of Cache Lines (2 to the power of M)
+ * \tparam N Bitwidth of serial configuration input
  */
 template <typename T, uint8_t M = 2, uint8_t L = 4, uint8_t N = 8>
 class ConfigurationCache : public sc_core::sc_module {
 public:
 	typedef T config_type_t;
 	//!< \brief Type for stored configuration data per line
-	typedef bool clock_type_t;
+	typedef cgra::clock_type_t clock_type_t;
 	//!< \brief Clock type
 	typedef sc_dt::sc_lv<M> select_type_t;
 	//!< \brief Type for line selector

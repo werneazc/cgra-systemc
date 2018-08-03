@@ -13,11 +13,8 @@
 #include <array>
 #include <string>
 #include <iomanip>
+#include "Typedef.h"
 
-/*!
- * \namespace cgra
- * \brief Namespace of VCGRA elements and functions
- */
 namespace cgra
 {
 
@@ -45,9 +42,9 @@ class Processing_Element : public sc_core::sc_module
 	//!< \brief Type of Processing_Elements configuration input
 	typedef sc_dt::sc_int<K> output_type_t;
 	//!< \brief Type of Processing_Elements data output
-	typedef bool enable_type_t;
+	typedef cgra::start_type_t enable_type_t;
 	//!< \brief Type of Processing_Elements enable inputs
-	typedef bool clock_type_t;
+	typedef cgra::clock_type_t clock_type_t;
 	//!< \brief Clock type
 	typedef bool valid_type_t;
 	//!< \brief Valid type

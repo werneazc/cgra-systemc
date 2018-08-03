@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <systemc>
 #include <array>
+#include "Typedef.h"
 #include "VirtualChannel.h"
 #include "ProcessingElement.h"
 #include "ConfigurationCache.h"
@@ -47,11 +48,11 @@ public:
 	//!< \brief Type for Processing_Element configuration cache
 	typedef ConfigurationCache<sc_dt::sc_lv<64>,1,2,8> ch_config_cache_type_t;
 	//!< \brief Type for VirtualChannel configuration cache
-	typedef bool clock_type_t;
+	typedef cgra::clock_type_t clock_type_t;
 	//!< \brief Clock type definition
-	typedef bool reset_type_t;
+	typedef cgra::reset_type_t reset_type_t;
 	//!< \brief Reset type definition
-	typedef bool ready_type_t;
+	typedef cgra::ready_type_t ready_type_t;
 	//!< \brief Ready type definition
 	typedef typename pe_type_t::enable_type_t start_type_t;
 	//!< \brief Start type definition

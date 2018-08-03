@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <iostream>
 #include <array>
+#include "Typedef.h"
 
 namespace cgra {
 
@@ -26,9 +27,9 @@ private:
 public:
 	typedef T valid_type_t;
 	//!< \brief Type of input valid signal vector
-	typedef bool ready_type_t;
+	typedef cgra::ready_type_t ready_type_t;
 	//!< \brief Type of output ready signal
-	typedef bool clock_type_t;
+	typedef cgra::clock_type_t clock_type_t;
 	//!< \brief Type of clock signal
 	typedef sc_dt::sc_lv<N> config_type_t;
 	//!< \brief Type of configuration input signal

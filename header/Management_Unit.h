@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <iostream>
 #include <array>
+#include "Typedef.h"
 #include "CommandInterpreter.h"
 #include "MMU.h"
 
@@ -30,17 +31,17 @@ constexpr uint32_t c_programMemorySize{10};
 class ManagementUnit : public sc_core::sc_module
 {
 public:
-	typedef bool clock_type_t;
+	typedef cgra::clock_type_t clock_type_t;
 	//!< \brief ManagementUnit clock type
 	typedef bool run_type_t;
 	//!< \brief ManagementUnit run type
 	typedef bool pause_type_t;
 	//!< \brief ManagementUnit pause type
-	typedef bool reset_type_t;
+	typedef cgra::reset_type_t reset_type_t;
 	//!< \brief ManagementUnit reset type
-	typedef bool ready_type_t;
+	typedef cgra::ready_type_t ready_type_t;
 	//!< \brief Synchronization signal type with VCGRA
-	typedef bool start_type_t;
+	typedef cgra::start_type_t start_type_t;
 	//!< \brief Start type for VCGRA
 	typedef CommandInterpreter::assembler_type_t assembler_type_t;
 	//!< \brief Type definition for assembler command

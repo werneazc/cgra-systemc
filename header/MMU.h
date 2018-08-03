@@ -11,6 +11,7 @@
 #include <systemc>
 #include <iostream>
 #include "CommandInterpreter.h"
+#include "Typedef.h"
 
 namespace cgra
 {
@@ -26,7 +27,7 @@ namespace cgra
 class MMU : public sc_core::sc_module
 {
 public:
-	typedef bool clock_type_t;
+	typedef cgra::clock_type_t clock_type_t;
 	//!< \brief MMU clock type
 	typedef bool ready_type_t;
 	//!< \brief Signal type to show current processing; Ready for new command if false

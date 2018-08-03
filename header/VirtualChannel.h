@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <array>
 #include "Multiplexer.h"
+#include "Typedef.h"
 
 namespace cgra {
 
@@ -44,9 +45,9 @@ private:
 public:
 	typedef sc_dt::sc_int<S> input_type_t;
 	//!< \brief Type of VirtualChannel data inputs
-	typedef bool clock_type_t;
+	typedef cgra::clock_type_t clock_type_t;
 	//!< \brief Clock type
-	typedef bool reset_type_t;
+	typedef cgra::reset_type_t reset_type_t;
 	//!< \brief Reset type
 	typedef sc_dt::sc_lv<T * L> conf_type_t;
 	//!< \brief Type of VirtualChannel configuration port
