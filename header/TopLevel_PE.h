@@ -15,6 +15,11 @@ namespace cgra {
  */
 class TopLevel : public sc_core::sc_module {
 public:
+	/*!
+	 * \brief General Constructor
+	 *
+	 * \param[in] nameA Name of SystemC module
+	 */
 	TopLevel(sc_core::sc_module_name nameA);
 	virtual ~TopLevel();
 
@@ -44,10 +49,10 @@ private:
 
 	//Forbidden Constructors
 	TopLevel() = delete;
-	TopLevel(const TopLevel& src) = delete;
-	TopLevel(TopLevel&& src) = delete;
-	TopLevel& operator=(const TopLevel& src) = delete;
-	TopLevel& operator=(TopLevel&& src) = delete;
+	TopLevel(const TopLevel& src) = delete;				//!< \brief because sc_module could not be copied
+	TopLevel(TopLevel&& src) = delete;					//!< \brief because move not implemented for sc_module
+	TopLevel& operator=(const TopLevel& src) = delete;	//!< \brief because sc_module could not be copied
+	TopLevel& operator=(TopLevel&& src) = delete;		//!< \brief because move not implemented for sc_module
 };
 
 } //end namespace cgra

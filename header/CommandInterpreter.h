@@ -62,7 +62,7 @@ public:
 	/*!
 	 * \brief General Constructor
 	 *
-	 * \param nameA Name of the CommandInterpreter as a SystemC Module
+	 * \param[in] nameA Name of the CommandInterpreter as a SystemC Module
 	 */
 	CommandInterpreter(const sc_core::sc_module_name& nameA);
 
@@ -87,6 +87,8 @@ public:
 
 	/*!
 	 * \brief Dump CommmandInterpreter information
+	 *
+	 * \param[out] os Define used outstream [default: std::cout]
 	 */
 	virtual void dump(std::ostream& os = std::cout) const override
 	{

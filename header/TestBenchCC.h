@@ -1,8 +1,8 @@
 /*
  * TestBenchCC.h
  *
- *  Created on: Aug 17, 2017
- *      Author: andrewerner
+ * Created on: Aug 17, 2017
+ * Author: andrewerner
  */
 
 #ifndef HEADER_TESTBENCHCC_H_
@@ -48,7 +48,7 @@ public:
 	/*!
 	 * \brief Named constructor
 	 *
-	 * \param 	nameA 	Name of the test bench module
+	 * \param[in] 	nameA 	Name of the test bench module
 	 */
 	TestBench_CC(const sc_core::sc_module_name& nameA);
 
@@ -66,7 +66,7 @@ public:
 	/*!
 	 * \brief Return information dump about SystemC module
 	 *
-	 * \param os Reference to output stream (default std::cout)
+	 * \param[out] os Reference to output stream (default std::cout)
 	 */
 	virtual void dump(std::ostream& os = std::cout) const override;
 
@@ -83,10 +83,10 @@ public:
 private:
 	//Forbidden Constructors
 	TestBench_CC() = delete;
-	TestBench_CC(const TestBench_CC& src) = delete;
-	TestBench_CC& operator=(const TestBench_CC& src) = delete;
-	TestBench_CC(TestBench_CC&& src) = delete;
-	TestBench_CC& operator=(TestBench_CC&& src) = delete;
+	TestBench_CC(const TestBench_CC& src) = delete;				//!< \brief because sc_module could not be copied
+	TestBench_CC& operator=(const TestBench_CC& src) = delete;	//!< \brief because move not implemented for sc_module
+	TestBench_CC(TestBench_CC&& src) = delete;					//!< \brief because sc_module could not be copied
+	TestBench_CC& operator=(TestBench_CC&& src) = delete;		//!< \brief because move not implemented for sc_module
 };
 
 } /* namespace cgra */

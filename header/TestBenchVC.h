@@ -52,7 +52,7 @@ public:
 	/*!
 	 * \brief Named Constructor
 	 *
-	 * \param nameA SystemC module name of TestBench
+	 * \param[out] nameA SystemC module name of TestBench
 	 */
 	TestBenchVC(sc_core::sc_module_name nameA);
 	/*!
@@ -79,17 +79,17 @@ public:
 	/*!
 	 * \brief print current signal values
 	 *
-	 * \param os Output stream to write information to
+	 * \param[out] os Output stream to write information to
 	 */
 	void dump(std::ostream& os = ::std::cout) const override;
 
 private:
 	//Forbidden Constructors
 	TestBenchVC() = delete;
-	TestBenchVC(const TestBenchVC& src) = delete;
-	TestBenchVC& operator=(const TestBenchVC& src) = delete;
-	TestBenchVC(TestBenchVC&& src) = delete;
-	TestBenchVC& operator=(TestBenchVC&& src) = delete;
+	TestBenchVC(const TestBenchVC& src) = delete;				//!< \brief because sc_module could not be copied
+	TestBenchVC& operator=(const TestBenchVC& src) = delete;	//!< \brief because move not implemented for sc_module
+	TestBenchVC(TestBenchVC&& src) = delete;					//!< \brief because sc_module could not be copied
+	TestBenchVC& operator=(TestBenchVC&& src) = delete;			//!< \brief because move not implemented for sc_module
 
 };
 

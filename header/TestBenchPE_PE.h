@@ -37,7 +37,7 @@ public:
 	/*!
 	 * \brief Constsructor
 	 *
-	 * \param nameA sc_module name of TestBench;
+	 * \param[in] nameA sc_module name of TestBench;
 	 */
 	TestBench_PE();
 
@@ -49,8 +49,8 @@ public:
 	/*!
 	 * \brief write current signals to output
 	 *
-	 * \param os Output stream to write information to
-	 * \param tb Constant reference to a test bench module for a PE
+	 * \param[out] 	os Output stream to write information to
+	 * \param[in] 	tb Constant reference to a test bench module for a PE
 	 */
 	friend std::ostream& operator<<(std::ostream& os, const TestBench_PE& tb);
 
@@ -63,7 +63,7 @@ public:
 	/*!
 	 * \brief Print current status of PE signals
 	 *
-	 * \param os out-stream where to write to (default: std::cout)
+	 * \param[out] os out-stream where to write to (default: std::cout)
 	 */
 	void dump(std::ostream& os = ::std::cout) const override;
 };

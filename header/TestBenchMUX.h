@@ -1,8 +1,8 @@
 /*
  * TestBenchMUX.h
  *
- *  Created on: Aug 4, 2017
- *      Author: andrewerner
+ * Created on: Aug 4, 2017
+ * Author: andrewerner
  */
 
 #ifndef HEADER_TESTBENCHMUX_H_
@@ -40,6 +40,11 @@ public:
 
 	//CTOR
 	SC_HAS_PROCESS(TestBench_MUX);
+	/*!
+	 * \brief General Constructor
+	 *
+	 * \param[in] nameA Name of the SystemC module
+	 */
 	TestBench_MUX(const sc_core::sc_module_name& nameA);
 	//!< \brief Ctor
 	virtual ~TestBench_MUX() = default;
