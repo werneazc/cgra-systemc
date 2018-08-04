@@ -100,7 +100,7 @@ public:
 	 * \param[in] configBitstreamLength Number of configuration bits to cache
 	 */
 	ConfigurationCache(const sc_core::sc_module_name& nameA, uint32_t configBitStreamLength ) :
-		sc_core::sc_module(nameA), m_numOfBytes((configBitStreamLength % 8) ? (configBitStreamLength / 8 + 1) : (configBitStreamLength / 8))
+		sc_core::sc_module(nameA), m_numOfBytes(cgra::calc_numOfBytes(configBitStreamLength))
 	{
 		SC_METHOD(storeCacheLine);
 		sensitive << clk.pos();

@@ -30,6 +30,16 @@ constexpr uint16_t calc_bitwidth(const uint16_t numOfCacheLinesA)
 	return static_cast<uint16_t>(ceil(log2(numOfCacheLinesA)));
 }
 
+/*!
+ * /brief Calculate number of necessary bytes to store a given number of bits
+ *
+ * \param[in] numOfBitsA Number of bits to store
+ */
+constexpr uint32_t calc_numOfBytes(const uint32_t numOfBitsA)
+{
+	return (numOfBitsA % 8) ? (numOfBitsA / 8 + 1) : (numOfBitsA / 8);
+}
+
 
 //Global type definitions
 //=======================
