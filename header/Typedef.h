@@ -78,7 +78,7 @@ static constexpr uint16_t cBitWidthOfSerialInterfaceVChConfCache{8};
 //!< \brief Bitwidth for serial configuration input stream to configuration cache
 
 
-//Properties for input data cache
+//Properties for data caches
 //--------------------------------------------------
 static constexpr uint16_t cDataValueBitwidth{16};
 //!< \brief Number of bits for one
