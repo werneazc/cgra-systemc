@@ -22,7 +22,7 @@ template <uint32_t B, uint32_t N, uint32_t L, uint32_t S, uint32_t I>
 class DataInCache;
 
 //Definition of input data cache types
-typedef DataInCache<cgra::cDataValueBitwidth,
+static typedef DataInCache<cgra::cDataValueBitwidth,
 		cgra::cNumberOfValuesPerCacheLine,
 		cgra::cNumberDataInCacheLines
 		> data_input_cache_type;

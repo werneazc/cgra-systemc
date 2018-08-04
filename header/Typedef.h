@@ -56,37 +56,37 @@ typedef bool start_type_t;
 
 //Properties for PE configuration cache
 //--------------------------------------
-constexpr uint16_t cPeConfigBitWidth{48};
+static constexpr uint16_t cPeConfigBitWidth{48};
 //!< \brief Number of bits for whole PE configuration of VCGRA
-constexpr uint16_t cNumberOfPeCacheLines{2};
+static constexpr uint16_t cNumberOfPeCacheLines{2};
 //!< \brief Number of cache lines for PE configuration cache
-constexpr uint16_t cSelectLineBitwidthPeConfCache{calc_bitwidth(cNumberOfPeCacheLines)};
+static constexpr uint16_t cSelectLineBitwidthPeConfCache{calc_bitwidth(cNumberOfPeCacheLines)};
 //!< \brief Bitwidth to select available cache lines round-up{log2(cNumberOfCacheLines)}
-constexpr uint16_t cBitWidthOfSerialInterfacePeConfCache{8};
+static constexpr uint16_t cBitWidthOfSerialInterfacePeConfCache{8};
 //!< \brief Bitwidth for serial configuration input stream to configuration cache
 
 
 //Properties for virtual channel configuration cache
 //--------------------------------------------------
-constexpr uint16_t cVChConfigBitWidth{64};
+static constexpr uint16_t cVChConfigBitWidth{64};
 //!< \brief Number of bits for whole vCh configuration of VCGRA
-constexpr uint16_t cNumberOfVChCacheLines{2};
+static constexpr uint16_t cNumberOfVChCacheLines{2};
 //!< \brief Number of cache lines for vCh configuration cache
-constexpr uint16_t cSelectLineBitwidthVChConfCache{calc_bitwidth(cNumberOfVChCacheLines)};
+static constexpr uint16_t cSelectLineBitwidthVChConfCache{calc_bitwidth(cNumberOfVChCacheLines)};
 //!< \brief Bitwidth to select available cache lines round-up{log2(cNumberOfCacheLines)}
-constexpr uint16_t cBitWidthOfSerialInterfaceVChConfCache{8};
+static constexpr uint16_t cBitWidthOfSerialInterfaceVChConfCache{8};
 //!< \brief Bitwidth for serial configuration input stream to configuration cache
 
 
 //Properties for input data cache
 //--------------------------------------------------
-constexpr uint16_t cDataValueBitwidth{16};
+static constexpr uint16_t cDataValueBitwidth{16};
 //!< \brief Number of bits for one
-constexpr uint16_t cNumberOfValuesPerCacheLine{8};
+static constexpr uint16_t cNumberOfValuesPerCacheLine{8};
 //!< \brief Number of accessible data values in a cache line
-constexpr uint16_t cNumberDataInCacheLines{2};
+static constexpr uint16_t cNumberDataInCacheLines{2};
 //!< \brief Number of cache lines for PE configuration cache
-constexpr uint16_t cSelectLineBitwidthDataInCache{calc_bitwidth(cNumberDataInCacheLines)};
+static constexpr uint16_t cSelectLineBitwidthDataInCache{calc_bitwidth(cNumberDataInCacheLines)};
 //!< \brief Bitwidth to select available cache lines round-up{log2(cNumberOfCacheLines)}
 
 }
