@@ -96,7 +96,7 @@ public:
 	/*!
 	 * \brief Named C'tor for a VC
 	 *
-	 * \param nameA Name of the VC within the simulation
+	 * \param[in] nameA Name of the VC within the simulation
 	 */
 	VirtualChannel(const sc_core::sc_module_name& nameA) : sc_core::sc_module(nameA)
 	{
@@ -160,6 +160,8 @@ public:
 
 	/*!
 	 * \brief Print VirtualChannel name
+	 *
+	 * \param[out] 	os 	Select outstream to write [default: std::cout]
 	 */
 	virtual void print(std::ostream& os = ::std::cout) const override
 	{
@@ -168,6 +170,8 @@ public:
 
 	/*!
 	 * \brief Dump VirtualChannel information
+	 *
+	 * \param[out] 	os 	Select outstream to write [default: std::cout]
 	 */
 	virtual void dump(std::ostream& os = ::std::cout) const override
 	{
@@ -264,7 +268,6 @@ private:
 	//!< \brief Bitstream length of configuration for VirtualChannel
 
 };
-
 
 } // namespace cgra
 

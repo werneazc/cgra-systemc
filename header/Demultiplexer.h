@@ -46,7 +46,7 @@ public:
 	/*!
 	 * \brief General Constructor
 	 *
-	 * \param nameA Name of the Demultiplexer as a SystemC Module
+	 * \param[in] nameA Name of the Demultiplexer as a SystemC Module
 	 */
 	Demultiplexer(const sc_core::sc_module_name& nameA) : sc_core::sc_module(nameA)
 	{
@@ -74,6 +74,8 @@ public:
 
 	/*!
 	 * \brief Dump Demultiplexer information
+	 *
+	 * \param[out] os Define used outstream [default: std::cout]
 	 */
 	virtual void dump(std::ostream& os = std::cout) const override
 	{

@@ -76,7 +76,7 @@ public:
 	/*!
 	 * \brief Constructor of the test bench
 	 *
-	 * \param name VCGRA test bench module name
+	 * \param[in] name VCGRA test bench module name
 	 */
 	TestBench_VCGRA(const sc_core::sc_module_name& nameA);
 
@@ -107,15 +107,15 @@ public:
 	/*!
 	 * \brief Write current signals to output
 	 *
-	 * \param os Output stream to write information to
-	 * \param tb Constant reference to a VCGRA instance
+	 * \param[out] os Output stream to write information to
+	 * \param[in]  tb Constant reference to a VCGRA instance
 	 */
 	friend std::ostream& operator<<(std::ostream& os, const TestBench_VCGRA& vcgra);
 
 	/*!
 	 * \brief Dump current status of test bench ports
 	 *
-	 * \param os out-stream where to write to (default: std::cout)
+	 * \param[out] os out-stream where to write to (default: std::cout)
 	 */
 	virtual void dump(std::ostream& os = ::std::cout) const override;
 

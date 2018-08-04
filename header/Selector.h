@@ -64,9 +64,9 @@ public:
 	/*!
 	 * \brief General Constructor
 	 *
-	 * \param nameA 	Name of the Selector as a SystemC Module
-	 * \param start 	Start position on selection range (index starts with zero)
-	 * \param length	Length of input configuration bitstream
+	 * \param[in] nameA 	Name of the Selector as a SystemC Module
+	 * \param[in] start 	Start position on selection range (index starts with zero)
+	 * \param[in] length	Length of input configuration bitstream
 	 */
 	Selector(const sc_core::sc_module_name& nameA, uint32_t start, uint32_t length)
 	: sc_core::sc_module(nameA)
@@ -99,6 +99,8 @@ public:
 
 	/*!
 	 * \brief Dump Selector information
+	 *
+	 * \param[out] os Define used outstream [default: std::cout]
 	 */
 	virtual void dump(std::ostream& os = std::cout) const override
 	{

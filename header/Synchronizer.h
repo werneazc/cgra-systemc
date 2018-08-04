@@ -48,7 +48,7 @@ public:
 	/*!
 	 * \brief General Constructor
 	 *
-	 * \param nameA 	Name of the Synchronizer as a SystemC Module
+	 * \param[in] nameA 	Name of the Synchronizer as a SystemC Module
 	 */
 	Synchronizer(const sc_core::sc_module_name& nameA) : sc_core::sc_module(nameA)
 	{
@@ -80,7 +80,14 @@ public:
 	 * \brief Multiplexing data inputs to one output
 	 *
 	 * \details
+	 * First, the current status word from valid input signals
+	 * from previous ProcessingElement level is ORed with the
+	 * configuration mask. The configuration mask consists of
+	 * Ones where no valid signal from a previous PE will appear.
+	 * The other mask bits are zero.
 	 *
+	 * Afterwards, all bits of the vector are sequentially ANDed
+	 * and the result is the status of the ready signal.
 	 */
 	void sync()
 	{

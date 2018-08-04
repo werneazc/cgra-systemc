@@ -74,6 +74,12 @@ class Processing_Element : public sc_core::sc_module
 	sc_core::sc_out<valid_type_t> valid{"valid"};		//!< \brief synchronization of output
 
 	//Constructor
+	/*!
+	 * \brief General Constructor
+	 *
+	 * \param[in] nameA			Name of ProcessingElement instance
+	 * \param[in] pe_numberA 	Unique ID of a ProcessingElement instance
+	 */
 	SC_HAS_PROCESS(Processing_Element);
 	Processing_Element(const sc_core::sc_module_name& nameA, const uint32_t pe_numberA) : sc_module(nameA), m_peId{pe_numberA}
 	{
@@ -103,6 +109,8 @@ class Processing_Element : public sc_core::sc_module
 
 	/*!
 	 *  \brief Print PE name
+	 *
+	 * \param[out] os Define used outstream [default: std::cout]
 	 */
 	virtual void print(std::ostream& os = ::std::cout) const override
 	{
@@ -111,6 +119,8 @@ class Processing_Element : public sc_core::sc_module
 
 	/*!
 	 * \brief Dump PE information
+	 *
+	 * \param[out] os Define used outstream [default: std::cout]
 	 */
 	virtual void dump(std::ostream& os = ::std::cout) const override
 	{
@@ -292,6 +302,7 @@ class Processing_Element : public sc_core::sc_module
 
 	//static members
 	static uint32_t pe_generation_counter;
+	//!< \brief Counter for unique IDs of ProcessingElements
 
 	//a processing element's operations
 	/*!
@@ -301,6 +312,7 @@ class Processing_Element : public sc_core::sc_module
 	{
 		res.write(m_invalues[0].read() + m_invalues[1].read());
 	}
+
 	/*!
 	 * \brief Subtracts in2 from in1
 	 */
@@ -308,6 +320,7 @@ class Processing_Element : public sc_core::sc_module
 	{
 		res.write(m_invalues[0].read() - m_invalues[1].read());
 	}
+
 	/*!
 	 * \brief Multiplies the two inputs
 	 *
@@ -320,6 +333,7 @@ class Processing_Element : public sc_core::sc_module
 		sc_assert(m_invalues[0].read().length() <= 32 || m_invalues[1].read().length() <= 32);
 		res.write(m_invalues[0].read() * m_invalues[1].read());
 	}
+
 	/*!
 	 * \brief Performs an integer devision in1 / in2
 	 */
@@ -329,6 +343,7 @@ class Processing_Element : public sc_core::sc_module
 		temp_res = static_cast<sc_dt::int64>(m_invalues[0].read().to_int() / m_invalues[1].read().to_int());
 		res.write(temp_res);
 	}
+
 	/*!
 	 * \brief Perform modulo operation in1 & in2
 	 */
@@ -337,6 +352,7 @@ class Processing_Element : public sc_core::sc_module
 		res.write(m_invalues[0].read() % m_invalues[1].read());
 
 	}
+
 	/*!
 	 * \brief Returns the greater input of in1 and in2
 	 */
@@ -344,6 +360,7 @@ class Processing_Element : public sc_core::sc_module
 	{
 		res.write((m_invalues[0].read() >= m_invalues[1].read()) ? m_invalues[0].read() : m_invalues[1].read());
 	}
+
 	/*!
 	 * \brief Returns 1 if both are value-equal or 0 otherwise
 	 */
@@ -351,6 +368,7 @@ class Processing_Element : public sc_core::sc_module
 	{
 		res.write((m_invalues[0].read() == m_invalues[1].read()) ? 1 : 0);
 	}
+
 	/*!
 	 * \brief Copies in1 to res
 	 */
@@ -358,6 +376,7 @@ class Processing_Element : public sc_core::sc_module
 	{
 		res.write(m_invalues[0].read());
 	}
+
 };
 
 } /* namespace cgra */

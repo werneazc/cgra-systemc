@@ -106,7 +106,7 @@ public:
 	//Constructor
 	/*!
 	 * \brief Constructor of a VCGRA
-	 * \param name VCGRA module name
+	 * \param[in] name VCGRA module name
 	 */
 	VCGRA(const sc_core::sc_module_name& name);
 
@@ -121,22 +121,22 @@ public:
 	/*!
 	 * \brief Write current signals to output
 	 *
-	 * \param os Output stream to write information to
-	 * \param tb Constant reference to a VCGRA instance
+	 * \param[out] 	os 	Output stream to write information to
+	 * \param[in] 	tb 	Constant reference to a VCGRA instance
 	 */
 	friend std::ostream& operator<<(std::ostream& os, const VCGRA& vcgra);
 
 	/*!
 	 * \brief Dump the VCGRA structure
 	 *
-	 * \param os out-stream where to write to (default: std::cout)
+	 * \param[out] os out-stream where to write to (default: std::cout)
 	 */
 	virtual void dump(std::ostream& os = ::std::cout) const override;
 
 	/*!
 	 * \brief Dump the VCGRA structure
 	 *
-	 * \param os out-stream where to write to (default: std::cout)
+	 * \param[out] os out-stream where to write to (default: std::cout)
 	 */
 	virtual void end_of_elaboration() override
 	{
@@ -228,7 +228,7 @@ private:
 	 * Therefore, we use a Functor to create the Processing_Element which than
 	 * is passed into the array.
 	 *
-	 * \param pe_id Unique ID of a processing element.
+	 * \param[in] pe_id Unique ID of a processing element.
 	 *
 	 */
 	struct pe_creator
@@ -238,7 +238,7 @@ private:
 		//Contructor
 		/*!
 		 * \brief Constructor for Processing_Element creator
-		 * \param Unique ID of a processing element.
+		 * \param[in] Unique ID of a processing element.
 		 */
 		pe_creator(uint32_t pe_id) : m_pe_id(pe_id) {};
 

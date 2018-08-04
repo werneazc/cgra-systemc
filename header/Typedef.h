@@ -22,6 +22,8 @@ namespace cgra {
 //===================
 /*!
  * /brief Calculate number of bits to select available cache lines.
+ *
+ * \param[in] numOfCacheLinesA Number of available cache lines to address
  */
 constexpr uint16_t calc_bitwidth(const uint16_t numOfCacheLinesA)
 {

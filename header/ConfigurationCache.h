@@ -96,8 +96,8 @@ public:
 	 * \details
 	 * The number of configuration bits defines the size of the cache lines.
 	 *
-	 * \param nameA SystemC module name for ConfigurationCache instance
-	 * \param configBitstreamLength Number of configuration bits to cache
+	 * \param[in] nameA 				SystemC module name for ConfigurationCache instance
+	 * \param[in] configBitstreamLength Number of configuration bits to cache
 	 */
 	ConfigurationCache(const sc_core::sc_module_name& nameA, uint32_t configBitStreamLength ) :
 		sc_core::sc_module(nameA), m_numOfBytes((configBitStreamLength % 8) ? (configBitStreamLength / 8 + 1) : (configBitStreamLength / 8))
@@ -171,6 +171,8 @@ public:
 
 	/*!
 	 * \brief Print configuration cache name
+	 *
+	 * \param[out] os Define used outstream [default: std::cout]
 	 */
 	virtual void print(std::ostream& os = std::cout) const override
 	{
@@ -179,6 +181,8 @@ public:
 
 	/*!
 	 * \brief Dump configuration cache information
+	 *
+	 * \param[out] os Define used outstream [default: std::cout]
 	 */
 	virtual void dump(std::ostream& os = std::cout) const override
 	{
@@ -204,8 +208,8 @@ public:
 	/*!
 	 * \brief Print content of a cache line
 	 *
-	 * \param line 	Select cache line to print
-	 * \param os 	Select out stream to write (default std::cout)
+	 * \param[in] 	line 	Select cache line to print
+	 * \param[out] 	os 		Select out stream to write (default std::cout)
 	 */
 	void print_cache_line(uint32_t line, std::ostream& os = std::cout) const
 	{
