@@ -53,15 +53,15 @@ class Processing_Element : public sc_core::sc_module
 	//! \brief Operations of a processing element
 	enum OP
 	{
-		NONE = 0,
-		ADD,
-		SUB,
-		MUL,
-		IDIV,
-		MDL,
-		GRE,
-		EQU,
-		BUF
+		NONE = 0,		//!< \brief PE will not perform any operation on data inputs
+		ADD,			//!< \brief Add two integers
+		SUB,			//!< \brief Subtract two integers
+		MUL,			//!< \brief Multiply two integers
+		IDIV,			//!< \brief Integer division of two integers
+		MDL,			//!< \brief Modulo operation
+		GRE,			//!< \brief Return greater value of In1 and In2
+		EQU,			//!< \brief True if both inputs are equal
+		BUF				//!< \brief Buffer Input one for one clock cycle
 	};
 
 	//interfaces
@@ -74,13 +74,13 @@ class Processing_Element : public sc_core::sc_module
 	sc_core::sc_out<valid_type_t> valid{"valid"};		//!< \brief synchronization of output
 
 	//Constructor
+	SC_HAS_PROCESS(Processing_Element);
 	/*!
 	 * \brief General Constructor
 	 *
 	 * \param[in] nameA			Name of ProcessingElement instance
 	 * \param[in] pe_numberA 	Unique ID of a ProcessingElement instance
 	 */
-	SC_HAS_PROCESS(Processing_Element);
 	Processing_Element(const sc_core::sc_module_name& nameA, const uint32_t pe_numberA) : sc_module(nameA), m_peId{pe_numberA}
 	{
 		SC_METHOD(perform);
@@ -283,9 +283,9 @@ class Processing_Element : public sc_core::sc_module
 	//! \brief States of the processing element's state machine
 	enum STATE
 	{
-		AWAIT_DATA,
-		PROCESS_DATA,
-		VALID_DATA
+		AWAIT_DATA,		//!< \brief Await both input data values
+		PROCESS_DATA,	//!< \brief Perform configured operation on input values
+		VALID_DATA		//!< \brief Set current result valid for one clock cycle
 	};
 
 	//private member:

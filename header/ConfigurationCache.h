@@ -26,11 +26,12 @@ class ConfigurationCache;
 typedef ConfigurationCache<sc_dt::sc_lv<cgra::cPeConfigBitWidth>,
 		cgra::cSelectLineBitwidthPeConfCache,
 		cgra::cNumberOfPeCacheLines,cgra::cSelectLineBitwidthPeConfCache> pe_config_cache_type_t;
-//!< \brief Type for Processing_Element configuration cache
+//!< \brief Type definition for Processing_Element configuration cache
 typedef ConfigurationCache<sc_dt::sc_lv<cgra::cVChConfigBitWidth>,
 		cgra::cSelectLineBitwidthVChConfCache,
 		cgra::cNumberOfVChCacheLines,
 		cgra::cBitWidthOfSerialInterfaceVChConfCache> ch_config_cache_type_t;
+//!< \brief Type definition for VirtualChannel configuration cache
 
 
 /*!
@@ -97,7 +98,7 @@ public:
 	 * The number of configuration bits defines the size of the cache lines.
 	 *
 	 * \param[in] nameA 				SystemC module name for ConfigurationCache instance
-	 * \param[in] configBitstreamLength Number of configuration bits to cache
+	 * \param[in] configBitStreamLength Number of configuration bits to cache
 	 */
 	ConfigurationCache(const sc_core::sc_module_name& nameA, uint32_t configBitStreamLength ) :
 		sc_core::sc_module(nameA), m_numOfBytes(cgra::calc_numOfBytes(configBitStreamLength))

@@ -76,7 +76,7 @@ public:
 	/*!
 	 * \brief Constructor of the test bench
 	 *
-	 * \param[in] name VCGRA test bench module name
+	 * \param[in] nameA VCGRA test bench module name
 	 */
 	TestBench_VCGRA(const sc_core::sc_module_name& nameA);
 
@@ -108,7 +108,7 @@ public:
 	 * \brief Write current signals to output
 	 *
 	 * \param[out] os Output stream to write information to
-	 * \param[in]  tb Constant reference to a VCGRA instance
+	 * \param[in]  vcgra Constant reference to a VCGRA instance
 	 */
 	friend std::ostream& operator<<(std::ostream& os, const TestBench_VCGRA& vcgra);
 

@@ -272,7 +272,7 @@ private:
 
 	//Private Signals and Buffers
 	std::array<std::array<sc_core::sc_buffer<value_type_t>, N>, L> m_cacheLines;
-	//!< /brief Two-dimensional array, where 1st. dimension is cache line and 2nd. dimension is value
+	//!< \brief Two-dimensional array, where 1st. dimension is cache line and 2nd. dimension is value
 
 	const uint32_t m_numOfBytes{cgra::calc_numOfBytes(B * N * L)};
 	//!< \brief Cache size in bytes

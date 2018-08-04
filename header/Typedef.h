@@ -21,7 +21,7 @@ namespace cgra {
 //Function prototypes
 //===================
 /*!
- * /brief Calculate number of bits to select available cache lines.
+ * \brief Calculate number of bits to select available cache lines.
  *
  * \param[in] numOfCacheLinesA Number of available cache lines to address
  */
@@ -31,7 +31,7 @@ constexpr uint16_t calc_bitwidth(const uint16_t numOfCacheLinesA)
 }
 
 /*!
- * /brief Calculate number of necessary bytes to store a given number of bits
+ * \brief Calculate number of necessary bytes to store a given number of bits
  *
  * \param[in] numOfBitsA Number of bits to store
  */

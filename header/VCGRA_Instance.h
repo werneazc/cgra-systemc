@@ -122,7 +122,7 @@ public:
 	 * \brief Write current signals to output
 	 *
 	 * \param[out] 	os 	Output stream to write information to
-	 * \param[in] 	tb 	Constant reference to a VCGRA instance
+	 * \param[in] 	vcgra 	Constant reference to a VCGRA instance
 	 */
 	friend std::ostream& operator<<(std::ostream& os, const VCGRA& vcgra);
 
@@ -134,9 +134,7 @@ public:
 	virtual void dump(std::ostream& os = ::std::cout) const override;
 
 	/*!
-	 * \brief Dump the VCGRA structure
-	 *
-	 * \param[out] os out-stream where to write to (default: std::cout)
+	 * \brief Initialize simulation
 	 */
 	virtual void end_of_elaboration() override
 	{
@@ -238,7 +236,7 @@ private:
 		//Contructor
 		/*!
 		 * \brief Constructor for Processing_Element creator
-		 * \param[in] Unique ID of a processing element.
+		 * \param[in] pe_id Unique ID of a processing element.
 		 */
 		pe_creator(uint32_t pe_id) : m_pe_id(pe_id) {};
 
