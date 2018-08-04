@@ -1,5 +1,5 @@
 /*
- * DataCache.h
+ * DataInCache.h
  *
  *  Created on: 03.08.2018
  *      Author: andrewerner
@@ -18,14 +18,14 @@
 namespace cgra {
 
 //Forward declaration of DataCache class
-template <uint32_t B, uint32_t N, uint32_t L, uint32_t S, uint32_t I>
+template <uint32_t B, uint32_t N, uint32_t L>
 class DataInCache;
 
 //Definition of input data cache types
 static typedef DataInCache<cgra::cDataValueBitwidth,
 		cgra::cNumberOfValuesPerCacheLine,
 		cgra::cNumberDataInCacheLines
-		> data_input_cache_type;
+		> data_input_cache_type_t;
 //!< \brief Type definition for the input data cache of a VCGRA
 
 /*!
@@ -35,7 +35,14 @@ static typedef DataInCache<cgra::cDataValueBitwidth,
  *
  * \details
  * This is a template of a data input cache for a VCGRA.
- * One can parameterize its properties by the value bitwidth.
+ * One can parameterize its properties by the value bitwidth,
+ * the number of values per cache line and the number of
+ * cache lines itself.
+ *
+ * The bitwidth of the serial interface to load new data into
+ * a cache line corresponds to the bitwidth of one integer value.
+ * The selected cache line is linked in parallel to the first virtual
+ * channel.
  *
  * \tparam B Bitwidth for a single integer value (with respect to VirtualChannel data bitwidth)
  * \tparam N Number of data values in a data cache line
@@ -47,7 +54,7 @@ class DataInCache : public sc_core::sc_module
 {
 public:
 	typedef sc_dt::sc_int<B> value_type_t;
-	//!< \brief Type for stored configuration data per line
+	//!< \brief Type for stored value datum per place in a cache line
 	typedef cgra::clock_type_t clock_type_t;
 	//!< \brief Clock type
 	typedef sc_dt::sc_lv<cgra::calc_bitwidth(L)> select_lines_type_t;
@@ -63,9 +70,9 @@ public:
 
 	//Entity Ports
 	sc_core::sc_in<stream_type_t> dataInStream{"data_in_stream"};
-	//!< \brief New configuration data to be stored in a cache line
+	//!< \brief New data value to be stored in a cache line
 	sc_core::sc_in<clock_type_t> clk{"clk"};
-	//!< \brief Clock of configuration cache
+	//!< \brief Clock of data input cache
 	sc_core::sc_in<write_enable_type_t> write{"write_new_value"};
 	//!< \brief If a positive edge occurs, datum from data-in-stream is copied into cache line
 	sc_core::sc_in<select_lines_type_t> slt_in{"data_in_cache_line"};
@@ -75,7 +82,7 @@ public:
 	sc_core::sc_in<select_lines_type_t> slt_out{"data_out_cache_line"};
 	//!< \brief Select current cache line for current-configuration
 	std::array<sc_core::sc_out<value_type_t>, N> currentValues;
-	//!< \brief Currently set configuration
+	//!< \brief Currently set values to process
 	sc_core::sc_out<ack_type_t> ack{"acknowledge"};
 	//!< \brief Acknowledges the income of a new data-stream
 
@@ -83,9 +90,6 @@ public:
 	SC_HAS_PROCESS(DataInCache);
 	/*!
 	 * \brief General Constructor
-	 *
-	 * \details
-	 * The number of configuration bits defines the size of the cache lines.
 	 *
 	 * \param[in] nameA SystemC module name for DataInCache instance
 	 */
@@ -159,7 +163,7 @@ public:
 	 * \details
 	 * Function raises a warning, if a cache line should be
 	 * written which is not reachable (address error).
-	 * The cache line won't be selected.
+	 * The cache line won't be selected, if it is also currently in use for input values.
 	 */
 	void switchCacheLine()
 	{
@@ -274,8 +278,8 @@ private:
 	std::array<std::array<sc_core::sc_buffer<value_type_t>, N>, L> m_cacheLines;
 	//!< \brief Two-dimensional array, where 1st. dimension is cache line and 2nd. dimension is value
 
-	const uint32_t m_numOfBytes{cgra::calc_numOfBytes(B * N * L)};
-	//!< \brief Cache size in bytes
+	const uint32_t m_numOfBytes{cgra::calc_numOfBytes(B * N)};
+	//!< \brief Cache line size in bytes
 };
 
 } //End namespace CGRA
