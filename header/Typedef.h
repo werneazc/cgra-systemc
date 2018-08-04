@@ -82,17 +82,13 @@ constexpr uint16_t cBitWidthOfSerialInterfaceVChConfCache{8};
 //--------------------------------------------------
 constexpr uint16_t cDataValueBitwidth{16};
 //!< \brief Number of bits for one
-constexpr uint16_t cNumberOfValuesPerCacheLine{2};
+constexpr uint16_t cNumberOfValuesPerCacheLine{8};
 //!< \brief Number of accessible data values in a cache line
 constexpr uint16_t cNumberDataInCacheLines{2};
 //!< \brief Number of cache lines for PE configuration cache
-constexpr uint16_t cSelectLineBitwidthVChConfCache{calc_bitwidth(cNumberDataInCacheLines)};
+constexpr uint16_t cSelectLineBitwidthDataInCache{calc_bitwidth(cNumberDataInCacheLines)};
 //!< \brief Bitwidth to select available cache lines round-up{log2(cNumberOfCacheLines)}
-constexpr uint16_t cBitWidthOfSerialInterfaceDateInCache{8};
-//!< \brief Bitwidth for serial configuration input stream to configuration cache
 
 }
-
-
 
 #endif /* HEADER_TYPEDEF_H_ */
