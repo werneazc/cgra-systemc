@@ -54,6 +54,30 @@ typedef bool ready_type_t;
 typedef bool start_type_t;
 //!< \brief Architecture start signal type for VCGRA
 
+//Properties for MMU usability
+//--------------------------------------
+/* These definitions are caused by the shared resources of MMU ports to the configuration caches.
+ * Ack, Write_Enable and DataInstream of a PE, channel and mask configuration are
+ * shared ports at the MMU. Multiplexers are controlled by ManagementUnit to select
+ * the necessary connection during runtime.
+ */
+static constexpr uint16_t cDataStreamBitWidthConfCaches{8};
+//!< \brief Bitwidth for data streams of configuration parts to configuration caches
+typedef bool cache_write_type_t;
+//!< \brief Cache type to store streamed input data to a cache location
+typedef bool cache_ack_type_t;
+//!< \brief Cache type to show MMU data processing
+using cache_load_type_t = cache_write_type_t;
+//!< \brief Alias for cache_write_type_t
+static constexpr uint16_t cMemorySize{1024};
+//!< \brief Shared memory size in byte
+
+
+//Properties for Management Unit
+//--------------------------------------
+constexpr uint32_t cProgramMemorySize{10};
+//!< \brief Set program memory size for assembler commands
+
 //Properties for PE configuration cache
 //--------------------------------------
 static constexpr uint16_t cPeConfigBitWidth{48};
@@ -62,7 +86,7 @@ static constexpr uint16_t cNumberOfPeCacheLines{2};
 //!< \brief Number of cache lines for PE configuration cache
 static constexpr uint16_t cSelectLineBitwidthPeConfCache{calc_bitwidth(cNumberOfPeCacheLines)};
 //!< \brief Bitwidth to select available cache lines round-up{log2(cNumberOfCacheLines)}
-static constexpr uint16_t cBitWidthOfSerialInterfacePeConfCache{8};
+static constexpr uint16_t cBitWidthOfSerialInterfacePeConfCache{cDataStreamBitWidthConfCaches};
 //!< \brief Bitwidth for serial configuration input stream to configuration cache
 
 
@@ -74,7 +98,7 @@ static constexpr uint16_t cNumberOfVChCacheLines{2};
 //!< \brief Number of cache lines for vCh configuration cache
 static constexpr uint16_t cSelectLineBitwidthVChConfCache{calc_bitwidth(cNumberOfVChCacheLines)};
 //!< \brief Bitwidth to select available cache lines round-up{log2(cNumberOfCacheLines)}
-static constexpr uint16_t cBitWidthOfSerialInterfaceVChConfCache{8};
+static constexpr uint16_t cBitWidthOfSerialInterfaceVChConfCache{cDataStreamBitWidthConfCaches};
 //!< \brief Bitwidth for serial configuration input stream to configuration cache
 
 
