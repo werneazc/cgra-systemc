@@ -11,10 +11,6 @@
 
 namespace cgra {
 
-constexpr uint32_t c_programMemorySize{10};
-//!< \brief Set program memory size for assembler commands
-
-
 /*!
  * \class ManagementUnit
  *
@@ -105,7 +101,7 @@ private:
 	//===============
 	CommandInterpreter m_cInterpreter{"cInterpreter"};
 	//!< \brief Select parts from Assembler Command
-	std::array<assembler_type_t, c_programMemorySize> m_programMemory;
+	std::array<assembler_type_t, cgra::cProgramMemorySize> m_programMemory;
 	//!< \brief Program memory for assembler program
 	assembler_type_t* m_programPointer;
 	//!< \brief Program pointer for assembler program
