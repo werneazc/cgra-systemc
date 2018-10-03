@@ -5,8 +5,8 @@
  *      Author: andrewerner
  */
 
-#ifndef HEADER_DATAINCACHE_H_
-#define HEADER_DATAINCACHE_H_
+#ifndef HEADER_DATAOUTCACHE_H_
+#define HEADER_DATAOUTCACHE_H_
 
 #include <systemc>
 #include <cstdint>
@@ -59,11 +59,11 @@ public:
 	//!< \brief Clock type
 	typedef sc_dt::sc_lv<cgra::calc_bitwidth(L)> select_lines_type_t;
 	//!< \brief Type for line selector
-	typedef bool load_enable_type_t;
-	//!< \brief Type for write enable signal
+	typedef cgra::cache_load_type_t load_enable_type_t;
+	//!< \brief Type for load signal
 	typedef sc_dt::sc_lv<B> stream_type_t;
 	//!< \brief Type for streaming a value to shared memory
-	typedef bool ack_type_t;
+	typedef cgra::cache_ack_type_t ack_type_t;
 	//!< \brief Acknowledge data type
 	typedef bool update_type_t;
 	//!< \brief Data type for update of input values
@@ -82,13 +82,13 @@ public:
 	sc_core::sc_in<select_lines_type_t> slt_in{"data_in_cache_line"};
 	//!< \brief Select cache line to store datum from data-out-stream
 	sc_core::sc_in<select_value_type_t> slt_place{"data_place"};
-	//!< \brief Select current cache line for current-configuration
+	//!< \brief Select current cache place for data out stream
 	sc_core::sc_in<select_lines_type_t> slt_out{"data_out_cache_line"};
-	//!< \brief Select current cache line for current-configuration
+	//!< \brief Select current cache line for data out stream.
 	sc_core::sc_out<stream_type_t> dataOutStream{"data_out_stream"};
 	//!< \brief Data stream to shared memory
 	sc_core::sc_out<ack_type_t> ack{"acknowledge"};
-	//!< \brief Acknowledges the income of a new data-stream
+	//!< \brief Acknowledges the request of a new data to stream
 
 	//Ctor
 	SC_HAS_PROCESS(DataOutCache);
@@ -310,4 +310,4 @@ private:
 
 } //End namespace CGRA
 
-#endif /* HEADER_DATAINCACHE_H_ */
+#endif /* HEADER_DATAOUTCACHE_H_ */

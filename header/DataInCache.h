@@ -59,11 +59,11 @@ public:
 	//!< \brief Clock type
 	typedef sc_dt::sc_lv<cgra::calc_bitwidth(L)> select_lines_type_t;
 	//!< \brief Type for line selector
-	typedef bool write_enable_type_t;
+	typedef cgra::cache_write_type_t write_enable_type_t;
 	//!< \brief Type for write enable signal
 	typedef sc_dt::sc_lv<B> stream_type_t;
 	//!< \brief Type for streaming input data to fill cache line
-	typedef bool ack_type_t;
+	typedef cgra::cache_ack_type_t ack_type_t;
 	//!< \brief Acknowledge data type
 	typedef sc_dt::sc_lv<cgra::calc_bitwidth(N)> select_value_type_t;
 	//!< \brief Select cache place in cache line to store data
@@ -78,9 +78,9 @@ public:
 	sc_core::sc_in<select_lines_type_t> slt_in{"data_in_cache_line"};
 	//!< \brief Select cache line to store datum from data-in-stream
 	sc_core::sc_in<select_value_type_t> slt_place{"data_place"};
-	//!< \brief Select current cache line for current-configuration
+	//!< \brief Select current cache place for to store value at data in stream
 	sc_core::sc_in<select_lines_type_t> slt_out{"data_out_cache_line"};
-	//!< \brief Select current cache line for current-configuration
+	//!< \brief Select current cache line for current-data set
 	std::array<sc_core::sc_out<value_type_t>, N> currentValues;
 	//!< \brief Currently set values to process
 	sc_core::sc_out<ack_type_t> ack{"acknowledge"};

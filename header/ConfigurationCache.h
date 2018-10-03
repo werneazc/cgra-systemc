@@ -66,11 +66,11 @@ public:
 	//!< \brief Clock type
 	typedef sc_dt::sc_lv<M> select_type_t;
 	//!< \brief Type for line selector
-	typedef bool write_enable_type_t;
+	typedef cgra::cache_write_type_t write_enable_type_t;
 	//!< \brief Type for write enable signal
 	typedef sc_dt::sc_lv<N> stream_type_t;
 	//!< \brief Type for streaming input data to fill cache line
-	typedef bool ack_type_t;
+	typedef cgra::cache_ack_type_t ack_type_t;
 	//!< \brief Acknowledge data type
 
 	//Entity Ports
