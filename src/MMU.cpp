@@ -67,20 +67,98 @@ void MMU::state_machine()
 				pAddress.write(address.read());
 				pPlace.write(place.read());
 
-				switch (pCurrentCache) {
-					case CACHE_TYPE::DATA_OUTPUT:
-						pState = STATES::WRITE_EN;
-						break;
-					case CACHE_TYPE::CONF_CC:
-					case CACHE_TYPE::CONF_PE:
+				pState = STATES::DECODE;
+
+			}
+			break;
+
+		case STATES::DECODE:
+			if(127 == pPlace.read().to_uint())
+			{
+				pBlockTransmission = true;
+				//Get cache line size in bits to calculate number of transmissions for whole data block.
+				uint16_t tCacheLineSize = (pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::LINESIZE)*
+										pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::DATAWIDTH));
+
+				//Temporary variable to store stream bitwidth depending on cache targets.
+				uint16_t tStreamDataWidth{1};
+
+				switch (pCurrentCache)
+				{
 					case CACHE_TYPE::DATA_INPUT:
-						pState = STATES::WRITE_DATA;
+					case CACHE_TYPE::DATA_OUTPUT:
+						tStreamDataWidth = cgra::cDataValueBitwidth;
+						break;
+					case CACHE_TYPE::CONF_PE:
+					case CACHE_TYPE::CONF_CC:
+						tStreamDataWidth = cgra::cDataStreamBitWidthConfCaches;
 						break;
 					default:
-						SC_REPORT_WARNING("MMU State Machine", "Unknown cache type. Await for new start signal.");
+						tCacheLineSize = 0;
 						break;
 				}
+
+				if(tCacheLineSize % tStreamDataWidth)
+					pNumOfTransmission = tCacheLineSize / tStreamDataWidth;
+				else
+					pNumOfTransmission = (tCacheLineSize / tStreamDataWidth) + 1;
+
+				//Calculate address step with for block data transfers
+				pAddressStepSize = tStreamDataWidth / (8 * sizeof(memory_size_type_t));
+
+				pState = STATES::PROCESS;
+				cache_place.write(0);
+				pPlace.write(0);
 			}
+			else
+			{
+				pBlockTransmission = false;
+				pNumOfTransmission = 1;
+
+				pState = STATES::VALIDATE;
+			}
+
+			break;
+
+		case STATES::VALIDATE:
+
+			if (pCurrentCache == CACHE_TYPE::DATA_INPUT || pCurrentCache == CACHE_TYPE::DATA_OUTPUT)
+			{
+				uint16_t tmaxPlaces = pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::LINESIZE);
+				if(tmaxPlaces > pPlace.read().to_uint())
+				{
+					pState = STATES::PROCESS;
+					cache_place.write(pPlace.read());
+				}
+				else
+				{
+					ready.write(true);
+					SC_REPORT_WARNING("MMU Transmission Error", "Selected Place out of range at selected cache type.");
+					pState = STATES::AWAIT;
+				}
+			}
+			else
+				pState = STATES::PROCESS;
+
+			break;
+
+		case STATES::PROCESS:
+			switch (pCurrentCache)
+			{
+				case CACHE_TYPE::DATA_OUTPUT:
+					pState = STATES::WRITE_EN;
+					break;
+				case CACHE_TYPE::CONF_CC:
+				case CACHE_TYPE::CONF_PE:
+				case CACHE_TYPE::DATA_INPUT:
+					pState = STATES::WRITE_DATA;
+					break;
+				default:
+					pState=STATES::AWAIT;
+					SC_REPORT_WARNING("MMU State Machine", "Unknown cache type. Await for new start signal.");
+					break;
+			}
+
 			break;
 
 		case STATES::WRITE_DATA:
@@ -116,8 +194,14 @@ void MMU::state_machine()
 				else
 				{
 					write_enable.write(false);
-					ready.write(true);
-					pState = STATES::AWAIT;
+					if(pBlockTransmission)
+						pState = STATES::BLOCK;
+					else
+					{
+						ready.write(true);
+						pState = STATES::AWAIT;
+						pNumOfTransmission = 0;
+					}
 				}
 			}
 			break;
@@ -125,11 +209,32 @@ void MMU::state_machine()
 		case STATES::READ_DATA:
 			process_data_output();
 			write_enable.write(false);
-			ready.write(true);
-			pState = STATES::AWAIT;
+			if(pBlockTransmission)
+				pState = STATES::BLOCK;
+			else
+			{
+				ready.write(true);
+				pState = STATES::AWAIT;
+				pNumOfTransmission = 0;
+			}
+			break;
+
+		case STATES::BLOCK:
+		{
+			uint16_t tAddress = pAddress.read().to_uint() + pAddressStepSize;
+			pAddress.write(tAddress);
+			if(!(--pNumOfTransmission))
+				pBlockTransmission = false;
+
+			uint16_t tPlace = static_cast<uint16_t>(pPlace.read().to_uint());
+			cache_place.write(++tPlace);
+			pPlace.write(tPlace);
+			pState = STATES::PROCESS;
+		}
 			break;
 
 		default:
+			pState=STATES::AWAIT;
 			SC_REPORT_WARNING("MMU State Machine.", "Unknown state-machine state. Nothing done. Wait for new valid input");
 			break;
 	}
@@ -148,6 +253,11 @@ void MMU::process_data_input()
 		data_stream_type_t tvalue{0};
 
 		pCurrentMemPtr = pMemStartPtr + pAddress.read().to_uint();
+		/*
+		 * Hint to magic number 8: Sizeof returns the size of a data type in number of bytes.
+		 * The bitwidth of a data connections is set in number of bits. Thus, a previous devision by
+		 * 8 calculates a data path size in the number of bytes.
+		 */
 		memcpy(&tvalue, pCurrentMemPtr, (cgra::cDataValueBitwidth / (8 * sizeof(memory_size_type_t))));
 		data_value_out_stream.write(tvalue);
 	}
@@ -158,6 +268,11 @@ void MMU::process_data_input()
 void MMU::process_configuration()
 {
 
+	/*
+	 * Hint to magic number 8: Sizeof returns the size of a data type in number of bytes.
+	 * The bitwidth of a data connections is set in number of bits. Thus, a previous devision by
+	 * 8 calculates a data path size in the number of bytes.
+	 */
 	if(pAddress.read().to_uint() + (cgra::cDataStreamBitWidthConfCaches / (8 * sizeof(memory_size_type_t))) >= cgra::cMemorySize)
 		SC_REPORT_WARNING("MMU Transmission Error", "Addressed value out of memory.");
 	else
@@ -166,6 +281,11 @@ void MMU::process_configuration()
 		conf_stream_type_t tvalue{0};
 
 		pCurrentMemPtr = pMemStartPtr + pAddress.read().to_uint();
+		/*
+		 * Hint to magic number 8: Sizeof returns the size of a data type in number of bytes.
+		 * The bitwidth of a data connections is set in number of bits. Thus, a previous devision by
+		 * 8 calculates a data path size in the number of bytes.
+		 */
 		memcpy(&tvalue, pCurrentMemPtr, (cgra::cDataStreamBitWidthConfCaches / (8 * sizeof(memory_size_type_t))));
 		conf_cache_stream.write(tvalue);
 	}

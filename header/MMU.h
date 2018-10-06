@@ -70,6 +70,8 @@ public:
 	//!< \brief Data value out stream to data input caches of VCGRA
 	sc_core::sc_in<data_stream_type_t> data_value_in_stream{"Data_Value_In_Stream"};
 	//!< \brief Data value in stream from data output caches of VCGRA
+	sc_core::sc_out<place_type_t> cache_place{"Slct_Cache_Place"};
+	//!< \brief Selected Cache place in data input/output caches.
 	sc_core::sc_in<clock_type_t> clk{"clock"};
 	//!< \brief System clock input
 
@@ -93,9 +95,9 @@ public:
 	 * \details
 	 * The second constructor parameter is for the internal storage of the caches features.
 	 * For the four cache types CONF_PE, CONF_CH, DATA_INPUT and DATA_OUTPUT, three properties
-	 * are stored: LINESIZE (LS), CACHESIZE (CS), DATAWIDTH (DW). The parameter expects a value in form
-	 * {{LS,CS,DW},{LS,CS,DW},{LS,DS,DW},{LS,CS,DW}}. For the configuration caches the DW is ignored and
-	 * might be set to zero or to the LINESIZE of a cache line.
+	 * are stored: LINESIZE (LS) in #places, CACHESIZE (CS) in #lines, DATAWIDTH (DW) in #bits.
+	 * The parameter expects a value in form {{LS,CS,DW},{LS,CS,DW},{LS,DS,DW},{LS,CS,DW}}.
+	 * For the configuration caches the DW needs to be set to the LINESIZE in buts of a cache line.
 	 *
 	 * \param[in] nameA SystemC module name for DataInCache instance
 	 * \param[in] cacheFeaturesA Initializer list of exact 12 values including features of all available cache types
@@ -126,7 +128,6 @@ private:
 	 * bitwidth of the streaming interfaces.
 	 */
 	typedef uint8_t memory_size_type_t;
-    //!<
 
 	//Private Members
 	enum CACHE_TYPE pCurrentCache{CACHE_TYPE::NONE};
@@ -144,10 +145,24 @@ private:
 	//!< \brief Cache line place in target cache
 	memory_size_type_t* const pMemStartPtr{static_cast<memory_size_type_t*>(calloc(cgra::cMemorySize, sizeof(memory_size_type_t)))};
 	//!< \brief Start address of shared memory block.
-	memory_size_type_t* const pMemEndPtr{pMemStartPtr+cgra::cMemorySize};
+	memory_size_type_t* const pMemEndPtr{pMemStartPtr+cgra::cMemorySize - 1};
 	//!< \brief End address of shared memory block.
 	memory_size_type_t* pCurrentMemPtr;
 	//!< \brief Actual position in shared memory block.
+
+	/*!
+	 * \brief Flag for block transmissions of whole cache lines.
+	 *
+	 * \details
+	 * If "place" value equals 127, a complete data block in the size of
+	 * addressed cache line is processed. The block starts at the given
+	 * address and is processed sequentially in shared memory.
+	 */
+	bool pBlockTransmission{false};
+	uint16_t pNumOfTransmission{0};
+	//!< \brief This is the number of open required transmissions to complete transmission process.
+	uint16_t pAddressStepSize{0};
+	//!< \brief This is the step size for address adaption in block transfers.
 
 	/*! Definition for cache properties to ease the access. */
 	enum FEATURE_SELECT : uint8_t
@@ -162,10 +177,14 @@ private:
 	enum STATES : uint8_t
 	{
 		AWAIT,			//!< \brief Wait for start signal to perform next data transaction
+		DECODE,			//!< \brief Decode data transmission request
+		VALIDATE,		//!< \brief Validate a selected cache place for data input/output
+		PROCESS,		//!< \brief Start transmission process
 		WRITE_DATA,		//!< \brief Write new data to data stream output
 		WRITE_EN,		//!< \brief Set current data at data stream output
 		WAIT_ACK,		//!< \brief Wait for cache to acknowledge data transmission
-		READ_DATA		//!< \brief Read data from data input stream
+		READ_DATA,		//!< \brief Read data from data input stream
+		BLOCK			//!< \brief Adaption for block transmissions
 	}pState{AWAIT};
 	//!< \brief State machine variable
 
