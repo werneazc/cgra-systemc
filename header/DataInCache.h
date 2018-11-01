@@ -22,7 +22,7 @@ template <uint32_t B, uint32_t N, uint32_t L>
 class DataInCache;
 
 //Definition of input data cache types
-static typedef DataInCache<cgra::cDataValueBitwidth,
+typedef DataInCache<cgra::cDataValueBitwidth,
 		cgra::cNumberOfValuesPerCacheLine,
 		cgra::cNumberDataInCacheLines
 		> data_input_cache_type_t;
@@ -134,11 +134,18 @@ public:
 	{
 		//Check if selected place in cache line is valid
 		if(N <= slt_place.read().to_uint())
+		{
 			SC_REPORT_WARNING("Cache Warning", "Selected place not in range of cache size");
+			ack.write(true);
+			return;
+		}
 		else if(L <= slt_in.read().to_uint())
+		{
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
-
-		if(write.read() && !ack.read())
+			ack.write(true);
+			return;
+		}
+		else if(write.read() && !ack.read())
 		{
 			//Check if selected cache line is currently in use
 			if(slt_in.read().to_uint() != slt_out.read().to_uint())
@@ -148,10 +155,12 @@ public:
 				ack.write(true);
 			}
 			else
+			{
 				SC_REPORT_WARNING("Cache Warning", "Selected cache-line currently in use. Value is unchanged");
+				ack.write(true);
+			}
 		}
-
-		if (ack.read() && !write.read())
+		else if (ack.read() && !write.read())
 			ack.write(false);
 
 		return;
@@ -169,7 +178,10 @@ public:
 	{
 		//Check if selected place in cache line is valid
 		if(L <= slt_out.read().to_uint())
+		{
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
+			return;
+		}
 
 		auto tmp_cacheline = slt_out.read().to_uint();
 
@@ -208,12 +220,13 @@ public:
 	virtual void dump(std::ostream& os = std::cout) const override
 	{
 		os << name() << "\t\t" << kind() << std::endl;
-		os << "Number of cache lines:\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
-		os << "Cache line length:\t\t" << std::setw(3) << static_cast<uint32_t>(size()) << std::endl;
-		os << "Bitwidth serial input:\t\t" << std::setw(3) << static_cast<uint32_t>(N) << std::endl;
-		os << "Selected input cache line:\t\t" << std::setw(3) << slt_in.read().to_string() << std::endl;
-		os << "Selected cache line place:\t\t" << std::setw(3) << slt_place.read().to_string() << std::endl;
-		os << "Selected output cache line:\t\t" << std::setw(3) << slt_out.read().to_string() << std::endl;
+		os << "Number of cache lines:\t\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
+		os << "Cache line length[#bytes]:\t\t" << std::setw(3) << static_cast<uint32_t>(size()) << std::endl;
+		os << "Bitwidth serial input:\t\t\t" << std::setw(3) << static_cast<uint32_t>(B) << std::endl;
+		os << "Number of places per line:\t\t" << std::setw(3) << static_cast<uint32_t>(N) << std::endl;
+		os << "Selected input cache line:\t\t" << std::setw(3) << slt_in.read().to_string(sc_dt::SC_DEC, false) << std::endl;
+		os << "Selected cache line place:\t\t" << std::setw(3) << slt_place.read().to_string(sc_dt::SC_DEC, false) << std::endl;
+		os << "Selected output cache line:\t\t" << std::setw(3) << slt_out.read().to_string(sc_dt::SC_DEC, false) << std::endl;
 
 		os << "Cache content\n";
 		os << "=============\n";
@@ -228,7 +241,7 @@ public:
 			{
 				os << value_iter++ << ": ";
 				value.print(os);
-				os << ', ';
+				os << ", ";
 			}
 			os << "\n";
 		}
@@ -244,14 +257,17 @@ public:
 	{
 		//Check if selected place in cache line is valid
 		if(L <= line)
+		{
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
+			return;
+		}
 
 		uint32_t value_iter = 1;
 		for(auto& value : m_cacheLines.at(line))
 		{
 			os << value_iter++ << ": ";
 			value.print(os);
-			os << ', ';
+			os << ", ";
 		}
 		os << "\n";
 	}
@@ -277,7 +293,6 @@ private:
 	//Private Signals and Buffers
 	std::array<std::array<sc_core::sc_buffer<value_type_t>, N>, L> m_cacheLines;
 	//!< \brief Two-dimensional array, where 1st. dimension is cache line and 2nd. dimension is value
-
 	const uint32_t m_numOfBytes{cgra::calc_numOfBytes(B * N)};
 	//!< \brief Cache line size in bytes
 };
