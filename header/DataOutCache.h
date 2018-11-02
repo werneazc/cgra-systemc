@@ -22,7 +22,7 @@ template <uint32_t B, uint32_t N, uint32_t L>
 class DataOutCache;
 
 //Definition of output data cache types
-static typedef DataOutCache<cgra::cDataValueBitwidth,
+typedef DataOutCache<cgra::cDataValueBitwidth,
 		cgra::cNumberOfValuesPerCacheLine,
 		cgra::cNumberDataInCacheLines
 		> data_output_cache_type_t;
@@ -139,17 +139,26 @@ public:
 	{
 		//Check if selected place in cache line is valid
 		if(N <= slt_place.read().to_uint())
-			SC_REPORT_WARNING("Cache Warning", "Selected place not in range of cache size");
-		else if(L <= slt_in.read().to_uint())
-			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
-
-		if(update.read())
 		{
-			SC_REPORT_WARNING("Cache Warning", "Selected cache line updated. Value not loaded.");
+			SC_REPORT_WARNING("Cache Warning", "Selected place not in range of cache size");
+			ack.write(true);
+			return;
+		}
+		else if(L <= slt_out.read().to_uint())
+		{
+			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
+			ack.write(true);
 			return;
 		}
 
-		if(load.read() && !ack.read())
+		else if (load.read() && update.read() && m_currentCachline == slt_out.read().to_uint())
+		{
+			SC_REPORT_WARNING("Cache Warning", "Selected cache line updated. Value not loaded.");
+			ack.write(true);
+			return;
+		}
+
+		else if(load.read() && !ack.read())
 		{
 			//Check if selected cache line is currently in use
 			auto& value = m_cacheLines[slt_out.read().to_uint()][slt_place.read().to_uint()];
@@ -157,34 +166,37 @@ public:
 			ack.write(true);
 		}
 
-		if (ack.read() && !load.read())
+		else if (ack.read() && !load.read())
 			ack.write(false);
 
 		return;
 	}
 
 	/*!
-	 * \brief Switch current value cache line
+	 * \brief Switch current value cache line for a VCGRA's results
 	 *
 	 * \details
 	 * Function raises a warning, if a cache line should be
 	 * written which is not reachable (address error).
 	 * The cache line won't be selected.
+	 * If the cache currently updates its cache lines or loads up
+	 * a cache line to shared memory, the line selection is not processed.
 	 */
 	void switchCacheLine()
 	{
 		//Check if selected place in cache line is valid
 		if(L <= slt_in.read().to_uint())
+		{
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
-
-		auto tmp_cacheline = slt_in.read().to_uint();
-
-		//Check if selected cache line is currently used for data import/export
-		if(!load.read() && !update.read())
-			m_currentCachline = &m_currentCachline[tmp_cacheline];
-
-		else
-			SC_REPORT_WARNING("Cache Warning", "Selected cache line is currently in use. Cache line is not changed.");
+		}
+		else if(slt_in.read().to_uint() != m_currentCachline)
+		{
+			//Check if selected cache line is currently used for data import/export
+			if(!load.read() && !update.read())
+				m_currentCachline = slt_in.read().to_uint();
+			else
+				SC_REPORT_WARNING("Cache Warning", "Selected cache line is currently in use. Cache line is not changed.");
+		}
 
 		return;
 	}
@@ -202,9 +214,11 @@ public:
 
 		//If positive edge update selected buffer with recent results at input port
 		if(update.read())
+		{
+			auto& t_currentCacheLine = m_cacheLines.at(m_currentCachline);
 			for(uint32_t idx = 0; N > idx; ++idx)
-				*(m_currentCachline + idx).write(currentResults.at(idx).read());
-
+				t_currentCacheLine.at(idx).write(currentResults.at(idx).read());
+		}
 		return;
 	}
 
@@ -233,12 +247,13 @@ public:
 	virtual void dump(std::ostream& os = std::cout) const override
 	{
 		os << name() << "\t\t" << kind() << std::endl;
-		os << "Number of cache lines:\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
-		os << "Cache line length:\t\t" << std::setw(3) << static_cast<uint32_t>(size()) << std::endl;
-		os << "Bitwidth serial output:\t\t" << std::setw(3) << static_cast<uint32_t>(N) << std::endl;
-		os << "Selected input cache line:\t\t" << std::setw(3) << slt_in.read().to_string() << std::endl;
-		os << "Selected cache line place:\t\t" << std::setw(3) << slt_place.read().to_string() << std::endl;
-		os << "Selected output cache line:\t\t" << std::setw(3) << slt_out.read().to_string() << std::endl;
+		os << "Number of cache lines:\t\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
+		os << "Cache line length[#bytes]:\t\t" << std::setw(3) << static_cast<uint32_t>(size()) << std::endl;
+		os << "Bitwidth serial output:\t\t\t" << std::setw(3) << static_cast<uint32_t>(B) << std::endl;
+		os << "Number of places per line:\t\t" << std::setw(3) << static_cast<uint32_t>(N) << std::endl;
+		os << "Selected input cache line:\t\t" << std::setw(3) << slt_in.read().to_string(sc_dt::SC_DEC, false) << std::endl;
+		os << "Selected cache line place:\t\t" << std::setw(3) << slt_place.read().to_string(sc_dt::SC_DEC, false) << std::endl;
+		os << "Selected output cache line:\t\t" << std::setw(3) << slt_out.read().to_string(sc_dt::SC_DEC, false) << std::endl;
 
 		os << "Cache content\n";
 		os << "=============\n";
@@ -253,7 +268,7 @@ public:
 			{
 				os << value_iter++ << ": ";
 				value.print(os);
-				os << ', ';
+				os << ", ";
 			}
 			os << "\n";
 		}
@@ -269,20 +284,23 @@ public:
 	{
 		//Check if selected place in cache line is valid
 		if(L <= line)
+		{
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
+			return;
+		}
 
 		uint32_t value_iter = 1;
 		for(auto& value : m_cacheLines.at(line))
 		{
 			os << value_iter++ << ": ";
 			value.print(os);
-			os << ', ';
+			os << ", ";
 		}
 		os << "\n";
 	}
 
 	/*!
-	 * \brief Return the size of a cache line
+	 * \brief Return the size of a cache line in number of bytes.
 	 */
 	uint16_t size() const { return m_numOfBytes; }
 
@@ -302,8 +320,8 @@ private:
 	//Private Signals and Buffers
 	std::array<std::array<sc_core::sc_buffer<value_type_t>, N>, L> m_cacheLines;
 	//!< \brief Two-dimensional array, where 1st. dimension is cache line and 2nd. dimension is value
-	std::array<sc_core::sc_buffer<value_type_t>, N>* m_currentCachline{nullptr};
-	//!< \brief Current cache line for new input values (slt_in)
+	unsigned int m_currentCachline{0};
+	//!< \brief Number of current cache line for new input values (slt_in)
 	const uint32_t m_numOfBytes{cgra::calc_numOfBytes(B * N)};
 	//!< \brief Cache line size in bytes
 };
