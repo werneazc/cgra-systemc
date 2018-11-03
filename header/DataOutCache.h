@@ -230,7 +230,7 @@ public:
 	}
 
 	/*!
-	 * \brief Print data input cache name
+	 * \brief Print data output cache name
 	 *
 	 * \param[out] os Define used outstream [default: std::cout]
 	 */
@@ -240,7 +240,7 @@ public:
 	}
 
 	/*!
-	 * \brief Dump configuration cache information
+	 * \brief Dump data cache information
 	 *
 	 * \param[out] os Define used outstream [default: std::cout]
 	 */
