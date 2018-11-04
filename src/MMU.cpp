@@ -5,8 +5,10 @@
  *      Author: andrewerner
  */
 
-#include "MMU.h"
 #include <cstring>
+#include <iomanip>
+#include <iostream>
+#include "MMU.h"
 
 namespace cgra {
 
@@ -48,6 +50,7 @@ void MMU::end_of_elaboration()
 	conf_cache_stream.write(0);
 	write_enable.write(false);
 	data_value_out_stream.write(0);
+	cache_place.write(0);
 
 	return;
 }
@@ -57,6 +60,7 @@ void MMU::state_machine()
 	switch (pState)
 	{
 		case STATES::AWAIT:
+		{
 			if(ready.read() && start.read())
 				ready.write(false);
 
@@ -65,20 +69,20 @@ void MMU::state_machine()
 				//Save current cache type for further processing
 				pCurrentCache = static_cast<CACHE_TYPE>(cache_select.read().to_uint());
 				pAddress.write(address.read());
-				pPlace.write(place.read());
+				pPlaceIn.write(place.read().to_uint());
 
 				pState = STATES::DECODE;
 
 			}
 			break;
-
+		}
 		case STATES::DECODE:
-			if(127 == pPlace.read().to_uint())
+		{
+			if(127 == pPlaceIn.read().to_uint())
 			{
 				pBlockTransmission = true;
 				//Get cache line size in bits to calculate number of transmissions for whole data block.
-				uint16_t tCacheLineSize = (pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::LINESIZE)*
-										pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::DATAWIDTH));
+				uint16_t tCacheLineSize = pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::LINESIZE)* 8u;
 
 				//Temporary variable to store stream bitwidth depending on cache targets.
 				uint16_t tStreamDataWidth{1};
@@ -98,37 +102,44 @@ void MMU::state_machine()
 						break;
 				}
 
+				/*
+				 * False if tCacheLineSize MOD tStreamDataWidth = 0
+				 * Transmission needs to be one step smaller because of zero based counting
+				 */
 				if(tCacheLineSize % tStreamDataWidth)
 					pNumOfTransmission = tCacheLineSize / tStreamDataWidth;
 				else
-					pNumOfTransmission = (tCacheLineSize / tStreamDataWidth) + 1;
+					pNumOfTransmission = tCacheLineSize / tStreamDataWidth - 1;
 
 				//Calculate address step with for block data transfers
 				pAddressStepSize = tStreamDataWidth / (8 * sizeof(memory_size_type_t));
 
 				pState = STATES::PROCESS;
-				cache_place.write(0);
-				pPlace.write(0);
+				pPlaceOut.write(0);
 			}
 			else
 			{
 				pBlockTransmission = false;
 				pNumOfTransmission = 1;
 
+				pPlaceOut.write(pPlaceIn.read());
 				pState = STATES::VALIDATE;
 			}
 
 			break;
-
+		}
 		case STATES::VALIDATE:
-
+		{
 			if (pCurrentCache == CACHE_TYPE::DATA_INPUT || pCurrentCache == CACHE_TYPE::DATA_OUTPUT)
 			{
-				uint16_t tmaxPlaces = pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::LINESIZE);
-				if(tmaxPlaces > pPlace.read().to_uint())
+				/*
+				 * The number of places is calculated by the cache line size in bytes devided by the datawidth of one value in bytes.
+				 */
+				uint16_t tmaxPlaces = (pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::LINESIZE)
+						/ cgra::calc_numOfBytes(pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::DATAWIDTH)));
+				if(tmaxPlaces > pPlaceOut.read().to_uint())
 				{
 					pState = STATES::PROCESS;
-					cache_place.write(pPlace.read());
 				}
 				else
 				{
@@ -141,8 +152,9 @@ void MMU::state_machine()
 				pState = STATES::PROCESS;
 
 			break;
-
+		}
 		case STATES::PROCESS:
+		{
 			switch (pCurrentCache)
 			{
 				case CACHE_TYPE::DATA_OUTPUT:
@@ -159,10 +171,12 @@ void MMU::state_machine()
 					break;
 			}
 
+			cache_place.write(pPlaceOut.read());
+
 			break;
-
+		}
 		case STATES::WRITE_DATA:
-
+		{
 			//Set data output regarding current handled cache type
 			switch (pCurrentCache)
 			{
@@ -180,13 +194,15 @@ void MMU::state_machine()
 			}
 			pState = STATES::WRITE_EN;
 			break;
-
+		}
 		case STATES::WRITE_EN:
+		{
 			write_enable.write(true);
 			pState = STATES::WAIT_ACK;
 			break;
-
+		}
 		case STATES::WAIT_ACK:
+		{
 			if(ack.read())
 			{
 				if(pCurrentCache == CACHE_TYPE::DATA_OUTPUT)
@@ -205,8 +221,9 @@ void MMU::state_machine()
 				}
 			}
 			break;
-
+		}
 		case STATES::READ_DATA:
+		{
 			process_data_output();
 			write_enable.write(false);
 			if(pBlockTransmission)
@@ -218,7 +235,7 @@ void MMU::state_machine()
 				pNumOfTransmission = 0;
 			}
 			break;
-
+		}
 		case STATES::BLOCK:
 		{
 			uint16_t tAddress = pAddress.read().to_uint() + pAddressStepSize;
@@ -226,17 +243,17 @@ void MMU::state_machine()
 			if(!(--pNumOfTransmission))
 				pBlockTransmission = false;
 
-			uint16_t tPlace = static_cast<uint16_t>(pPlace.read().to_uint());
-			cache_place.write(++tPlace);
-			pPlace.write(tPlace);
+			uint16_t tPlace = static_cast<uint16_t>(pPlaceOut.read().to_uint()) + 1;
+			pPlaceOut.write(tPlace);
 			pState = STATES::PROCESS;
-		}
 			break;
-
+		}
 		default:
+		{
 			pState=STATES::AWAIT;
 			SC_REPORT_WARNING("MMU State Machine.", "Unknown state-machine state. Nothing done. Wait for new valid input");
 			break;
+		}
 	}
 
 	return;
@@ -250,7 +267,7 @@ void MMU::process_data_input()
 	else
 	{
 		//Temporary variable for data to write to data stream
-		data_stream_type_t tvalue{0};
+		sc_dt::int_type tvalue{0};
 
 		pCurrentMemPtr = pMemStartPtr + pAddress.read().to_uint();
 		/*
@@ -278,7 +295,7 @@ void MMU::process_configuration()
 	else
 	{
 		//Temporary variable for data to write to data stream
-		conf_stream_type_t tvalue{0};
+		sc_dt::int_type tvalue{0};
 
 		pCurrentMemPtr = pMemStartPtr + pAddress.read().to_uint();
 		/*
@@ -293,6 +310,42 @@ void MMU::process_configuration()
 	return;
 }
 
+void MMU::dump(std::ostream& os) const
+{
+	os << name() << ": " << kind() << std::endl;
+	os << "Current start status:\t\t" << std::setw(3) << std::boolalpha << start.read() << std::endl;
+	os << "Current ready status:\t\t" << std::setw(3) << std::boolalpha << ready.read() << std::endl;
+	os << "Current acknowledge status:\t" << std::setw(3) << std::boolalpha << ack.read() << std::endl;
+	os << "Current write_enable status:\t" << std::setw(3) << std::boolalpha << write_enable.read() << std::endl;
+	os << "Current cache:\t\t\t";
+	switch(static_cast<CACHE_TYPE>(cache_select.read().to_uint()))
+	{
+		case CACHE_TYPE::DATA_INPUT:
+			os << "Data Input Cache" << std::endl;
+			break;
+		case CACHE_TYPE::DATA_OUTPUT:
+			os << "Data Output Cache" << std::endl;
+			break;
+		case CACHE_TYPE::CONF_PE:
+			os << "PE Configuration Cache" << std::endl;
+			break;
+		case CACHE_TYPE::CONF_CC:
+			os << "vCH Configuration Cache" << std::endl;
+			break;
+		default:
+			os << "Unknown cache type." << std::endl;
+			break;
+	}
+	os << "Current Address:\t\t" << std::setw(3) << address.read().to_string(sc_dt::SC_DEC, false) << std::endl;
+	os << "Selected place:\t\t\t" << std::setw(3) << place.read().to_string(sc_dt::SC_DEC, false) << std::endl;
+	os << "Data value in stream:\t\t" << std::setw(3) << data_value_in_stream.read().to_string(sc_dt::SC_HEX) << std::endl;
+	os << "Data value out stream:\t\t" << std::setw(3) << data_value_out_stream.read().to_string(sc_dt::SC_HEX) << std::endl;
+	os << "config. cache stream:\t\t" << std::setw(3) << conf_cache_stream.read().to_string(sc_dt::SC_HEX) << std::endl;
+	os << "Current place:\t\t\t" << std::setw(3) << cache_place.read().to_string(sc_dt::SC_DEC, false) << std::endl;
+
+	return;
+}
+
 void MMU::process_data_output()
 {
 
@@ -300,11 +353,11 @@ void MMU::process_data_output()
 		SC_REPORT_WARNING("MMU Transmission Error", "Addressed value out of memory.");
 	else
 	{
-		//Temporary variable for data to write to data stream
-		data_stream_type_t tvalue{0};
+		//Temporary variable for data to read from data stream
+		sc_dt::int_type tvalue{0};
 
 		pCurrentMemPtr = pMemStartPtr + pAddress.read().to_uint();
-		tvalue = data_value_in_stream.read();
+		tvalue = data_value_in_stream.read().to_int();
 		memcpy(pCurrentMemPtr, &tvalue, (cgra::cDataValueBitwidth / (8 * sizeof(memory_size_type_t))));
 	}
 
@@ -312,3 +365,4 @@ void MMU::process_data_output()
 }
 
 } /* End namespace cgra */
+
