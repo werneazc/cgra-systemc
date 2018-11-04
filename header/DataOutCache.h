@@ -24,7 +24,7 @@ class DataOutCache;
 //Definition of output data cache types
 typedef DataOutCache<cgra::cDataValueBitwidth,
 		cgra::cNumberOfValuesPerCacheLine,
-		cgra::cNumberDataInCacheLines
+		cgra::cNumberDataOutCacheLines
 		> data_output_cache_type_t;
 //!< \brief Type definition for the input data cache of a VCGRA
 
@@ -67,7 +67,7 @@ public:
 	//!< \brief Acknowledge data type
 	typedef bool update_type_t;
 	//!< \brief Data type for update of input values
-	typedef sc_dt::sc_lv<cgra::calc_bitwidth(N)> select_value_type_t;
+	typedef sc_dt::sc_uint<cgra::calc_bitwidth(N)> select_value_type_t;
 	//!< \brief Select cache place in cache line to process data
 
 	//Entity Ports
@@ -161,8 +161,8 @@ public:
 		else if(load.read() && !ack.read())
 		{
 			//Check if selected cache line is currently in use
-			auto& value = m_cacheLines[slt_out.read().to_uint()][slt_place.read().to_uint()];
-			dataOutStream.write(value.read());
+			auto* tvalue = &m_cacheLines[slt_out.read().to_uint()][slt_place.read().to_uint()];
+			dataOutStream.write(tvalue->read());
 			ack.write(true);
 		}
 
