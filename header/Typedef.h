@@ -68,7 +68,7 @@ typedef bool cache_write_type_t;
 typedef bool cache_ack_type_t;
 //!< \brief Cache type to show MMU data processing
 using cache_load_type_t = cache_write_type_t;
-//!< \brief Alias for cache_write_type_t
+//!< \brief Alias for cache_write_type_t for data output cache load port of a VCGRA
 static constexpr uint16_t cMemorySize{1024};
 //!< \brief Shared memory size in byte
 
@@ -105,13 +105,34 @@ static constexpr uint16_t cBitWidthOfSerialInterfaceVChConfCache{cDataStreamBitW
 //Properties for data caches
 //--------------------------------------------------
 static constexpr uint16_t cDataValueBitwidth{16};
-//!< \brief Number of bits for one
+//!< \brief Number of bits for one data value
 static constexpr uint16_t cNumberOfValuesPerCacheLine{8};
 //!< \brief Number of accessible data values in a cache line
 static constexpr uint16_t cNumberDataInCacheLines{2};
-//!< \brief Number of cache lines for PE configuration cache
-static constexpr uint16_t cSelectLineBitwidthDataInCache{calc_bitwidth(cNumberDataInCacheLines)};
-//!< \brief Bitwidth to select available cache lines round-up{log2(cNumberOfCacheLines)}
+//!< \brief Number of cache lines for data input cache
+static constexpr uint16_t cNumberDataOutCacheLines{2};
+//!< \brief Number of cache lines for data output cache
+
+//MMU initializer list
+//--------------------------------------------------
+/*!
+ * \brief Initializer list for MMU constructor to store cache parameters.
+ *
+ * \details
+ * The initializer list needs to consists twelve values for four caches:
+ * DATA_IN, DATA_OUT, CONF_PE and CONF_VCH. Three following values contain
+ * to one cache type. The meaning of the three values is:
+ * LINESIZE (LS) in #bytes, CACHESIZE (CS) in #lines, DATAWIDTH (DW) in #bits.
+ *
+ * Initializer_list<uint16_t>{LS,CS,DW,LS,CS,DW,LS,CS,DW,LS,CS,DW};
+ *
+ */
+static constexpr std::initializer_list<uint16_t> cCacheFeatures{
+	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cDataValueBitwidth * cgra::cNumberOfValuesPerCacheLine)), cgra::cNumberDataInCacheLines, cgra::cDataValueBitwidth,
+	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cDataValueBitwidth * cgra::cNumberOfValuesPerCacheLine)), cgra::cNumberDataOutCacheLines, cgra::cDataValueBitwidth,
+	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cPeConfigBitWidth)), cgra::cNumberOfPeCacheLines, cgra::cPeConfigBitWidth,
+	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cVChConfigBitWidth)), cgra::cNumberOfVChCacheLines, cgra::cVChConfigBitWidth
+};
 
 }
 
