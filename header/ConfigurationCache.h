@@ -25,7 +25,8 @@ class ConfigurationCache;
 //------------------------------------
 typedef ConfigurationCache<sc_dt::sc_lv<cgra::cPeConfigBitWidth>,
 		cgra::cSelectLineBitwidthPeConfCache,
-		cgra::cNumberOfPeCacheLines,cgra::cSelectLineBitwidthPeConfCache> pe_config_cache_type_t;
+		cgra::cNumberOfPeCacheLines,
+		cgra::cBitWidthOfSerialInterfacePeConfCache> pe_config_cache_type_t;
 //!< \brief Type definition for Processing_Element configuration cache
 typedef ConfigurationCache<sc_dt::sc_lv<cgra::cVChConfigBitWidth>,
 		cgra::cSelectLineBitwidthVChConfCache,
@@ -107,6 +108,8 @@ public:
 		sensitive << clk.pos();
 		SC_METHOD(switchCacheLine);
 		sensitive << clk.pos();
+
+		return;
 	}
 
 
@@ -122,6 +125,8 @@ public:
 		for (uint32_t i = 0; i < L; ++i)
 			m_cachelines[i].write(0);
 		ack.write(false);
+
+		return;
 	}
 
 	/*!
@@ -150,6 +155,8 @@ public:
 
 		if (ack.read() && !write.read())
 			ack.write(false);
+
+		return;
 	}
 
 	/*!
@@ -161,6 +168,8 @@ public:
 
 		if(slt_in.read().to_uint() != tmp_cacheline)
 			currentConfig.write(m_cachelines[tmp_cacheline].read());
+
+		return;
 	}
 
 	/*!
@@ -178,6 +187,8 @@ public:
 	virtual void print(std::ostream& os = std::cout) const override
 	{
 		os << name();
+
+		return;
 	}
 
 	/*!
@@ -191,8 +202,8 @@ public:
 		os << "Number of cache lines:\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
 		os << "Cache line length:\t\t" << std::setw(3) << static_cast<uint32_t>(size()) << std::endl;
 		os << "Bitwidth serial input:\t\t" << std::setw(3) << static_cast<uint32_t>(N) << std::endl;
-		os << "Selected input cache line:\t\t" << std::setw(3) << slt_in.read().to_string() << std::endl;
-		os << "Selected output cache line:\t\t" << std::setw(3) << slt_out.read().to_string() << std::endl;
+		os << "Selected input cache line:\t" << std::setw(3) << slt_in.read().to_string() << std::endl;
+		os << "Selected output cache line:\t" << std::setw(3) << slt_out.read().to_string() << std::endl;
 
 		os << "Cache content\n";
 		os << "=============\n";
@@ -201,9 +212,11 @@ public:
 		for(auto& line : m_cachelines)
 		{
 			os << line_iter++ << std::setw(3) <<":\t";
-			line.print(os);
+			os << line.read().to_string(sc_dt::SC_HEX);
 			os << "\n";
 		}
+
+		return;
 	}
 
 	/*!
@@ -215,7 +228,9 @@ public:
 	void print_cache_line(uint32_t line, std::ostream& os = std::cout) const
 	{
 		sc_assert(L > line);
-		m_cachelines.at(line).print(os);
+		os << m_cachelines.at(line).read().to_string(sc_dt::SC_HEX) << std::endl;
+
+		return;
 	}
 
 	/*!
