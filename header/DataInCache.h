@@ -65,7 +65,7 @@ public:
 	//!< \brief Type for streaming input data to fill cache line
 	typedef cgra::cache_ack_type_t ack_type_t;
 	//!< \brief Acknowledge data type
-	typedef sc_dt::sc_lv<cgra::calc_bitwidth(N)> select_value_type_t;
+	typedef sc_dt::sc_uint<cgra::calc_bitwidth(N)> select_value_type_t;
 	//!< \brief Select cache place in cache line to store data
 
 	//Entity Ports
@@ -219,7 +219,7 @@ public:
 	 */
 	virtual void dump(std::ostream& os = std::cout) const override
 	{
-		os << name() << "\t\t" << kind() << std::endl;
+		os << name() << ": " << kind() << std::endl;
 		os << "Number of cache lines:\t\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
 		os << "Cache line length[#bytes]:\t\t" << std::setw(3) << static_cast<uint32_t>(size()) << std::endl;
 		os << "Bitwidth serial input:\t\t\t" << std::setw(3) << static_cast<uint32_t>(B) << std::endl;
