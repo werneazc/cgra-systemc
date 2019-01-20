@@ -54,6 +54,59 @@ typedef bool ready_type_t;
 typedef bool start_type_t;
 //!< \brief Architecture start signal type for VCGRA
 
+//VCGRA properties
+//-------------------
+static constexpr uint32_t cNumOfLevels{4};
+//!< \brief Number of PEs in the VCGRA instance
+static constexpr uint32_t cNumOfPe{16};
+//!< \brief Number of PEs in the VCGRA instance
+static constexpr std::array<uint32_t, cNumOfLevels> cPeLevels = {4, 4, 4, 4}; 
+//!< \brief Number of PEs for each VCGRA level
+
+//Properties PEse_t;
+//!< \brief Architecture reset type
+typedef bool ready_type_t;
+//!< \brief Architecture ready signal type from VCGRA
+typedef bool start_type_t;
+//!< \brief Architecture start signal type for VCGRA
+
+//VCGRA properties
+//-------------------
+static constexpr uint32_t cPeInputBitwidth{16};
+//!< \brief Bitwidth definition for inputs of PE instances of a VCGRA
+static constexpr uint32_t cPeOutputBitwidth{16};
+//!< \brief Bitwidth definition for outputs of PE instances of a VCGRA
+static constexpr uint32_t cPeConfigLvSize{4};
+//!< \brief Bitwidth for logic vector size to decode all available PE operations
+
+//Properties Virtual Channels
+//---------------------------
+static constexpr uint32_t cInputChannel_NumOfInputs{8};
+//!< \brief Number of inputs for the first layer of a VirtualChannel
+static constexpr uint32_t cInputChannel_InputBitwidth{16};
+//!< \brief Bitwidth of inputs for the first layer of a VirtualChannel
+static constexpr uint32_t cInputChannel_NumOfOutputs{8};
+//!< \brief Number of outputs for the first layer of a VirtualChannel
+static constexpr uint32_t cInputChannel_OutputBitwidth{16};
+//!< \brief Bitwidth of outputs for the first layer of a VirtualChannel
+static constexpr uint32_t cInputChannel_MuxScktBitwidth{3};
+//!< \brief Bitwidth the internal Multiplexers selection port
+static constexpr uint32_t cInputChannel_InternalBitwidth{16};
+//!< \brief Bitwidth the internal connections within the VirtualChannel instance
+static constexpr uint32_t cChannel_NumOfInputs{4};
+//!< \brief Number of inputs of a VirtualChannel
+static constexpr uint32_t cChannel_InputBitwidth{16};
+//!< \brief Bitwidth of inputs of a VirtualChannel
+static constexpr uint32_t cChannel_NumOfOutputs{8};
+//!< \brief Number of outputs of a VirtualChannel
+static constexpr uint32_t cChannel_OutputBitwidth{16};
+//!< \brief Bitwidth of outputs of a VirtualChannel
+static constexpr uint32_t cChannel_MuxScktBitwidth{2};
+//!< \brief Bitwidth the internal Multiplexers selection port
+static constexpr uint32_t cChannel_InternalBitwidth{16};
+//!< \brief Bitwidth the internal connections within the VirtualChannel instance
+
+
 //Properties for MMU usability
 //--------------------------------------
 /* These definitions are caused by the shared resources of MMU ports to the configuration caches.
@@ -80,7 +133,7 @@ constexpr uint32_t cProgramMemorySize{10};
 
 //Properties for PE configuration cache
 //--------------------------------------
-static constexpr uint16_t cPeConfigBitWidth{48};
+static constexpr uint16_t cPeConfigBitWidth{64};
 //!< \brief Number of bits for whole PE configuration of VCGRA
 static constexpr uint16_t cNumberOfPeCacheLines{2};
 //!< \brief Number of cache lines for PE configuration cache
@@ -92,7 +145,7 @@ static constexpr uint16_t cBitWidthOfSerialInterfacePeConfCache{cDataStreamBitWi
 
 //Properties for virtual channel configuration cache
 //--------------------------------------------------
-static constexpr uint16_t cVChConfigBitWidth{64};
+static constexpr uint16_t cVChConfigBitWidth{80};
 //!< \brief Number of bits for whole vCh configuration of VCGRA
 static constexpr uint16_t cNumberOfVChCacheLines{2};
 //!< \brief Number of cache lines for vCh configuration cache
