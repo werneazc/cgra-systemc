@@ -272,4 +272,3 @@ private:
 } // namespace cgra
 
 #endif // VIRTUALCHANNEL_H_
-;
