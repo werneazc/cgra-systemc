@@ -4,3 +4,6 @@
 .settings
 doc/html
 .project
+build
+!CMakeLists.txt
+.kdev4
