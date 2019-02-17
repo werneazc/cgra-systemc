@@ -108,7 +108,7 @@ public:
 	/*!
 	 * \brief Initialize output signals of module
 	 */
-	void end_of_elaboration()
+	virtual void end_of_elaboration() override
 	{
 		//Initialize current value output with zero
 		for(auto& value : currentValues)

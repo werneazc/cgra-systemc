@@ -119,7 +119,7 @@ public:
 	/*!
 	 * \brief Initialize output signals of module
 	 */
-	void end_of_elaboration()
+	virtual void end_of_elaboration() override
 	{
 		currentConfig.write(0);
 		for (uint32_t i = 0; i < L; ++i)
