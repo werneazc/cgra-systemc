@@ -19,7 +19,7 @@ namespace cgra {
  */
 static constexpr uint32_t array_size(uint32_t length, uint32_t numOfParts, uint32_t partWidth)
 {
-	return (length - numOfParts * partWidth < 0) ?
+	return (static_cast<int32_t>(length - numOfParts * partWidth) < 0) ?
 			((length % numOfParts) ? (length / numOfParts) - 1 : length / numOfParts) : numOfParts ;
 }
 
