@@ -10,7 +10,7 @@
 
 #include <systemc>
 #include <cstdint>
-#include <cmath>
+#include <array>
 
 /*!
  * \namespace cgra
@@ -24,10 +24,19 @@ namespace cgra {
  * \brief Calculate number of bits to select available cache lines.
  *
  * \param[in] numOfCacheLinesA Number of available cache lines to address
+ * 
+ * \details
+ * Currently its implemented over a simple lookup table, because the 
+ * binary logarithm function is not defined for const expression. 
+ * Valid inputs for numOfCacheLinesA is ]0, 17].
  */
 constexpr uint16_t calc_bitwidth(const uint16_t numOfCacheLinesA)
 {
-	return static_cast<uint16_t>(ceil(log2(numOfCacheLinesA)));
+    //Simple look-up table for bitwitdh of select lines
+    constexpr std::array<uint16_t, 17> cBitwidth{
+        0, 1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5};
+    
+        return cBitwidth.at(numOfCacheLinesA);
 }
 
 /*!
@@ -60,22 +69,13 @@ static constexpr uint32_t cNumOfLevels{4};
 //!< \brief Number of PEs in the VCGRA instance
 static constexpr uint32_t cNumOfPe{16};
 //!< \brief Number of PEs in the VCGRA instance
-static constexpr std::array<uint32_t, cNumOfLevels> cPeLevels = {4, 4, 4, 4}; 
+static constexpr std::array<uint16_t, cNumOfLevels> cPeLevels{4, 4, 4, 4}; 
 //!< \brief Number of PEs for each VCGRA level
 
-//Properties PEse_t;
-//!< \brief Architecture reset type
-typedef bool ready_type_t;
-//!< \brief Architecture ready signal type from VCGRA
-typedef bool start_type_t;
-//!< \brief Architecture start signal type for VCGRA
-
-//VCGRA properties
+//Properties PEs
 //-------------------
-static constexpr uint32_t cPeInputBitwidth{16};
-//!< \brief Bitwidth definition for inputs of PE instances of a VCGRA
-static constexpr uint32_t cPeOutputBitwidth{16};
-//!< \brief Bitwidth definition for outputs of PE instances of a VCGRA
+static constexpr uint32_t cPeDataBitwidth{16};
+//!< \brief Bitwidth definition for data values of PE instances of a VCGRA
 static constexpr uint32_t cPeConfigLvSize{4};
 //!< \brief Bitwidth for logic vector size to decode all available PE operations
 
@@ -83,27 +83,27 @@ static constexpr uint32_t cPeConfigLvSize{4};
 //---------------------------
 static constexpr uint32_t cInputChannel_NumOfInputs{8};
 //!< \brief Number of inputs for the first layer of a VirtualChannel
-static constexpr uint32_t cInputChannel_InputBitwidth{16};
+static constexpr uint32_t cInputChannel_InputBitwidth{cPeDataBitwidth};
 //!< \brief Bitwidth of inputs for the first layer of a VirtualChannel
 static constexpr uint32_t cInputChannel_NumOfOutputs{8};
 //!< \brief Number of outputs for the first layer of a VirtualChannel
-static constexpr uint32_t cInputChannel_OutputBitwidth{16};
+static constexpr uint32_t cInputChannel_OutputBitwidth{cPeDataBitwidth};
 //!< \brief Bitwidth of outputs for the first layer of a VirtualChannel
-static constexpr uint32_t cInputChannel_MuxScktBitwidth{3};
+static constexpr uint32_t cInputChannel_MuxScltBitwidth{3};
 //!< \brief Bitwidth the internal Multiplexers selection port
-static constexpr uint32_t cInputChannel_InternalBitwidth{16};
+static constexpr uint32_t cInputChannel_InternalBitwidth{cPeDataBitwidth};
 //!< \brief Bitwidth the internal connections within the VirtualChannel instance
 static constexpr uint32_t cChannel_NumOfInputs{4};
 //!< \brief Number of inputs of a VirtualChannel
-static constexpr uint32_t cChannel_InputBitwidth{16};
+static constexpr uint32_t cChannel_InputBitwidth{cPeDataBitwidth};
 //!< \brief Bitwidth of inputs of a VirtualChannel
 static constexpr uint32_t cChannel_NumOfOutputs{8};
 //!< \brief Number of outputs of a VirtualChannel
-static constexpr uint32_t cChannel_OutputBitwidth{16};
+static constexpr uint32_t cChannel_OutputBitwidth{cPeDataBitwidth};
 //!< \brief Bitwidth of outputs of a VirtualChannel
-static constexpr uint32_t cChannel_MuxScktBitwidth{2};
+static constexpr uint32_t cChannel_MuxScltBitwidth{2};
 //!< \brief Bitwidth the internal Multiplexers selection port
-static constexpr uint32_t cChannel_InternalBitwidth{16};
+static constexpr uint32_t cChannel_InternalBitwidth{cPeDataBitwidth};
 //!< \brief Bitwidth the internal connections within the VirtualChannel instance
 
 
@@ -120,6 +120,8 @@ typedef bool cache_write_type_t;
 //!< \brief Cache type to store streamed input data to a cache location
 typedef bool cache_ack_type_t;
 //!< \brief Cache type to show MMU data processing
+typedef sc_dt::sc_lv<3> cache_slct_type_t;
+//!< \brief Select type for available cache types (none, data-input, data-output, pe-config, vch-config)
 using cache_load_type_t = cache_write_type_t;
 //!< \brief Alias for cache_write_type_t for data output cache load port of a VCGRA
 static constexpr uint16_t cMemorySize{1024};
@@ -128,7 +130,7 @@ static constexpr uint16_t cMemorySize{1024};
 
 //Properties for Management Unit
 //--------------------------------------
-constexpr uint32_t cProgramMemorySize{10};
+constexpr uint32_t cProgramMemorySize{40};
 //!< \brief Set program memory size for assembler commands
 
 //Properties for PE configuration cache
@@ -141,6 +143,8 @@ static constexpr uint16_t cSelectLineBitwidthPeConfCache{calc_bitwidth(cNumberOf
 //!< \brief Bitwidth to select available cache lines round-up{log2(cNumberOfCacheLines)}
 static constexpr uint16_t cBitWidthOfSerialInterfacePeConfCache{cDataStreamBitWidthConfCaches};
 //!< \brief Bitwidth for serial configuration input stream to configuration cache
+typedef sc_dt::sc_lv<cPeConfigBitWidth> pe_config_type_t;
+//!< \brief Signal type for the PE configuration connection between PE configuration cache and VCGRA.
 
 
 //Properties for virtual channel configuration cache
@@ -153,13 +157,17 @@ static constexpr uint16_t cSelectLineBitwidthVChConfCache{calc_bitwidth(cNumberO
 //!< \brief Bitwidth to select available cache lines round-up{log2(cNumberOfCacheLines)}
 static constexpr uint16_t cBitWidthOfSerialInterfaceVChConfCache{cDataStreamBitWidthConfCaches};
 //!< \brief Bitwidth for serial configuration input stream to configuration cache
+typedef sc_dt::sc_lv<cVChConfigBitWidth> ch_config_type_t;
+//!< \brief Signal type for the VirtualChannel configuration connection between VCH configuration cache and VCGRA.
+
 
 
 //Properties for data caches
 //--------------------------------------------------
-static constexpr uint16_t cDataValueBitwidth{16};
+static constexpr uint16_t cDataValueBitwidth{cPeDataBitwidth};
 //!< \brief Number of bits for one data value
-static constexpr uint16_t cNumberOfValuesPerCacheLine{8};
+static constexpr uint16_t cMaxNumberOfValuesPerCacheLine{static_cast<uint16_t>(
+    (2*cgra::cPeLevels.front()) > cgra::cPeLevels.back() ? 2 * cgra::cPeLevels.front() : cPeLevels.back())};
 //!< \brief Number of accessible data values in a cache line
 static constexpr uint16_t cNumberDataInCacheLines{2};
 //!< \brief Number of cache lines for data input cache
@@ -181,8 +189,8 @@ static constexpr uint16_t cNumberDataOutCacheLines{2};
  *
  */
 static constexpr std::initializer_list<uint16_t> cCacheFeatures{
-	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cDataValueBitwidth * cgra::cNumberOfValuesPerCacheLine)), cgra::cNumberDataInCacheLines, cgra::cDataValueBitwidth,
-	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cDataValueBitwidth * cgra::cNumberOfValuesPerCacheLine)), cgra::cNumberDataOutCacheLines, cgra::cDataValueBitwidth,
+	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cDataValueBitwidth * 2 * cgra::cPeLevels.front())), cgra::cNumberDataInCacheLines, cgra::cDataValueBitwidth,
+	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cDataValueBitwidth * cgra::cPeLevels.back())), cgra::cNumberDataOutCacheLines, cgra::cDataValueBitwidth,
 	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cPeConfigBitWidth)), cgra::cNumberOfPeCacheLines, cgra::cPeConfigBitWidth,
 	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cVChConfigBitWidth)), cgra::cNumberOfVChCacheLines, cgra::cVChConfigBitWidth
 };
