@@ -61,10 +61,7 @@ void MMU::state_machine()
 	{
 		case STATES::AWAIT:
 		{
-			if(ready.read() && start.read())
-				ready.write(false);
-
-			else if(start.read() && !(ready.read()))
+			if(start.read() && !(ready.read()))
 			{
 				//Save current cache type for further processing
 				pCurrentCache = static_cast<CACHE_TYPE>(cache_select.read().to_uint());
@@ -72,7 +69,6 @@ void MMU::state_machine()
 				pPlaceIn.write(place.read().to_uint());
 
 				pState = STATES::DECODE;
-
 			}
 			break;
 		}
@@ -111,7 +107,7 @@ void MMU::state_machine()
 				else
 					pNumOfTransmission = tCacheLineSize / tStreamDataWidth - 1;
 
-				//Calculate address step with for block data transfers
+				//Calculate address step width for block data transfers
 				pAddressStepSize = tStreamDataWidth / (8 * sizeof(memory_size_type_t));
 
 				pState = STATES::PROCESS;
@@ -215,7 +211,7 @@ void MMU::state_machine()
 					else
 					{
 						ready.write(true);
-						pState = STATES::AWAIT;
+						pState = STATES::FINISH;
 						pNumOfTransmission = 0;
 					}
 				}
@@ -231,7 +227,7 @@ void MMU::state_machine()
 			else
 			{
 				ready.write(true);
-				pState = STATES::AWAIT;
+				pState = STATES::FINISH;
 				pNumOfTransmission = 0;
 			}
 			break;
@@ -248,6 +244,19 @@ void MMU::state_machine()
 			pState = STATES::PROCESS;
 			break;
 		}
+        case STATES::FINISH:
+        {
+			if(ready.read() && start.read())
+            {    
+				ready.write(false);
+                pState = STATES::FINISH;
+            }
+            else if(!ready.read() && !start.read())
+                pState = STATES::AWAIT;
+            
+            break;
+            
+        }
 		default:
 		{
 			pState=STATES::AWAIT;

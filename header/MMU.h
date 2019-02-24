@@ -36,7 +36,7 @@ public:
 	//!< \brief Signal type to show current processing; Ready for new command if false
 	typedef bool start_type_t;
 	//!< \brief Start processing using data at address, line, cache select and place port
-	typedef sc_dt::sc_lv<3> cache_select_type_t;
+	typedef cgra::cache_slct_type_t cache_select_type_t;
 	//!< \brief MMU selection type for available caches
 	typedef CommandInterpreter::address_type_t address_type_t;
 	//!< \brief MMU address type for shared memory data location
@@ -49,8 +49,8 @@ public:
 	typedef sc_dt::sc_lv<cgra::cDataStreamBitWidthConfCaches> conf_stream_type_t;
 	//!< \brief Configuration data stream type
 	typedef sc_dt::sc_lv<cgra::cDataValueBitwidth> data_stream_type_t;
-	//!< \brief Configuration data stream type
-	typedef sc_dt::sc_uint<cgra::calc_bitwidth(cNumberOfValuesPerCacheLine)> cache_place_type_t;
+	//!< \brief Value data stream type
+	typedef sc_dt::sc_uint<cgra::calc_bitwidth(cMaxNumberOfValuesPerCacheLine)> cache_place_type_t;
 	//!< \brief Data type for place signal lines to data caches
 
 	sc_core::sc_in<address_type_t> address{"Address"};
@@ -164,7 +164,7 @@ public:
 	/*!
 	 * \brief Write content to shared memory
 	 *
-	 * \param[in] startAddA Start address to write data to
+	 * \param[in] startAddrA Start address to write data to
 	 * \param[in] startDataA Pointer to value or value array
 	 * \param[in] numOfValuesA Number of values which should be copied (default = 1)
 	 *
@@ -177,7 +177,7 @@ public:
 	/*!
 	 * \brief Read data from shared memory
 	 *
-	 * \param[in] startAddA Start address to read data from
+	 * \param[in] startAddrA Start address to read data from
 	 * \param[in] startDataA Pointer to value or value array
 	 * \param[in] numOfValuesA Number of values which should be copied (default = 1)
 	 *
@@ -256,7 +256,8 @@ private:
 		WRITE_EN,		//!< \brief Set current data at data stream output
 		WAIT_ACK,		//!< \brief Wait for cache to acknowledge data transmission
 		READ_DATA,		//!< \brief Read data from data input stream
-		BLOCK			//!< \brief Adaption for block transmissions
+		BLOCK,			//!< \brief Adaption for block transmissions
+        FINISH          //!< \brief Finish the current transmission sequence internally.
 	}pState{AWAIT};
 	//!< \brief State machine variable
 
