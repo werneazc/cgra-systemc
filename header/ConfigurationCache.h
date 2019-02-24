@@ -23,12 +23,12 @@ class ConfigurationCache;
 
 //Cache Definitions for VCGRA instance
 //------------------------------------
-typedef ConfigurationCache<sc_dt::sc_lv<cgra::cPeConfigBitWidth>,
+typedef ConfigurationCache<cgra::pe_config_type_t,
 		cgra::cSelectLineBitwidthPeConfCache,
 		cgra::cNumberOfPeCacheLines,
 		cgra::cBitWidthOfSerialInterfacePeConfCache> pe_config_cache_type_t;
 //!< \brief Type definition for Processing_Element configuration cache
-typedef ConfigurationCache<sc_dt::sc_lv<cgra::cVChConfigBitWidth>,
+typedef ConfigurationCache<cgra::ch_config_type_t,
 		cgra::cSelectLineBitwidthVChConfCache,
 		cgra::cNumberOfVChCacheLines,
 		cgra::cBitWidthOfSerialInterfaceVChConfCache> ch_config_cache_type_t;
@@ -166,7 +166,8 @@ public:
 	{
 		auto tmp_cacheline = slt_out.read().to_uint();
 
-		if(slt_in.read().to_uint() != tmp_cacheline)
+//		if(slt_in.read().to_uint() != tmp_cacheline)
+//#Todo: This line is currently disabled. Otherwise MU cannot switch cache lines!
 			currentConfig.write(m_cachelines[tmp_cacheline].read());
 
 		return;
