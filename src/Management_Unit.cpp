@@ -1,5 +1,6 @@
 #include "Management_Unit.h"
 #include <bitset>
+#include <iomanip>
 
 namespace cgra {
 
@@ -500,6 +501,7 @@ void ManagementUnit::show_finish_state()
 	{
 		m_activeState = ACTIVE_STATE::STOP;
 		m_current_state = STATE::NOOP;
+        m_programPointer = m_programMemory.data();
 		finish.write(false);
 	}
 	else

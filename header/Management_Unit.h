@@ -8,9 +8,6 @@
 #include <utility>
 #include "Typedef.h"
 #include "CommandInterpreter.h"
-#include "DataInCache.h"
-#include "DataOutCache.h"
-#include "ConfigurationCache.h"
 #include "MMU.h"
 
 namespace cgra {
@@ -47,13 +44,21 @@ public:
 	//!< \brief Start type for VCGRA
 	typedef CommandInterpreter::assembler_type_t assembler_type_t;
 	//!< \brief Type definition for assembler command
-	typedef std::pair<sc_core::sc_out<cgra::data_input_cache_type_t::select_lines_type_t>, sc_core::sc_out<cgra::data_input_cache_type_t::select_lines_type_t>> dic_select_type_t;
+	typedef CommandInterpreter::address_type_t address_type_t;
+	//!< \brief Type definition for assembler command
+	typedef CommandInterpreter::place_type_t place_type_t;
+	//!< \brief Type definition for assembler command
+    typedef sc_dt::sc_lv<cgra::calc_bitwidth(cgra::cNumberDataInCacheLines)>\
+        dic_slct_type_t;
 	//!< \brief Select type for input and output line of DataInCache
-	typedef std::pair<sc_core::sc_out<cgra::data_output_cache_type_t::select_lines_type_t>, sc_core::sc_out<cgra::data_output_cache_type_t::select_lines_type_t>> doc_select_type_t;
+    typedef sc_dt::sc_lv<cgra::calc_bitwidth(cgra::cNumberDataOutCacheLines)>\
+        doc_slct_type_t;
 	//!< \brief Select type for input and output line of DataOutCache
-	typedef std::pair<sc_core::sc_out<cgra::pe_config_cache_type_t::select_type_t>, sc_core::sc_out<cgra::pe_config_cache_type_t::select_type_t>> pe_cc_select_type_t;
+    typedef sc_dt::sc_lv<cgra::calc_bitwidth(cgra::cNumberOfPeCacheLines)>\
+        pe_cc_slct_type_t;
 	//!< \brief Select type for input and output line of Processing_Element ConfigurationCache
-	typedef std::pair<sc_core::sc_out<cgra::ch_config_cache_type_t::select_type_t>, sc_core::sc_out<cgra::ch_config_cache_type_t::select_type_t>> ch_cc_select_type_t;
+    typedef sc_dt::sc_lv<cgra::calc_bitwidth(cgra::cNumberOfVChCacheLines)>\
+        ch_cc_slct_type_t;
 	//!< \brief Select type for input and output line of VirtualChannel ConfigurationCache
 
 	//Entity Ports
@@ -72,9 +77,9 @@ public:
 	//!< \brief (Synchronization) Ready signal port of VCGRA
 	sc_core::sc_out<start_type_t> start{"start"};
 	//!< \brief (Synchronization) Start signal port for VCGRA
-	sc_core::sc_out<CommandInterpreter::address_type_t> address{"Address"};
+	sc_core::sc_out<address_type_t> address{"Address"};
 	//!< \brief Shared memory (start) address of data (sequence)
-	sc_core::sc_out<CommandInterpreter::place_type_t> place{"Place"};
+	sc_core::sc_out<place_type_t> place{"Place"};
 	//!< \brief Place in cache line to store data from or load data to
 	sc_core::sc_out<MMU::cache_select_type_t> cache_select{"Cache_Select"};
 	//!< \brief Selection of source/target cache
@@ -82,13 +87,13 @@ public:
 	//!< \brief If false, shared memory ready to process new command, else shared memory is processing.
 	sc_core::sc_out<MMU::start_type_t> mmu_start{"MMU_start"};
 	//!< \brief If false, shared memory ready to process new command, else shared memory is processing.
-	dic_select_type_t dic_select_lines;
+	std::pair<sc_core::sc_out<dic_slct_type_t>, sc_core::sc_out<dic_slct_type_t>> dic_select_lines;
 	//!< \brief Select line outputs (select_in, select_out) for DataInCache
-	doc_select_type_t doc_select_lines;
+	std::pair<sc_core::sc_out<doc_slct_type_t>, sc_core::sc_out<doc_slct_type_t>> doc_select_lines;
 	//!< \brief Select line outputs (select_in, select_out) for DataOutCache
-	pe_cc_select_type_t pe_cc_select_lines;
+	std::pair<sc_core::sc_out<pe_cc_slct_type_t>, sc_core::sc_out<pe_cc_slct_type_t>> pe_cc_select_lines;
 	//!< \brief Select line outputs (select_in, select_out) for Processing_Element ConfigurationCache
-	ch_cc_select_type_t ch_cc_select_lines;
+	std::pair<sc_core::sc_out<ch_cc_slct_type_t>, sc_core::sc_out<ch_cc_slct_type_t>> ch_cc_select_lines;
 	//!< \brief Select line outputs (select_in, select_out) for Processing_Element ConfigurationCache
 
 	//Methods
@@ -254,7 +259,7 @@ private:
 	/*!
 	 * \brief Start execution of ManagementUnit
 	 *
-	 * \brief
+	 * \details
 	 * A positive edge sets active state of
 	 * ManagementUnit to RUN.
 	 */
