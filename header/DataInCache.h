@@ -23,7 +23,7 @@ class DataInCache;
 
 //Definition of input data cache types
 typedef DataInCache<cgra::cDataValueBitwidth,
-		cgra::cNumberOfValuesPerCacheLine,
+		2 * cgra::cPeLevels.front(),
 		cgra::cNumberDataInCacheLines
 		> data_input_cache_type_t;
 //!< \brief Type definition for the input data cache of a VCGRA
@@ -65,7 +65,7 @@ public:
 	//!< \brief Type for streaming input data to fill cache line
 	typedef cgra::cache_ack_type_t ack_type_t;
 	//!< \brief Acknowledge data type
-	typedef sc_dt::sc_uint<cgra::calc_bitwidth(N)> select_value_type_t;
+	typedef sc_dt::sc_uint<cgra::calc_bitwidth(cgra::cMaxNumberOfValuesPerCacheLine)> select_value_type_t;
 	//!< \brief Select cache place in cache line to store data
 
 	//Entity Ports
@@ -186,11 +186,11 @@ public:
 		auto tmp_cacheline = slt_out.read().to_uint();
 
 		//Check if selected cache line is currently used for data input
-		if(slt_in.read().to_uint() != tmp_cacheline)
+		if(slt_in.read().to_uint() == tmp_cacheline && write.read())
+			SC_REPORT_WARNING("Cache Warning", "Selected cache line is currently in use. Value is not changed.");
+		else
 			for(uint32_t idx = 0; N > idx; ++idx)
 				currentValues.at(idx).write(m_cacheLines.at(tmp_cacheline).at(idx).read());
-		else
-			SC_REPORT_WARNING("Cache Warning", "Selected cache line is currently in use. Value is not changed.");
 
 		return;
 	}
