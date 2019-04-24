@@ -1,21 +1,31 @@
 #include "Management_Unit.h"
-#include <bitset>
+#include <sstream>
 #include <iomanip>
 
 namespace cgra {
 
 /*!
- * \brief Build binary C-string from integer number
+ * \brief Build binary string from integer number
  *
- * \param [in] numberA Integer number to be transformed
- * \tparam bitlengthA Length of binary result string
+ * \param[in] numberA Integer number to be transformed
+ * \tparam bitwidth Length of binary result string
  *
- * \return C-string with binary representation of numberA
+ * \return String with binary representation of numberA
  */
 template < uint32_t bitwidth = 32 >
-static constexpr const char* integer2binaryCstr(const uint32_t numberA)
+static std::string integer2binaryCstr(const uint32_t numberA)
 {
-	return std::bitset<bitwidth>(numberA).to_string().c_str();
+	std::ostringstream t_value{};
+    
+    for(uint32_t idx = 0; bitwidth > idx; ++idx)
+    {
+        if((numberA>>idx)&1)
+            t_value << '1';
+        else
+            t_value << '0';
+    }
+    
+    return t_value.str();
 }
 
 
@@ -168,35 +178,35 @@ void ManagementUnit::decode()
 	switch(m_current_state)
 	{
 	case STATE::LOADD:
-		cache_select.write(integer2binaryCstr<3>(MMU::CACHE_TYPE::DATA_INPUT));
+		cache_select.write(MMU::CACHE_TYPE::DATA_INPUT);
 		dic_select_lines.first.write(m_cInterpreter.line.read().to_uint());
 		place.write(m_currentPlace);
 		break;
 	case STATE::LOADDA:
-		cache_select.write(integer2binaryCstr<3>(MMU::CACHE_TYPE::DATA_INPUT));
+		cache_select.write(MMU::CACHE_TYPE::DATA_INPUT);
 		dic_select_lines.first.write(m_cInterpreter.line.read().to_uint());
-		place.write(integer2binaryCstr<7>(127));
+		place.write(127);
 		break;
 	case STATE::SLCT_DIC_LINE:
 		dic_select_lines.second.write(m_cInterpreter.line.read().to_uint());
 		m_current_state = STATE::ADAPT_PP;
 		break;
 	case STATE::STORED:
-		cache_select.write(integer2binaryCstr<3>(MMU::CACHE_TYPE::DATA_OUTPUT));
+		cache_select.write(MMU::CACHE_TYPE::DATA_OUTPUT);
 		doc_select_lines.second.write(m_cInterpreter.line.read().to_uint());
 		place.write(m_currentPlace);
 		break;
 	case STATE::STOREDA:
-		cache_select.write(integer2binaryCstr<3>(MMU::CACHE_TYPE::DATA_OUTPUT));
+		cache_select.write(MMU::CACHE_TYPE::DATA_OUTPUT);
 		doc_select_lines.second.write(m_cInterpreter.line.read().to_uint());
-		place.write(integer2binaryCstr<7>(127));
+		place.write(127);
 		break;
 	case STATE::SLCT_DOC_LINE:
 		doc_select_lines.first.write(m_cInterpreter.line.read().to_uint());
 		m_current_state = STATE::ADAPT_PP;
 		break;
 	case STATE::LOADPC:
-		cache_select.write(integer2binaryCstr<3>(MMU::CACHE_TYPE::CONF_PE));
+		cache_select.write(MMU::CACHE_TYPE::CONF_PE);
 		pe_cc_select_lines.first.write(m_cInterpreter.line.read().to_uint());
 		place.write(m_currentPlace);
 		break;
@@ -205,7 +215,7 @@ void ManagementUnit::decode()
 		m_current_state = STATE::ADAPT_PP;
 		break;
 	case STATE::LOADCC:
-		cache_select.write(integer2binaryCstr<3>(MMU::CACHE_TYPE::CONF_CC));
+		cache_select.write(MMU::CACHE_TYPE::CONF_CC);
 		ch_cc_select_lines.first.write(m_cInterpreter.line.read().to_uint());
 		place.write(m_currentPlace);
 		break;
@@ -214,7 +224,7 @@ void ManagementUnit::decode()
 		m_current_state = STATE::ADAPT_PP;
 		break;
 	default:
-		cache_select.write(integer2binaryCstr<3>(MMU::CACHE_TYPE::NONE));
+		cache_select.write(MMU::CACHE_TYPE::NONE);
 		place.write(m_currentPlace);
 		break;
 	}
