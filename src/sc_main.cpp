@@ -11,6 +11,7 @@
 #include <fstream>
 #include "TopLevel.h"
 #include "Testbench_TopLevel.h"
+#include "Assembler.hpp"
 
 int sc_main(int argc, char* arcv[])
 {
@@ -25,22 +26,22 @@ int sc_main(int argc, char* arcv[])
     configuration, before the VCGRA is started. The architecture process the data,
     then the results are stored back into the main memory. 
     */
-    std::array<cgra::TopLevel::assembler_type_t, 12> assembly {
-        "0x00001FC6", //LOADDA 0 0
-        "0x00321FC9", //LOADPE 50 0
-        "0x00281FCA", //LOADCH 40 0
-        "0x00000010", //SLCT_DOC_LINE 0
-        "0x0000000F", //SLCT_DIC_LINE 0
-        "0x00000011", //SLCT_PECC_LINE 0
-        "0x00000012", //SLCT_CHCC_LINE 0
-        "0x0000000B", //START
-        "0x00000004", //WAIT_READY
-        "0x00002010", //SLCT_DOC_LINE 1
-        "0x00101FC8", //STOREDA 16 0
-        "0x0000000C"  //FINISH
-    };
+    // std::array<cgra::TopLevel::assembler_type_t, 12> assembly {
+    //     "0x00001FC6", //LOADDA 0 0
+    //     "0x00321FC9", //LOADPE 50 0
+    //     "0x00281FCA", //LOADCH 40 0
+    //     "0x00000010", //SLCT_DOC_LINE 0
+    //     "0x0000000F", //SLCT_DIC_LINE 0
+    //     "0x00000011", //SLCT_PECC_LINE 0
+    //     "0x00000012", //SLCT_CHCC_LINE 0
+    //     "0x0000000B", //START
+    //     "0x00000004", //WAIT_READY
+    //     "0x00002010", //SLCT_DOC_LINE 1
+    //     "0x00101FC8", //STOREDA 16 0
+    //     "0x0000000C"  //FINISH
+    // };
 	//instantiate modules
-	auto toplevel = new cgra::TopLevel{"TopLevel", assembly.data(), assembly.size()};
+	auto toplevel = new cgra::TopLevel{"TopLevel", cgra::assembly.data(), cgra::assembly.size()};
 
 //#############################################################################
 
@@ -134,7 +135,7 @@ int sc_main(int argc, char* arcv[])
     }
     
 	//Run simulation
-  	sc_core::sc_start(1000, sc_core::SC_NS);
+  	sc_core::sc_start(10000, sc_core::SC_NS);
 
     
 //#ifdef DEBUG
