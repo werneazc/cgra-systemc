@@ -1,19 +1,26 @@
-cmake_minimum_required(VERSION 2.6)
-
-project(cgra_systemc)
-
-#Bring the headers from project include folder and systemc include dir to project
-include_directories(header "$ENV{SYSTEMC_ROOT}/include")
+cmake_minimum_required(VERSION 3.10)
+project(cgra_systemc
+    VERSION 0.1.0
+    DESCRIPTION "Virtual Coarse Grain Reconfigurable Array Simulator"
+    LANGUAGES CXX)
+    
+set(CMAKE_PREFIX_PATH /opt/systemc)
+find_package(SystemCLanguage REQUIRED CONFIG)
 
 #However, the file(GLOB...) allows for wildcard additions:
 file(GLOB SOURCES LIST_DIRECTORIES FALSE "src/*.cpp")
 
-#Add SystemC library to dependencies of project
-find_library(SYSTEMC systemc PATHS "$ENV{SYSTEMC_ROOT}/lib64")
-
 #Create project executable and link SystemC library 
 add_executable(cgra_systemc ${SOURCES})
-target_link_libraries(cgra_systemc ${SYSTEMC})
+target_include_directories(cgra_systemc
+    PUBLIC
+        header/
+    )
+target_compile_features(cgra_systemc
+    PUBLIC
+        cxx_std_14
+    )
+target_link_libraries(cgra_systemc SystemC::systemc)
 
 find_package(Doxygen)
 set(DOXFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/doc/cgra-systemc)
