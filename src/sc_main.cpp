@@ -13,10 +13,134 @@
 #include "Testbench_TopLevel.h"
 #include "Assembler.hpp"
 
+namespace {
+
+/*!
+ * \brief Read image file in pgm-format.
+ * 
+ * \param[in] file_p    Path to pgm-file
+ * \param[in] dest_p    Pointer to target array for image pixel values. Values stored row-major.
+ * \param[in] xsize_p   Number of columns of target array
+ * \param[in] ysize_p   Number of rows of target array
+ * 
+ * \return true: Read from PGM successfull
+ * \return false: Read from PGM has an error (file path wrong, target array to small)
+ */
+bool readPgm(const std::string &file_p, uint16_t *dest_p, const uint32_t xsize_p,
+             const uint32_t ysize_p) {
+
+  uint32_t width{0};
+  uint32_t heigth{0};
+  std::string t_lineBuf{};
+  std::ifstream t_ifs{file_p};
+
+  //File opens correctly
+  if (t_ifs.fail()) {
+    return false;
+  }
+
+  //Check valid grayscale format.
+  std::getline(t_ifs,t_lineBuf);
+  if(t_lineBuf.compare("P2"))
+  {
+      t_ifs.close();
+      return false;
+  }
+
+  //ignore comment line
+  std::getline(t_ifs,t_lineBuf);
+
+  //get image dimensions
+  t_ifs >> width >> heigth;
+  if(width > xsize_p || heigth > ysize_p)
+  {
+      t_ifs.close();
+      return false;
+  }
+
+  //ignore max value line
+  std::getline(t_ifs,t_lineBuf);
+  std::getline(t_ifs,t_lineBuf);
+
+  uint16_t t_value{0x0000};
+  uint32_t row{0};
+  uint32_t column{0};
+  do {
+
+      t_ifs >> t_value;
+      *(dest_p + row * width + column) = t_value;
+
+      ++column;
+
+      if(column >= width)
+      {
+          column = 0;
+          ++row;
+      }
+
+  } while (t_ifs.good());
+
+  t_ifs.close();
+
+  return true;
+}
+
+
+bool writePgm(const std::string& file_p, const int16_t* image, const uint32_t size_y, const uint32_t size_x, uint16_t max_p = INT16_MAX)
+{
+  uint32_t iter_x{0}, iter_y{0};    //image iterator
+  int8_t count{0};                  //pgm format limits number of characters per line to 70
+  std::ofstream t_ofs{file_p, std::ios_base::out};
+
+  //File opens correctly
+  if (t_ofs.fail()) {
+      return false;
+  }
+
+  //write header of pgm format
+  t_ofs << "P2\n\r";                                //gray scale ascii
+  t_ofs << "# result after convolution\n\r";        //comment to define picture
+  t_ofs << size_x << "\t" << size_y << "\n\r";      //size of the image
+  t_ofs << max_p << "\n\r";                     //max value within the picture
+
+
+  for( iter_y = 0; iter_y < size_y; ++iter_y)
+  {
+
+      count = 70;
+
+      for (iter_x = 0; iter_x < size_x; ++iter_x)
+      {
+
+          if(--count)
+          {
+            //   xil_printf("%d\t", (int)*((uint8_t*)(image + iter_y * size_x + iter_x)));
+            t_ofs << std::dec << *(image + iter_y * size_x + iter_x) << "\t";
+          }
+          else
+          {
+            //   xil_printf("%d\n\r", (int)*((uint8_t*)(image + iter_y * size_x + iter_x)));
+              t_ofs << std::dec << *(image + iter_y * size_x + iter_x) << "\n\r";
+              count = 70;
+          }
+
+      }
+
+      t_ofs << "\n\r";
+
+  }
+
+  t_ofs.close();
+
+  return true;
+}
+
+} // namespace
+
 int sc_main(int argc, char* arcv[])
 {
-	//include TB
-	auto tb_toplevel = new cgra::Testbench_TopLevel{"Architecture_TestBench"};
+    //include TB
+    auto tb_toplevel = new cgra::Testbench_TopLevel{"Architecture_TestBench"};
 
 //#############################################################################
 
@@ -46,7 +170,7 @@ int sc_main(int argc, char* arcv[])
 //#############################################################################
 
 	//signals
- 	sc_core::sc_clock clk{"clk", 2, sc_core::SC_NS};
+ 	sc_core::sc_clock clk{"clk", 200, sc_core::SC_NS};
  	sc_core::sc_signal<cgra::TopLevel::run_type_t> run{"run", true};
  	sc_core::sc_signal<cgra::TopLevel::reset_type_t> rst{"rst", false};
  	sc_core::sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"};
@@ -113,39 +237,66 @@ int sc_main(int argc, char* arcv[])
     sc_core::sc_trace(fp_toplevel, toplevel->vcgra.ch_config, "vch_configuration");
     sc_core::sc_trace(fp_toplevel, toplevel->vcgra.pe_config, "pe_configuration");
 
-
-// 	{	//Lambda function to create port name in trace file
-// 		uint8_t i = 0;
-// 		auto concat = [](uint8_t i, const char* preamble){
-// 			std::ostringstream s{""};
-// 			s << preamble << static_cast<short>(i);
-// 			return s.str();
-// 		};
-// 	}
 //#############################################################################
 
-    //Initialize configuration and data
-    {
-        uint16_t tdataValues[] = {10, 20, 50, 30, 16, 4, 64, 8};
-        toplevel->mmu.write_shared_memory(0,tdataValues,sizeof(tdataValues));
-        uint8_t tPeConfig[] = {0x12, 0x34, 0x86, 0x87, 0x88, 0x58, 0x88, 0x88};
-        toplevel->mmu.write_shared_memory(50, tPeConfig, sizeof(tPeConfig));
-        uint8_t tChConfig[] = {0x05, 0x39, 0x77, 0x01, 0xAB, 0x05, 0x6F, 0x05, 0xAF, 0x00};
-        toplevel->mmu.write_shared_memory(40, tChConfig, sizeof(tChConfig));
-    }
-    
-	//Run simulation
-  	sc_core::sc_start(10000, sc_core::SC_NS);
+  // Initialize configuration and data
+  {
+    // Small example configuation and input data for testing
+    // uint16_t tdataValues[] = {10, 20, 50, 30, 16, 4, 64, 8};
+    // toplevel->mmu.write_shared_memory(0,tdataValues,sizeof(tdataValues));
+    // uint8_t tPeConfig[] = {0x12, 0x34, 0x86, 0x87, 0x88, 0x58, 0x88, 0x88};
+    // toplevel->mmu.write_shared_memory(50, tPeConfig, sizeof(tPeConfig));
+    // uint8_t tChConfig[] = {0x05, 0x39, 0x77, 0x01, 0xAB, 0x05, 0x6F, 0x05, 0xAF, 0x00};
+    // toplevel->mmu.write_shared_memory(40, tChConfig, sizeof(tChConfig));
 
-    
-//#ifdef DEBUG
-    std::ofstream fp_dump{"simulation_dump.log", std::ios_base::out};
- 	toplevel->dump(fp_dump);
-    fp_dump << "Memory Dump" << std::endl;
-    toplevel->mmu.dump_memory<uint16_t>(0, 30, sc_dt::SC_DEC, true, fp_dump);
-    toplevel->mmu.dump_memory<uint16_t>(40, 60, sc_dt::SC_HEX, true, fp_dump);
-    fp_dump.close();
-//#endif //DEBUG
+    // std::array<uint16_t, 3*3> tcoefficients{0, 0, 0, 0, 1, 0, 0, 0, 0};
+    std::array<int16_t, 3*3> tcoefficients{1, 0, -1, 2, 0, -2, 1, 0, -1};
+    toplevel->mmu.write_shared_memory(0x170, tcoefficients.data(), tcoefficients.max_size() * sizeof(int16_t));
+      
+    std::array<uint16_t, 64*64> tdataValues;
+    if(!readPgm("./example.pgm", tdataValues.data(), 64, 64))
+    {
+        return EXIT_FAILURE;
+    }
+    toplevel->mmu.write_shared_memory(0x200, tdataValues.data(), tdataValues.max_size() * sizeof(uint16_t));
+    uint8_t tPeConfig1[] = {0x33, 0x33, 0x01, 0x01, 0x00, 0x10, 0x00, 0x80};
+    uint8_t tPeConfig2[] = {0x38, 0x80, 0x01, 0x80, 0x00, 0x10, 0x00, 0x80};
+    toplevel->mmu.write_shared_memory(0x00, tPeConfig1, sizeof(tPeConfig1));
+    toplevel->mmu.write_shared_memory(0x40, tPeConfig2, sizeof(tPeConfig2));
+    uint8_t tChConfig1[] = {0x05, 0x39, 0x77, 0x01, 0xAB,
+                            0x05, 0x7F, 0x05, 0xAF, 0xB0};
+    uint8_t tChConfig2[] = {0x05, 0x26, 0xE4, 0x01, 0xAF,
+                            0x05, 0x6F, 0x05, 0xAF, 0xB0};
+    toplevel->mmu.write_shared_memory(0x80, tChConfig1, sizeof(tChConfig1));
+    toplevel->mmu.write_shared_memory(0x120, tChConfig2, sizeof(tChConfig2));
+  }
+
+  // Run simulation
+  sc_core::sc_start(500, sc_core::SC_MS);
+
+  {
+      std::array<int16_t, 62*62> t_result;
+      t_result.fill(0);
+
+      toplevel->mmu.read_shared_memory<int16_t>(0x2300, t_result.data(), 62*62);
+
+      auto t_max = *(std::max_element(t_result.begin(), t_result.end()));
+
+      writePgm("./outimage.pgm", t_result.data(), 62, 62, t_max);
+
+  }
+
+  //#ifdef DEBUG
+  std::ofstream fp_dump{"simulation_dump.log", std::ios_base::out};
+  toplevel->dump(fp_dump);
+  fp_dump << "Memory Dump" << std::endl;
+  toplevel->mmu.dump_memory<int16_t>(0x170, 0x180, sc_dt::SC_DEC, true, fp_dump);
+  fp_dump << "\n\n";
+  toplevel->mmu.dump_memory<uint16_t>(0x200, 0x400, sc_dt::SC_DEC, true, fp_dump);
+  fp_dump << "\n\n";
+  toplevel->mmu.dump_memory<int16_t>(0x2300, 0x2500, sc_dt::SC_DEC, true, fp_dump);
+  fp_dump.close();
+  //#endif //DEBUG
 
 //#############################################################################
 
