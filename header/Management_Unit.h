@@ -165,7 +165,7 @@ public:
 	//!< \brief Local buffer for latest line number in data cache
 	sc_core::sc_buffer<CommandInterpreter::place_type_t> m_currentPlace{"CurrentPlace"};
 	//!< \brief Local buffer for latest place number in data cache
-	sc_core::sc_signal<bool> m_readyInterrupt{"VCGRA_Ready_Interrupt"};
+	sc_core::sc_fifo<bool> m_readyInterrupt{"VCGRA_Ready_Interrupt", 1};
 	//!< \brief Interrupt buffer for VCGRA ready signal if ManagementUnit does not wait active.
 
 private:

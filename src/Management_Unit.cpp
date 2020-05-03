@@ -16,16 +16,16 @@ template < uint32_t bitwidth = 32 >
 static std::string integer2binaryCstr(const uint32_t numberA)
 {
 	std::ostringstream t_value{};
-    
-    for(uint32_t idx = 0; bitwidth > idx; ++idx)
-    {
-        if((numberA>>idx)&1)
-            t_value << '1';
-        else
-            t_value << '0';
-    }
-    
-    return t_value.str();
+	
+	for(uint32_t idx = 0; bitwidth > idx; ++idx)
+	{
+		if((numberA>>idx)&1)
+			t_value << '1';
+		else
+			t_value << '0';
+	}
+	
+	return t_value.str();
 }
 
 
@@ -116,9 +116,9 @@ void ManagementUnit::state_machine()
 				 * Currently its not allowed to start a VCGRA again if you not clear the
 				 * interrupt before.
 				 */
-				if(m_readyInterrupt.read())
+				bool unusedReturn;
+				if(m_readyInterrupt.nb_read(unusedReturn))
 				{
-					m_readyInterrupt.write(false);
 					m_current_state = STATE::ADAPT_PP;
 				}
 				else
@@ -245,7 +245,8 @@ void ManagementUnit::start_state()
 {
 	//Check if ready signal is proven before
 	//starting next VCGRA processing round.
-	if(m_readyInterrupt.read())
+	bool unusedReturn;
+	if(m_readyInterrupt.nb_read(unusedReturn))
 		m_activeState = ACTIVE_STATE::ERROR;
 
 	//Start VCGRA
@@ -269,16 +270,14 @@ void ManagementUnit::wait_ready()
 	//If former processing state is WAIT
 	//resume execution if positive edge at
 	//ready port occurs.
-	if(ACTIVE_STATE::WAIT == m_activeState)
+	// "!mmu_start" is used to control, that the ManagementUnit is active waiting
+	// for the trigger from the VCGRA. WAIT state is also used, if MMU is triggert.
+	if(ACTIVE_STATE::WAIT == m_activeState && !mmu_start.read())
 	{
 		m_activeState = ACTIVE_STATE::RUN;
-		m_current_state = STATE::ADAPT_PP;
 	}
-	else
-	{
-		if(!m_readyInterrupt.read())
-		m_readyInterrupt.write(true);
-	}
+
+	m_readyInterrupt.nb_write(true);
 
 	return;
 }
@@ -511,7 +510,7 @@ void ManagementUnit::show_finish_state()
 	{
 		m_activeState = ACTIVE_STATE::STOP;
 		m_current_state = STATE::NOOP;
-        m_programPointer = m_programMemory.data();
+		m_programPointer = m_programMemory.data();
 		finish.write(false);
 	}
 	else
