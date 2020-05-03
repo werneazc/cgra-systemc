@@ -124,13 +124,13 @@ typedef sc_dt::sc_lv<3> cache_slct_type_t;
 //!< \brief Select type for available cache types (none, data-input, data-output, pe-config, vch-config)
 using cache_load_type_t = cache_write_type_t;
 //!< \brief Alias for cache_write_type_t for data output cache load port of a VCGRA
-static constexpr uint16_t cMemorySize{1024};
+static constexpr uint16_t cMemorySize{UINT16_MAX};
 //!< \brief Shared memory size in byte
 
 
 //Properties for Management Unit
 //--------------------------------------
-constexpr uint32_t cProgramMemorySize{40};
+constexpr uint32_t cProgramMemorySize{200000};
 //!< \brief Set program memory size for assembler commands
 
 //Properties for PE configuration cache
@@ -167,7 +167,7 @@ typedef sc_dt::sc_lv<cVChConfigBitWidth> ch_config_type_t;
 static constexpr uint16_t cDataValueBitwidth{cPeDataBitwidth};
 //!< \brief Number of bits for one data value
 static constexpr uint16_t cMaxNumberOfValuesPerCacheLine{static_cast<uint16_t>(
-    (2*cgra::cPeLevels.front()) > cgra::cPeLevels.back() ? 2 * cgra::cPeLevels.front() : cPeLevels.back())};
+    (2*cgra::cPeLevels.front()) >= cgra::cPeLevels.back() ? 2 * cgra::cPeLevels.front() : cPeLevels.back())};
 //!< \brief Number of accessible data values in a cache line
 static constexpr uint16_t cNumberDataInCacheLines{2};
 //!< \brief Number of cache lines for data input cache
