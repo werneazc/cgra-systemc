@@ -54,7 +54,7 @@ public:
     /*! 
      * \brief Standard constructor for Testbench_TopLevel
      */
-    Testbench_TopLevel(const sc_core::sc_module_name& nameA);
+    Testbench_TopLevel(const sc_core::sc_module_name& nameA, cgra::MMU& mmuA);
     
     /*!
      * \brief Destructor
@@ -90,6 +90,8 @@ public:
     void stimuli(void);
     
 private: 
+    
+    cgra::MMU& m_mmu;
     
     //Forbidden Constructors
     Testbench_TopLevel() = delete;                                          //!< \brief Every component needs a unique module name.

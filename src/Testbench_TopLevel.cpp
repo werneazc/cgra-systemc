@@ -21,8 +21,8 @@
 
 namespace cgra {
 
-Testbench_TopLevel::Testbench_TopLevel(const sc_core::sc_module_name& nameA) :
-sc_core::sc_module(nameA)
+Testbench_TopLevel::Testbench_TopLevel(const sc_core::sc_module_name& nameA, cgra::MMU& mmuA) :
+sc_core::sc_module(nameA), m_mmu(mmuA)
 {
     SC_THREAD(stimuli);
     sensitive << finish.pos();
@@ -55,17 +55,52 @@ void Testbench_TopLevel::dump(::std::ostream& os) const
     os << "Signal state \"pause\":\t\t" << std::setw(3) << std::boolalpha << pause.read() << std::endl;
     os << "Signal state \"rst\":\t\t" << std::setw(3) << std::boolalpha << rst.read() << std::endl;
     os << "Signal state \"finish\":\t\t" << std::setw(3) << std::boolalpha << finish.read() << std::endl;
-    
+
     return;
 }
 
 void Testbench_TopLevel::stimuli(void)
 {
-    wait(20, sc_core::SC_NS);
+
+    //Perform Sobel X direction
+    std::array<int16_t, 3*3> sobelx{1, 0, -1, 2, 0, -2, 1, 0, -1};
+    m_mmu.write_shared_memory(0x170, sobelx.data(), sobelx.max_size() * sizeof(int16_t));
+    auto t_start = sc_core::sc_time_stamp();
     run.write(true);
     wait(finish.posedge_event());
+    auto t_stopSobelx = sc_core::sc_time_stamp();
+    run.write(false);
+    wait(220, sc_core::SC_NS);
+    
+    std::array<int16_t, 62*62> t_resultx;
+    t_resultx.fill(0);
+    m_mmu.read_shared_memory<int16_t>(0x2300, t_resultx.data(), 62*62);
+    
+    //Perform Sobel Y direction
+    std::array<int16_t, 3*3> sobely{1, 2, 1, 0, 0, 0, -1, -2, -1};
+    m_mmu.write_shared_memory(0x170, sobely.data(), sobely.max_size() * sizeof(int16_t));
+    auto t_startSobely = sc_core::sc_time_stamp();
+    run.write(true);
+    wait(finish.posedge_event());
+    auto t_stopSobely = sc_core::sc_time_stamp();
     wait(50, sc_core::SC_NS);
     sc_core::sc_stop();
+    
+    std::cout << "\n\nSimulation timings: " << "\n" ;
+    std::cout << "overall: " << (t_stopSobely - t_start).to_string() << "\n";
+    std::cout << "sobel x-direction: " << (t_stopSobelx - t_start)<< "\n";
+    std::cout << "sobel y-direction: " << (t_stopSobely - t_startSobely) << std::endl;
+    
+    std::array<int16_t, 62*62> t_resulty;
+    t_resulty.fill(0);
+    m_mmu.read_shared_memory<int16_t>(0x2300, t_resulty.data(), 62*62);
+    
+    //Build sum of absolute values
+    for(uint32_t idx = 0; idx < t_resultx.size(); ++idx) {
+        t_resultx.at(idx) = std::abs(t_resultx.at(idx)) + std::abs((t_resulty.at(idx)));
+    }
+    
+    m_mmu.write_shared_memory<int16_t>(0x2300, t_resultx.data(), t_resultx.size() * sizeof(int16_t));
     
     return;
 }
