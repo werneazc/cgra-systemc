@@ -139,8 +139,6 @@ bool writePgm(const std::string& file_p, const int16_t* image, const uint32_t si
 
 int sc_main(int argc, char* arcv[])
 {
-    //include TB
-    auto tb_toplevel = new cgra::Testbench_TopLevel{"Architecture_TestBench"};
 
 //#############################################################################
 
@@ -167,6 +165,9 @@ int sc_main(int argc, char* arcv[])
 	//instantiate modules
 	auto toplevel = new cgra::TopLevel{"TopLevel", cgra::assembly.data(), cgra::assembly.size()};
 
+    //include TB
+    auto tb_toplevel = new cgra::Testbench_TopLevel{"Architecture_TestBench", toplevel->mmu};
+    
 //#############################################################################
 
 	//signals
@@ -250,8 +251,9 @@ int sc_main(int argc, char* arcv[])
     // toplevel->mmu.write_shared_memory(40, tChConfig, sizeof(tChConfig));
 
     // std::array<uint16_t, 3*3> tcoefficients{0, 0, 0, 0, 1, 0, 0, 0, 0};
-    std::array<int16_t, 3*3> tcoefficients{1, 0, -1, 2, 0, -2, 1, 0, -1};
-    toplevel->mmu.write_shared_memory(0x170, tcoefficients.data(), tcoefficients.max_size() * sizeof(int16_t));
+    std::array<int16_t, 3*3> sobelx{1, 0, -1, 2, 0, -2, 1, 0, -1};
+    std::array<int16_t, 3*3> sobely{1, 2, 1, 0, 0, 0, -1, -2, -1};
+    toplevel->mmu.write_shared_memory(0x170, sobelx.data(), sobelx.max_size() * sizeof(int16_t));
       
     std::array<uint16_t, 64*64> tdataValues;
     if(!readPgm("./example.pgm", tdataValues.data(), 64, 64))
@@ -272,7 +274,7 @@ int sc_main(int argc, char* arcv[])
   }
 
   // Run simulation
-  sc_core::sc_start(500, sc_core::SC_MS);
+  sc_core::sc_start(750, sc_core::SC_MS);
 
   {
       std::array<int16_t, 62*62> t_result;
