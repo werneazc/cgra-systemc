@@ -37,6 +37,7 @@ void cgra::TB_DataInCache::stimuli(void)
 
 	//Test4: write data to data input cache
 	sDataInStream.write(10);
+	wait(10, sc_core::SC_NS);
 	sWrite.write(true);
 	wait(sAck.posedge_event());
 
@@ -86,6 +87,7 @@ void cgra::TB_DataInCache::stimuli(void)
 	//Test9: write data to data input cache
 	sSlt_place.write(0);
 	sDataInStream.write(160);
+	wait(10, sc_core::SC_NS);
 	sWrite.write(true);
 	wait(sAck.posedge_event());
 
