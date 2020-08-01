@@ -155,6 +155,7 @@ void ManagementUnit::state_machine()
 	{
 		this->dump();
 		SC_REPORT_FATAL("MU", "Runtime error");
+		show_finish_state();
 	}
 
 	return;
