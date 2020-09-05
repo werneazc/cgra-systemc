@@ -51,6 +51,9 @@ public:
 	 * \param[in] nameA 	Name of the Synchronizer as a SystemC Module
 	 */
 	Synchronizer(const sc_core::sc_module_name& nameA) : sc_core::sc_module(nameA)
+#ifdef MCPAT
+	,m_totalCycles{0U}, m_idleCycles{0U}, m_busyCycles{0U}
+#endif
 	{
 		SC_METHOD(sync);
 		sensitive << clk.pos();
@@ -76,6 +79,22 @@ public:
 	 */
 	virtual ~Synchronizer() = default;
 
+#ifdef MCPAT
+	/**
+	 * \brief Dump runtime statistics for McPAT simulation
+	 * 
+	 * \param os Define used outstream [default: std::cout]
+	 */
+	void dumpMcpatStatistics(std::ostream& os = ::std::cout) const
+	{
+		os << name() << "\t\t" << kind() << "\n";
+		os << "total cycles: " << m_totalCycles << "\n";
+		os << "idle cycles: " << m_idleCycles << "\n";
+		os << "busy cycles: " << m_busyCycles << "\n";
+		os << std::endl;
+	}
+#endif
+
 	/*!
 	 * \brief Multiplexing data inputs to one output
 	 *
@@ -91,6 +110,13 @@ public:
 	 */
 	void sync()
 	{
+#ifdef MCPAT
+		/* A synchronizer always updates its input and output buffer states. 
+		 * Thus the component is always busy and has no idle state.
+		 */
+		++m_totalCycles;
+		++m_busyCycles;
+#endif
 		//Write current input signals to logic vector
 		for(uint32_t i = 0; N > i; ++i)
 			m_status_word[i] = valid_inputs.at(i).read();
@@ -114,6 +140,12 @@ private:
 	//Internal properties
 	config_type_t m_status_word{0};
 	//!< \brief Helper variable which temporary saves current status of valid signals
+#ifdef MCPAT
+	//McPAT dynamic statistic counters:
+	uint32_t m_totalCycles;   //!< \brief Count total number of executed cycles
+	uint32_t m_idleCycles;    //!< \brief Count number of idle cycles
+	uint32_t m_busyCycles;    //!< \brief Count number of working cycles
+#endif
 };
 
 

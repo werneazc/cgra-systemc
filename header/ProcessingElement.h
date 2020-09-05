@@ -82,6 +82,9 @@ class Processing_Element : public sc_core::sc_module
 	 * \param[in] pe_numberA 	Unique ID of a ProcessingElement instance
 	 */
 	Processing_Element(const sc_core::sc_module_name& nameA, const uint32_t pe_numberA) : sc_module(nameA), m_peId{pe_numberA}
+#ifdef MCPAT
+	,m_totalCycles{0U}, m_idleCycles{0U}, m_busyCycles{0U}
+#endif
 	{
 		SC_METHOD(perform);
 		sensitive << clk;
@@ -116,6 +119,22 @@ class Processing_Element : public sc_core::sc_module
 	{
 		os << name();
 	}
+
+#ifdef MCPAT
+	/**
+	 * \brief Dump runtime statistics for McPAT simulation
+	 * 
+	 * \param os Define used outstream [default: std::cout]
+	 */
+	void dumpMcpatStatistics(std::ostream& os = ::std::cout) const
+	{
+		os << name() << "\t\t" << kind() << "\tID: " << std::setw(3) <<  m_peId << "\n";
+		os << "total cycles: " << m_totalCycles << "\n";
+		os << "idle cycles: " << m_idleCycles << "\n";
+		os << "busy cycles: " << m_busyCycles << "\n";
+		os << std::endl;
+	}
+#endif
 
 	/*!
 	 * \brief Dump PE information
@@ -197,6 +216,10 @@ class Processing_Element : public sc_core::sc_module
 	{
 		if (clk.posedge())
 		{
+#ifdef MCPAT
+			++m_totalCycles;
+#endif
+
 			//save current signals in internal buffers
 			this->m_invalues[0].write(in1.read());
 			this->m_invalues[1].write(in2.read());
@@ -207,6 +230,10 @@ class Processing_Element : public sc_core::sc_module
 			case STATE::AWAIT_DATA:
 
 //				std::cout << "@ " << sc_core::sc_time_stamp() << " STATE=AWAIT_DATA" << std::endl;
+
+#ifdef MCPAT
+				++m_idleCycles;
+#endif
 
 				this->valid.write(false);
 
@@ -221,6 +248,10 @@ class Processing_Element : public sc_core::sc_module
 //				std::cout << "@ " << sc_core::sc_time_stamp() << " STATE=PROCESS_DATA" << std::endl;
 
 				m_current_state = STATE::VALID_DATA;
+
+#ifdef MCPAT
+				++m_busyCycles;
+#endif
 
 				switch (this->conf.read().to_uint())
 				{
@@ -263,6 +294,9 @@ class Processing_Element : public sc_core::sc_module
 				break;
 
 			case STATE::VALID_DATA:
+#ifdef MCPAT
+				++m_busyCycles;
+#endif
 //				std::cout << "@ " << sc_core::sc_time_stamp() << " STATE=VALID_DATA" << std::endl;
 				this->m_current_state = STATE::AWAIT_DATA;
 				this->valid.write(true);
@@ -304,6 +338,12 @@ class Processing_Element : public sc_core::sc_module
 	static uint32_t pe_generation_counter;
 	//!< \brief Counter for unique IDs of ProcessingElements
 
+#ifdef MCPAT
+	//McPAT dynamic statistic counters:
+	uint32_t m_totalCycles;   //!< \brief Count total number of executed cycles
+	uint32_t m_idleCycles;    //!< \brief Count number of idle cycles
+	uint32_t m_busyCycles;    //!< \brief Count number of working cycles
+#endif
 	//a processing element's operations
 	/*!
 	 * \brief Add the two inputs

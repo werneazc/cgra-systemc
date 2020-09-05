@@ -99,6 +99,9 @@ public:
 	 * \param[in] nameA Name of the VC within the simulation
 	 */
 	VirtualChannel(const sc_core::sc_module_name& nameA) : sc_core::sc_module(nameA)
+#ifdef MCPAT
+	,m_totalCycles{0U}, m_idleCycles{0U}, m_busyCycles{0U}
+#endif
 	{
 		//Register SystemC methods at simulator
 		SC_METHOD(buffer_input);
@@ -194,12 +197,36 @@ public:
 
 	}
 
+#ifdef MCPAT
+	/**
+	 * \brief Dump runtime statistics for McPAT simulation
+	 * 
+	 * \param os Define used outstream [default: std::cout]
+	 */
+	void dumpMcpatStatistics(std::ostream& os = ::std::cout) const
+	{
+		os << name() << "\t" << kind() << std::endl;
+		os << "total cycles: " << m_totalCycles << "\n";
+		os << "idle cycles: " << m_idleCycles << "\n";
+		os << "busy cycles: " << m_busyCycles << "\n";
+		os << std::endl;
+	}
+#endif
+
 	//Processes
 	/*!
 	 * \brief Buffer VC inputs in internal buffers for one clock cycle
 	 */
 	void buffer_input()
 	{
+
+#ifdef MCPAT
+		/* A virtual channel always changes its input and output buffer states. 
+		 * Thus the component is always busy and has no idle state.
+		 */
+		++m_totalCycles;
+		++m_busyCycles;
+#endif
 		if(!rst.read())
 		{
 			for(uint32_t i = 0; i < R; ++i)
@@ -266,6 +293,12 @@ private:
 
 	uint16_t m_config_length{L * T};
 	//!< \brief Bitstream length of configuration for VirtualChannel
+#ifdef MCPAT
+	//McPAT dynamic statistic counters:
+	uint32_t m_totalCycles;   //!< \brief Count total number of executed cycles
+	uint32_t m_idleCycles;    //!< \brief Count number of idle cycles
+	uint32_t m_busyCycles;    //!< \brief Count number of working cycles
+#endif
 
 };
 

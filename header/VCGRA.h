@@ -134,6 +134,15 @@ public:
      */
     virtual void dump(::std::ostream& os = std::cout) const override;
     
+#ifdef MCPAT
+	/**
+	 * \brief Dump runtime statistics for McPAT simulation
+	 * 
+	 * \param os Define used outstream [default: std::cout]
+	 */
+	void dumpMcpatStatistics(std::ostream& os = ::std::cout) const; 
+#endif
+
     /*!
      * \brief Destructor
      */

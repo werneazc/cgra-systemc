@@ -300,6 +300,12 @@ int sc_main(int argc, char* arcv[])
   fp_dump.close();
   //#endif //DEBUG
 
+#ifdef MCPAT
+    std::ofstream fp_mcpatStats{"mcpat_stats.log", std::ios_base::out};
+     toplevel->vcgra.dumpMcpatStatistics(fp_mcpatStats);
+    fp_mcpatStats.close();
+#endif
+
 //#############################################################################
 
 	//Finish simulation

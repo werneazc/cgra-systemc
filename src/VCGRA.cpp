@@ -147,6 +147,31 @@ void VCGRA::end_of_elaboration()
     return;
 }
 
+
+#ifdef MCPAT
+	/**
+	 * \brief Dump runtime statistics for McPAT simulation
+	 * 
+	 * \param os Define used outstream [default: std::cout]
+	 */
+void VCGRA::dumpMcpatStatistics(std::ostream& os) const 
+{
+    for(auto& pe : m_pe_instances)
+    {
+        pe.dumpMcpatStatistics(os);
+    }
+
+    m_input_channel.dumpMcpatStatistics(os);
+
+    for(auto& ch : m_channel_instances)
+    {
+        ch.dumpMcpatStatistics(os);
+    }
+
+    m_sync.dumpMcpatStatistics(os);
+}
+#endif
+
 void VCGRA::dump(::std::ostream & os) const
 {
     os << this->name() << "\t\t\t" << this->kind() << std::endl;

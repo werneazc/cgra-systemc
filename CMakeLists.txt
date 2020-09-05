@@ -21,6 +21,7 @@ target_compile_features(cgra_systemc
         cxx_std_14
     )
 target_link_libraries(cgra_systemc SystemC::systemc)
+add_compile_definitions(MCPAT)
 
 find_package(Doxygen)
 set(DOXFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/doc/cgra-systemc)
