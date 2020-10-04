@@ -31,13 +31,13 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
     m_input_channel_selector.config_input.bind(ch_config);
     m_input_channel_selector.config_parts.at(0).bind(s_input_ch_configuration);
     m_channel_selector.config_input.bind(ch_config);
-    for(uint32_t i = 0; m_channel_selector.config_parts.size() > i; ++i)
-        m_channel_selector.config_parts.at(i).bind(s_ch_configurations.at(i));
+    for(uint32_t i = 0; m_channel_selector.config_parts.size() > i; ++i) {
+        m_channel_selector.config_parts.at(i).bind(s_ch_configurations.at(i));}
     m_sync_selector.config_input.bind(ch_config);
     m_sync_selector.config_parts.at(0).bind(s_sync_configuration);
     m_pe_config_demux.config_input.bind(pe_config);
-    for(uint32_t i = 0; m_pe_config_demux.config_parts.size() > i; ++i)
-        m_pe_config_demux.config_parts.at(i).bind(s_pe_configurations.at(i));
+    for(uint32_t i = 0; m_pe_config_demux.config_parts.size() > i; ++i) {
+        m_pe_config_demux.config_parts.at(i).bind(s_pe_configurations.at(i));}
     
     //Connect Input Channel ports
     m_input_channel.clk.bind(clk);
@@ -69,10 +69,12 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
             pe.in1.bind(s_pe_data_input_signals.at(t_in_idx++));
             pe.in2.bind(s_pe_data_input_signals.at(t_in_idx++));
             pe.valid.bind(s_pe_valid_signals.at(t_pe_idx));
-            if((cgra::cNumOfPe - cgra::cPeLevels.back()) > t_pe_idx)
+            if((cgra::cNumOfPe - cgra::cPeLevels.back()) > t_pe_idx) {
                 pe.res.bind(s_pe_data_output_signals.at(t_pe_idx));
-            else
+            }
+            else {
                 pe.res.bind(data_outputs.at(t_out_idx++));
+            }
             
             ++t_pe_idx;
         }
@@ -133,18 +135,15 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
             cgra::cNumOfPe - cgra::cPeLevels.back()) + i));
     }
     
-    
-    return;
-    
 }
 
 void VCGRA::end_of_elaboration()
 {
-    ready.write(0);
-    for(auto& out : data_outputs)
+    ready.write(true);
+    for(auto& out : data_outputs) {
         out.write(0);
+    }
     
-    return;
 }
 
 
@@ -182,21 +181,25 @@ void VCGRA::dump(::std::ostream & os) const
     os << "CH configuration status:\t\t" << ch_config.read().to_string(sc_dt::SC_HEX) << std::endl;
    
     os << "Inputs:" << std::endl;
-    for(auto& in : data_inputs)
+    for(auto& in : data_inputs) {
         os << in.name() << ":\t\t" << in.read().to_string(sc_dt::SC_DEC, false) << std::endl;
+    }
     os << "Outputs:" << std::endl;
-    for(auto& out : data_outputs)
+    for(auto& out : data_outputs) {
         os << out.name() << ":\t\t" << out.read().to_string(sc_dt::SC_DEC, false) << std::endl; 
+    }
     
     os << "VCGRA component status:\n";
     os << "-----------------------" << std::endl;
-    for(auto& pe : m_pe_instances)
+    for(auto& pe : m_pe_instances) {
         pe.dump(os);
+    }
     os << std::endl;
     m_input_channel.dump(os);
     os << std::endl;
-    for(auto& ch : m_channel_instances)
+    for(auto& ch : m_channel_instances) {
         ch.dump(os);
+    }
     os << std::endl;
     m_sync.dump(os);
     os << std::endl;
@@ -209,8 +212,6 @@ void VCGRA::dump(::std::ostream & os) const
     m_sync_selector.dump(os);
     os << std::endl;
     
-    
-    return; 
 }
 
 } /* end namespace cgra */
