@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <systemc>
 #include <array>
+#include <vector>
 #include <fstream>
 #include "TopLevel.h"
 #include "Testbench_TopLevel.h"
@@ -252,16 +253,16 @@ int sc_main(int argc, char* arcv[])
         return EXIT_FAILURE;
     }
     toplevel->mmu.write_shared_memory(0x200, tdataValues.data(), tdataValues.max_size() * sizeof(uint16_t));
-    uint8_t tPeConfig1[] = {0x33, 0x33, 0x01, 0x01, 0x00, 0x10, 0x00, 0x80};
-    uint8_t tPeConfig2[] = {0x38, 0x80, 0x01, 0x80, 0x00, 0x10, 0x00, 0x80};
-    toplevel->mmu.write_shared_memory(0x00, tPeConfig1, sizeof(tPeConfig1));
-    toplevel->mmu.write_shared_memory(0x40, tPeConfig2, sizeof(tPeConfig2));
-    uint8_t tChConfig1[] = {0x05, 0x39, 0x77, 0x01, 0xAB,
+    std::vector<uint8_t> tPeConfig1 = {0x33, 0x33, 0x01, 0x01, 0x00, 0x10, 0x00, 0x80};
+    std::vector<uint8_t> tPeConfig2 = {0x38, 0x80, 0x01, 0x80, 0x00, 0x10, 0x00, 0x80};
+    toplevel->mmu.write_shared_memory(0x00, tPeConfig1.data(), tPeConfig1.size());
+    toplevel->mmu.write_shared_memory(0x40, tPeConfig2.data(), tPeConfig2.size());
+    std::vector<uint8_t> tChConfig1 = {0x05, 0x39, 0x77, 0x01, 0xAB,
                             0x05, 0x7F, 0x05, 0xAF, 0xB0};
-    uint8_t tChConfig2[] = {0x05, 0x26, 0xE4, 0x01, 0xAF,
+    std::vector<uint8_t> tChConfig2 = {0x05, 0x26, 0xE4, 0x01, 0xAF,
                             0x05, 0x6F, 0x05, 0xAF, 0xB0};
-    toplevel->mmu.write_shared_memory(0x80, tChConfig1, sizeof(tChConfig1));
-    toplevel->mmu.write_shared_memory(0x120, tChConfig2, sizeof(tChConfig2));
+    toplevel->mmu.write_shared_memory(0x80, tChConfig1.data(), tChConfig1.size());
+    toplevel->mmu.write_shared_memory(0x120, tChConfig2.data(), tChConfig2.size());
   }
 
   // Run simulation
