@@ -41,14 +41,11 @@ bool readPgm(const std::string &file_p, uint16_t *dest_p, const uint32_t xsize_p
 
   //Check valid grayscale format.
   std::getline(t_ifs,t_lineBuf);
-  if(t_lineBuf.compare("P2"))
+  if(0 != static_cast<uint32_t>(t_lineBuf.compare("P2")))
   {
       t_ifs.close();
       return false;
   }
-
-  //ignore comment line
-  std::getline(t_ifs,t_lineBuf);
 
   //get image dimensions
   t_ifs >> width >> heigth;
@@ -112,22 +109,16 @@ bool writePgm(const std::string& file_p, const int16_t* image, const uint32_t si
       for (iter_x = 0; iter_x < size_x; ++iter_x)
       {
 
-          if(--count)
+          if(0 > --count)
           {
-            //   xil_printf("%d\t", (int)*((uint8_t*)(image + iter_y * size_x + iter_x)));
             t_ofs << std::dec << *(image + iter_y * size_x + iter_x) << "\t";
           }
           else
           {
-            //   xil_printf("%d\n\r", (int)*((uint8_t*)(image + iter_y * size_x + iter_x)));
               t_ofs << std::dec << *(image + iter_y * size_x + iter_x) << "\n\r";
               count = 70;
           }
-
       }
-
-      t_ofs << "\n\r";
-
   }
 
   t_ofs.close();
