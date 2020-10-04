@@ -154,49 +154,49 @@ int sc_main(int argc, char* arcv[])
     //     "0x00101FC8", //STOREDA 16 0
     //     "0x0000000C"  //FINISH
     // };
-	//instantiate modules
-	auto toplevel = new cgra::TopLevel{"TopLevel", cgra::assembly.data(), cgra::assembly.size()};
+    //instantiate modules
+    auto toplevel = new cgra::TopLevel{"TopLevel", cgra::assembly.data(), cgra::assembly.size()};
 
     //include TB
     auto tb_toplevel = new cgra::Testbench_TopLevel{"Architecture_TestBench", toplevel->mmu};
     
 //#############################################################################
 
-	//signals
- 	sc_core::sc_clock clk{"clk", 200, sc_core::SC_NS};
- 	sc_core::sc_signal<cgra::TopLevel::run_type_t> run{"run", true};
- 	sc_core::sc_signal<cgra::TopLevel::reset_type_t> rst{"rst", false};
- 	sc_core::sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"};
- 	sc_core::sc_signal<cgra::TopLevel::pause_type_t> pause{"pause", false};
+    //signals
+     sc_core::sc_clock clk{"clk", 200, sc_core::SC_NS};
+     sc_core::sc_signal<cgra::TopLevel::run_type_t> run{"run", true};
+     sc_core::sc_signal<cgra::TopLevel::reset_type_t> rst{"rst", false};
+     sc_core::sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"};
+     sc_core::sc_signal<cgra::TopLevel::pause_type_t> pause{"pause", false};
 
 //#############################################################################
 
-	//Port bindings
+    //Port bindings
 
- 	//clock
- 	toplevel->clk.bind(clk);
+     //clock
+     toplevel->clk.bind(clk);
     tb_toplevel->clk.bind(clk);
 
-	//control signals
- 	toplevel->run.bind(run);
- 	toplevel->finish.bind(finish);
- 	toplevel->rst.bind(rst);
+    //control signals
+     toplevel->run.bind(run);
+     toplevel->finish.bind(finish);
+     toplevel->rst.bind(rst);
     toplevel->pause.bind(pause);
- 	tb_toplevel->run.bind(run);
- 	tb_toplevel->finish.bind(finish);
- 	tb_toplevel->rst.bind(rst);
+     tb_toplevel->run.bind(run);
+     tb_toplevel->finish.bind(finish);
+     tb_toplevel->rst.bind(rst);
     tb_toplevel->pause.bind(pause);
     
 //#############################################################################
 
-	//create and setup trace file;
-	auto fp_toplevel = sc_core::sc_create_vcd_trace_file("architecture_test");
+    //create and setup trace file;
+    auto fp_toplevel = sc_core::sc_create_vcd_trace_file("architecture_test");
 
-	sc_core::sc_trace(fp_toplevel,clk,"clock");
-	sc_core::sc_trace(fp_toplevel,run,"run");
-	sc_core::sc_trace(fp_toplevel,rst,"rst");
-	sc_core::sc_trace(fp_toplevel,pause,"pause");
-	sc_core::sc_trace(fp_toplevel,finish,"finish");
+    sc_core::sc_trace(fp_toplevel,clk,"clock");
+    sc_core::sc_trace(fp_toplevel,run,"run");
+    sc_core::sc_trace(fp_toplevel,rst,"rst");
+    sc_core::sc_trace(fp_toplevel,pause,"pause");
+    sc_core::sc_trace(fp_toplevel,finish,"finish");
     sc_core::sc_trace(fp_toplevel, toplevel->mu.m_currentAssembler, "assembler");
     sc_core::sc_trace(fp_toplevel, toplevel->mu.address, "address");
     sc_core::sc_trace(fp_toplevel, toplevel->mu.place, "place");
@@ -248,7 +248,8 @@ int sc_main(int argc, char* arcv[])
     toplevel->mmu.write_shared_memory(0x170, sobelx.data(), sobelx.max_size() * sizeof(int16_t));
       
     std::array<uint16_t, 64*64> tdataValues;
-    if(!readPgm("./example.pgm", tdataValues.data(), 64, 64))
+    tdataValues.fill(0x0000);
+    if(!readPgm("./lena.pgm", tdataValues.data(), 64, 64))
     {
         return EXIT_FAILURE;
     }
@@ -276,7 +277,7 @@ int sc_main(int argc, char* arcv[])
 
       auto t_max = *(std::max_element(t_result.begin(), t_result.end()));
 
-      writePgm("./outimage.pgm", t_result.data(), 62, 62, t_max);
+      writePgm("./outlena.pgm", t_result.data(), 62, 62, t_max);
 
   }
 
@@ -300,8 +301,8 @@ int sc_main(int argc, char* arcv[])
 
 //#############################################################################
 
-	//Finish simulation
-	sc_core::sc_close_vcd_trace_file(fp_toplevel);
+    //Finish simulation
+    sc_core::sc_close_vcd_trace_file(fp_toplevel);
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 };
