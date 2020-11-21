@@ -10,7 +10,7 @@
 		<param name="number_of_L2s" value="0"/> <!-- This number means how many L2 clusters in each cluster there can be multiple banks/ports -->
 		<param name="Private_L2" value="0"/><!--1 Private, 0 shared/coherent -->
 		<param name="number_of_L3s" value="0"/> <!-- This number means how many L3 clusters -->
-		<param name="number_of_NoCs" value="4"/>
+		<param name="number_of_NoCs" value="24"/>
 		<param name="homogeneous_cores" value="0"/><!--1 means homo -->
 		<param name="homogeneous_L2s" value="0"/>
 		<param name="homogeneous_L1Directories" value="0"/>
@@ -2861,7 +2861,7 @@
 			<!-- throughput >= latency -->
 			<!-- Router architecture -->
 			<param name="input_ports" value="8"/>
-			<param name="output_ports" value="8"/>
+			<param name="output_ports" value="1"/>
 			<!-- For bus the I/O ports should be 1 -->
 			<param name="flit_bits" value="16"/>
 			<!-- Virtual Channel bitwidth -->
@@ -2870,7 +2870,7 @@
 				chip_coverage <=1 -->
 			<param name="link_routing_over_percentage" value="0.05"/>
 			<!-- Links can route over other components or occupy whole area.
-				by default, 50% of the NoC global links routes over other 
+				by default, 5% of the NoC global links routes over other 
 				components -->
 			<stat name="total_accesses" value="2660805"/>
 			<!-- This is the number of total accesses within the whole network not for each router -->
@@ -2891,8 +2891,8 @@
 			<param name="link_latency" value="1"/><!--w.r.t clock -->
 			<!-- throughput >= latency -->
 			<!-- Router architecture -->
-			<param name="input_ports" value="4"/>
-			<param name="output_ports" value="8"/>
+			<param name="input_ports" value="8"/>
+			<param name="output_ports" value="1"/>
 			<!-- For bus the I/O ports should be 1 -->
 			<param name="flit_bits" value="16"/>
 			<!-- Virtual Channel bitwidth -->
@@ -2901,7 +2901,7 @@
 				chip_coverage <=1 -->
 			<param name="link_routing_over_percentage" value="0.05"/>
 			<!-- Links can route over other components or occupy whole area.
-				by default, 50% of the NoC global links routes over other 
+				by default, 5% of the NoC global links routes over other 
 				components -->
 			<stat name="total_accesses" value="2660805"/>
 			<!-- This is the number of total accesses within the whole network not for each router -->
@@ -2922,8 +2922,8 @@
 			<param name="link_latency" value="1"/><!--w.r.t clock -->
 			<!-- throughput >= latency -->
 			<!-- Router architecture -->
-			<param name="input_ports" value="4"/>
-			<param name="output_ports" value="8"/>
+			<param name="input_ports" value="8"/>
+			<param name="output_ports" value="1"/>
 			<!-- For bus the I/O ports should be 1 -->
 			<param name="flit_bits" value="16"/>
 			<!-- Virtual Channel bitwidth -->
@@ -2932,7 +2932,7 @@
 				chip_coverage <=1 -->
 			<param name="link_routing_over_percentage" value="0.05"/>
 			<!-- Links can route over other components or occupy whole area.
-				by default, 50% of the NoC global links routes over other 
+				by default, 5% of the NoC global links routes over other 
 				components -->
 			<stat name="total_accesses" value="2660805"/>
 			<!-- This is the number of total accesses within the whole network not for each router -->
@@ -2953,8 +2953,8 @@
 			<param name="link_latency" value="1"/><!--w.r.t clock -->
 			<!-- throughput >= latency -->
 			<!-- Router architecture -->
-			<param name="input_ports" value="4"/>
-			<param name="output_ports" value="8"/>
+			<param name="input_ports" value="8"/>
+			<param name="output_ports" value="1"/>
 			<!-- For bus the I/O ports should be 1 -->
 			<param name="flit_bits" value="16"/>
 			<!-- Virtual Channel bitwidth -->
@@ -2963,7 +2963,627 @@
 				chip_coverage <=1 -->
 			<param name="link_routing_over_percentage" value="0.05"/>
 			<!-- Links can route over other components or occupy whole area.
-				by default, 50% of the NoC global links routes over other 
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC4" name="noc4">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="8"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="8"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC5" name="noc5">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="8"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="8"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC6" name="noc6">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="8"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="8"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC7" name="noc7">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="8"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="8"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC8" name="noc8">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC9" name="noc9">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC10" name="noc10">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC11" name="noc11">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC12" name="noc12">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC13" name="noc13">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC14" name="noc14">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC15" name="noc15">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC16" name="noc16">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC17" name="noc17">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC18" name="noc18">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC19" name="noc19">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC20" name="noc20">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC21" name="noc21">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC22" name="noc22">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
+				components -->
+			<stat name="total_accesses" value="2660805"/>
+			<!-- This is the number of total accesses within the whole network not for each router -->
+			<stat name="duty_cycle" value="1.0"/>
+		</component>		
+		<component id="system.NoC23" name="noc23">
+			<param name="clockrate" value="2"/>
+			<param name="type" value="1"/>
+			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
+				at each time only one node can send req -->
+			<param name="horizontal_nodes" value="4"/>
+			<param name="vertical_nodes" value="1"/>
+			<!-- It is mendatory to have at least 1 vetical/horizontal node to
+			     calculate the right area if using a NOC. -->
+			<param name="has_global_link" value="0"/>
+			<!-- 1 has global link, 0 does not have global link -->
+			<param name="link_throughput" value="1"/><!--w.r.t clock -->
+			<param name="link_latency" value="1"/><!--w.r.t clock -->
+			<!-- throughput >= latency -->
+			<!-- Router architecture -->
+			<param name="input_ports" value="4"/>
+			<param name="output_ports" value="1"/>
+			<!-- For bus the I/O ports should be 1 -->
+			<param name="flit_bits" value="16"/>
+			<!-- Virtual Channel bitwidth -->
+			<param name="chip_coverage" value="0.000001"/>
+			<!-- When multiple NOC present, one NOC will cover part of the whole chip. 
+				chip_coverage <=1 -->
+			<param name="link_routing_over_percentage" value="0.05"/>
+			<!-- Links can route over other components or occupy whole area.
+				by default, 5% of the NoC global links routes over other 
 				components -->
 			<stat name="total_accesses" value="2660805"/>
 			<!-- This is the number of total accesses within the whole network not for each router -->
