@@ -2861,7 +2861,7 @@
 			<!-- throughput >= latency -->
 			<!-- Router architecture -->
 			<param name="input_ports" value="8"/>
-			<param name="output_ports" value="8"/>
+			<param name="output_ports" value="1"/>
 			<!-- For bus the I/O ports should be 1 -->
 			<param name="flit_bits" value="16"/>
 			<!-- Virtual Channel bitwidth -->
@@ -2892,7 +2892,7 @@
 			<!-- throughput >= latency -->
 			<!-- Router architecture -->
 			<param name="input_ports" value="4"/>
-			<param name="output_ports" value="8"/>
+			<param name="output_ports" value="1"/>
 			<!-- For bus the I/O ports should be 1 -->
 			<param name="flit_bits" value="16"/>
 			<!-- Virtual Channel bitwidth -->
@@ -2923,7 +2923,7 @@
 			<!-- throughput >= latency -->
 			<!-- Router architecture -->
 			<param name="input_ports" value="4"/>
-			<param name="output_ports" value="8"/>
+			<param name="output_ports" value="1"/>
 			<!-- For bus the I/O ports should be 1 -->
 			<param name="flit_bits" value="16"/>
 			<!-- Virtual Channel bitwidth -->
@@ -2954,7 +2954,7 @@
 			<!-- throughput >= latency -->
 			<!-- Router architecture -->
 			<param name="input_ports" value="4"/>
-			<param name="output_ports" value="8"/>
+			<param name="output_ports" value="1"/>
 			<!-- For bus the I/O ports should be 1 -->
 			<param name="flit_bits" value="16"/>
 			<!-- Virtual Channel bitwidth -->
