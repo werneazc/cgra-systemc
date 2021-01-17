@@ -5,7 +5,7 @@ project(
   DESCRIPTION "Virtual Coarse Grain Reconfigurable Array Simulator"
   LANGUAGES CXX)
 
-#Enable/disable McPAT statistic outputs to mcpat_stats.log file
+# Enable/disable McPAT statistic outputs to mcpat_stats.log file
 option(MCPAT_ENABLED "Enable statistic outputs for McPAT" OFF)
 
 # Prepare SystemC environment Please add environment variable to SystemC root
@@ -21,6 +21,15 @@ add_executable(full_architecture src/sc_main.cpp src/TopLevel.cpp
 target_include_directories(full_architecture PUBLIC header/)
 target_compile_features(full_architecture PUBLIC cxx_std_14)
 target_link_libraries(full_architecture SystemC::systemc COMPONENTS)
+if(MCPAT_ENABLED)
+  add_compile_definitions(MCPAT)
+endif(MCPAT_ENABLED)
+
+# Create full_architecture with all its components
+add_executable(vcgra_only src/vcgra_only.cpp src/testbench_vcgra_only.cpp)
+target_include_directories(vcgra_only PUBLIC header/)
+target_compile_features(vcgra_only PUBLIC cxx_std_14)
+target_link_libraries(vcgra_only SystemC::systemc COMPONENTS)
 if(MCPAT_ENABLED)
   add_compile_definitions(MCPAT)
 endif(MCPAT_ENABLED)
