@@ -87,7 +87,7 @@ bool readPgm(const std::string &file_p, uint16_t *dest_p, const uint32_t xsize_p
 bool writePgm(const std::string& file_p, const int16_t* image, const uint32_t size_y, const uint32_t size_x, uint16_t max_p = INT16_MAX)
 {
   uint32_t iter_x{0}, iter_y{0};    //image iterator
-  int8_t count{0};                  //pgm format limits number of characters per line to 70
+  size_t count{0};                  //pgm format limits number of characters per line to 70
   std::ofstream t_ofs{file_p, std::ios_base::out};
 
   //File opens correctly
@@ -97,9 +97,9 @@ bool writePgm(const std::string& file_p, const int16_t* image, const uint32_t si
 
   //write header of pgm format
   t_ofs << "P2\n\r";                                //gray scale ascii
-  t_ofs << "# result after convolution\n\r";        //comment to define picture
-  t_ofs << size_x << "\t" << size_y << "\n\r";      //size of the image
-  t_ofs << max_p << "\n\r";                     //max value within the picture
+  t_ofs << "# result after convolution\n";        //comment to define picture
+  t_ofs << size_x << "\t" << size_y << "\n";      //size of the image
+  t_ofs << max_p << "\n";                     //max value within the picture
 
 
   for( iter_y = 0; iter_y < size_y; ++iter_y)
@@ -112,12 +112,12 @@ bool writePgm(const std::string& file_p, const int16_t* image, const uint32_t si
 
           if(0 > --count)
           {
-            t_ofs << std::dec << *(image + iter_y * size_x + iter_x) << "\t";
+            t_ofs << std::dec << *(image + iter_y * size_x + iter_x) << "\n";
+            count = 70;
           }
           else
           {
-              t_ofs << std::dec << *(image + iter_y * size_x + iter_x) << "\n\r";
-              count = 70;
+              t_ofs << std::dec << *(image + iter_y * size_x + iter_x) << "\t";
           }
       }
   }

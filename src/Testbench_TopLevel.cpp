@@ -97,7 +97,7 @@ void Testbench_TopLevel::stimuli(void)
     
     //Build sum of absolute values
     for(uint32_t idx = 0; idx < t_resultx.size(); ++idx) {
-        t_resultx.at(idx) = std::abs(t_resultx.at(idx)) + std::abs((t_resulty.at(idx)));
+        t_resultx.at(idx) = std::sqrt(t_resultx.at(idx) * t_resultx.at(idx) + t_resulty.at(idx) * t_resulty.at(idx));
     }
     
     m_mmu.write_shared_memory<int16_t>(0x2300, t_resultx.data(), t_resultx.size() * sizeof(int16_t));
