@@ -8,7 +8,7 @@ install:
 
 env:
   global:
-    - SYSTEMC_ROOT=/tmp/systec
+    - SYSTEMC_ROOT=/tmp/systemc
 
 jobs:
   include: 
