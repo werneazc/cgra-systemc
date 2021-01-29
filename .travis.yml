@@ -6,10 +6,6 @@ install:
   - sudo ln -s /usr/bin/make /usr/bin/gmake
   - pushd /tmp/systemc-2.3.3 && mkdir objdir && cd objdir && ../configure --prefix=/tmp/systemc --with-unix-layout --enable-pthreads && gmake && sudo gmake install && popd
 
-env:
-  global:
-    - SYSTEMC_ROOT=/tmp/systemc
-
 jobs:
   include: 
     os: linux
@@ -26,5 +22,5 @@ jobs:
 
 script:
   - mkdir build
-  - cmake -B build -S ./ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -G "Unix Makefiles"
+  - export SYSTEMC_ROOT=/tmp/systemc && cmake -B build -S ./ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -G "Unix Makefiles"
   - cd build && cmake --build ./ -- -j2
