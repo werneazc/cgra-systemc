@@ -42,7 +42,7 @@ IF (MCPAT_ENABLED)
   ADD_COMPILE_DEFINITIONS (MCPAT)
 ENDIF (MCPAT_ENABLED)
 
-# Create full_architecture with all its components
+# Create VCGRA with all its components
 ADD_EXECUTABLE (vcgra_only src/vcgra_only.cpp src/testbench_vcgra_only.cpp)
 TARGET_INCLUDE_DIRECTORIES (
   vcgra_only
