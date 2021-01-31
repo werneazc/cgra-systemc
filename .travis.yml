@@ -22,5 +22,5 @@ jobs:
 
 script:
   - mkdir build
-  - cmake -B build -S ./ -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
-  - cd build && cmake --build ./ -- -j2
+  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles"
+  - cd build && travis_wait 30 cmake --build ./ -- -j2
