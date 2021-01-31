@@ -59,6 +59,28 @@ IF (MCPAT_ENABLED)
   ADD_COMPILE_DEFINITIONS (MCPAT)
 ENDIF (MCPAT_ENABLED)
 
+# Create VCGRA and pre-fetchers with all its components
+ADD_EXECUTABLE (
+  vcgra_prefetchers
+  src/TopLevel_VcgraPreloaders.cpp
+  src/Testbench_VcgraPreloaders.cpp
+  src/vcgra_prefetchers.cpp
+)
+TARGET_INCLUDE_DIRECTORIES (
+  vcgra_prefetchers
+  PUBLIC header/
+  PRIVATE ${SYSTEMC_INCLUDE_DIRS}
+)
+TARGET_COMPILE_FEATURES (vcgra_prefetchers PUBLIC cxx_std_14)
+TARGET_LINK_LIBRARIES (
+  vcgra_prefetchers
+  PRIVATE COMPONENTS
+  PRIVATE "${SYSTEMC_LIBRARIES}"
+)
+IF (MCPAT_ENABLED)
+  ADD_COMPILE_DEFINITIONS (MCPAT)
+ENDIF (MCPAT_ENABLED)
+
 # Add doxygen documentation
 FIND_PACKAGE (Doxygen)
 SET (DOXFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/doc/cgra-systemc)
