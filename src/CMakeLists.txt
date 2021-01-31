@@ -1,8 +1,17 @@
-add_library(COMPONENTS OBJECT CommandInterpreter.cpp Management_Unit.cpp
-                              MMU.cpp VCGRA.cpp)
-target_include_directories(COMPONENTS PUBLIC ${PROJECT_SOURCE_DIR}/header)
-target_compile_features(COMPONENTS PRIVATE cxx_std_14)
-target_link_libraries(COMPONENTS PRIVATE SystemC::systemc)
-if(MCPAT_ENABLED)
-  add_compile_definitions(MCPAT)
-endif(MCPAT_ENABLED)
+ADD_LIBRARY (
+  COMPONENTS OBJECT
+  CommandInterpreter.cpp
+  Management_Unit.cpp
+  MMU.cpp
+  VCGRA.cpp
+)
+TARGET_INCLUDE_DIRECTORIES (
+  COMPONENTS
+  PUBLIC ${PROJECT_SOURCE_DIR}/header
+  PRIVATE ${SYSTEMC_INCLUDE_DIRS}
+)
+TARGET_COMPILE_FEATURES (COMPONENTS PRIVATE cxx_std_14)
+TARGET_LINK_LIBRARIES (COMPONENTS PRIVATE "${SYSTEMC_LIBRARIES}")
+IF (MCPAT_ENABLED)
+  ADD_COMPILE_DEFINITIONS (MCPAT)
+ENDIF (MCPAT_ENABLED)
