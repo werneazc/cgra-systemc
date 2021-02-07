@@ -52,11 +52,11 @@ void MMU::end_of_elaboration()
 	data_value_out_stream.write(0);
 	cache_place.write(0);
 
-	return;
 }
 
 void MMU::state_machine()
 {
+
 	switch (pState)
 	{
 		case STATES::AWAIT:
@@ -173,6 +173,11 @@ void MMU::state_machine()
 		}
 		case STATES::WRITE_DATA:
 		{
+#ifdef MCPAT
+			++m_readAccesses; // Write to target is read from memory
+            ++m_totalAccesses;
+#endif
+
 			//Set data output regarding current handled cache type
 			switch (pCurrentCache)
 			{
@@ -220,6 +225,11 @@ void MMU::state_machine()
 		}
 		case STATES::READ_DATA:
 		{
+#ifdef MCPAT
+			++m_totalAccesses;
+            ++m_writeAccesses; // Read from target is write to memory
+#endif
+
 			process_data_output();
 			write_enable.write(false);
 			if(pBlockTransmission)

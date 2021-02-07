@@ -296,6 +296,7 @@ int sc_main(int argc, char* arcv[])
 #ifdef MCPAT
     std::ofstream fp_mcpatStats{"mcpat_stats.log", std::ios_base::out};
      toplevel->vcgra.dumpMcpatStatistics(fp_mcpatStats);
+     toplevel->mmu.dumpMcpatStatistics(fp_mcpatStats);
     fp_mcpatStats.close();
 #endif
 
