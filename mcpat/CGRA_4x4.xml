@@ -19,7 +19,7 @@
 		<param name="homogeneous_ccs" value="0"/><!--cache coherence hardware -->
 		<param name="homogeneous_NoCs" value="0"/>
 		<param name="core_tech_node" value="40"/><!-- nm -->
-		<param name="target_core_clockrate" value="2"/><!--MHz -->
+		<param name="target_core_clockrate" value="5"/><!--MHz -->
 		<param name="temperature" value="340"/> <!-- Kelvin -->
 		<param name="number_cache_levels" value="0"/>
 		<param name="interconnect_projection_type" value="0"/><!--0: aggressive wire technology; 1: conservative wire technology -->
@@ -41,7 +41,7 @@
 		<!-- *********************** cores ******************* -->
 		<component id="system.core0" name="core0">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -206,7 +206,7 @@
 		</component>
 		<component id="system.core1" name="core1">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -371,7 +371,7 @@
 		</component>
 		<component id="system.core2" name="core2">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -536,7 +536,7 @@
 		</component>
 		<component id="system.core3" name="core3">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -701,7 +701,7 @@
 		</component>
 		<component id="system.core4" name="core4">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -866,7 +866,7 @@
 		</component>
 		<component id="system.core5" name="core5">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -1031,7 +1031,7 @@
 		</component>
 		<component id="system.core6" name="core6">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -1196,7 +1196,7 @@
 		</component>
 		<component id="system.core7" name="core7">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -1361,7 +1361,7 @@
 		</component>
 		<component id="system.core8" name="core8">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -1526,7 +1526,7 @@
 		</component>
 		<component id="system.core9" name="core9">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -1691,7 +1691,7 @@
 		</component>
 		<component id="system.core10" name="core10">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -1856,7 +1856,7 @@
 		</component>
 		<component id="system.core11" name="core11">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -2021,7 +2021,7 @@
 		</component>
 		<component id="system.core12" name="core12">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -2186,7 +2186,7 @@
 		</component>
 		<component id="system.core13" name="core13">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -2351,7 +2351,7 @@
 		</component>
 		<component id="system.core14" name="core14">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -2516,7 +2516,7 @@
 		</component>
 		<component id="system.core15" name="core15">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -2681,7 +2681,7 @@
 		</component>
 		<component id="system.core16" name="core16">
 			<!-- Core property -->
-			<param name="clock_rate" value="2"/>
+			<param name="clock_rate" value="5"/>
 			<!-- for cores with unknown timing, set to 0 to force off the opt flag -->
 			<param name="opt_local" value="0"/>
 			<param name="instruction_length" value="32"/>
@@ -2846,7 +2846,7 @@
 		</component>
 		<!-- *********************** NOCs ******************* -->
 		<component id="system.NoC0" name="noc0">
-			<param name="clockrate" value="2"/>
+			<param name="clockrate" value="5"/>
 			<param name="type" value="1"/>
 			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
 				at each time only one node can send req -->
@@ -2877,7 +2877,7 @@
 			<stat name="duty_cycle" value="1.0"/>
 		</component>		
 		<component id="system.NoC1" name="noc1">
-			<param name="clockrate" value="2"/>
+			<param name="clockrate" value="5"/>
 			<param name="type" value="1"/>
 			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
 				at each time only one node can send req -->
@@ -2908,7 +2908,7 @@
 			<stat name="duty_cycle" value="1.0"/>
 		</component>		
 		<component id="system.NoC2" name="noc2">
-			<param name="clockrate" value="2"/>
+			<param name="clockrate" value="5"/>
 			<param name="type" value="1"/>
 			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
 				at each time only one node can send req -->
@@ -2939,7 +2939,7 @@
 			<stat name="duty_cycle" value="1.0"/>
 		</component>		
 		<component id="system.NoC3" name="noc3">
-			<param name="clockrate" value="2"/>
+			<param name="clockrate" value="5"/>
 			<param name="type" value="1"/>
 			<!--0:bus, 1:NoC , for bus no matter how many nodes sharing the bus
 				at each time only one node can send req -->
