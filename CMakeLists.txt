@@ -42,7 +42,7 @@ IF (MCPAT_ENABLED)
   ADD_COMPILE_DEFINITIONS (MCPAT)
 ENDIF (MCPAT_ENABLED)
 
-# Create full_architecture with all its components
+# Create VCGRA with all its components
 ADD_EXECUTABLE (vcgra_only src/vcgra_only.cpp src/testbench_vcgra_only.cpp)
 TARGET_INCLUDE_DIRECTORIES (
   vcgra_only
@@ -52,6 +52,28 @@ TARGET_INCLUDE_DIRECTORIES (
 TARGET_COMPILE_FEATURES (vcgra_only PUBLIC cxx_std_14)
 TARGET_LINK_LIBRARIES (
   vcgra_only
+  PRIVATE COMPONENTS
+  PRIVATE "${SYSTEMC_LIBRARIES}"
+)
+IF (MCPAT_ENABLED)
+  ADD_COMPILE_DEFINITIONS (MCPAT)
+ENDIF (MCPAT_ENABLED)
+
+# Create VCGRA and pre-fetchers with all its components
+ADD_EXECUTABLE (
+  vcgra_prefetchers
+  src/TopLevel_VcgraPreloaders.cpp
+  src/Testbench_VcgraPreloaders.cpp
+  src/vcgra_prefetchers.cpp
+)
+TARGET_INCLUDE_DIRECTORIES (
+  vcgra_prefetchers
+  PUBLIC header/
+  PRIVATE ${SYSTEMC_INCLUDE_DIRS}
+)
+TARGET_COMPILE_FEATURES (vcgra_prefetchers PUBLIC cxx_std_14)
+TARGET_LINK_LIBRARIES (
+  vcgra_prefetchers
   PRIVATE COMPONENTS
   PRIVATE "${SYSTEMC_LIBRARIES}"
 )

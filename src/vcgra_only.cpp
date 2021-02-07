@@ -16,12 +16,24 @@ const std::vector<std::vector<uint8_t>> cPeConfigs = {
     {0x33, 0x33, 0x01, 0x01, 0x00, 0x10, 0x00, 0x80},
     {0x38, 0x80, 0x01, 0x80, 0x00, 0x10, 0x00, 0x80},
 };
+//! Vector of PE configurations
 
 const std::vector<std::vector<uint8_t>> cChConfigs = {
     {0x05, 0x39, 0x77, 0x01, 0xAB, 0x05, 0x7F, 0x05, 0xAF, 0xB0},
     {0x05, 0x26, 0xE4, 0x01, 0xAF, 0x05, 0x6F, 0x05, 0xAF, 0xB0},
 };
+//! Vector of channel configurations
 
+/**
+ * @brief Bind signals of vectors
+ *
+ * @tparam T Type of input ports
+ * @tparam G Type of output ports
+ * @tparam U Type of signal to bind
+ * @param p_inputs Reference to array of input ports
+ * @param p_outputs Reference to array of output ports
+ * @param p_signals Reference to array of signals
+ */
 template <typename T, typename G, typename U> void array_bind(T &p_inputs, G &p_outputs, U &p_signals)
 {
 
@@ -43,6 +55,7 @@ int sc_main(int argc, char **argv)
     cgra::Testbench testbench("vcgra_testbench", "../demo/lena.pgm");
     cgra::VCGRA vcgra("VCGRA_Instance");
 
+    // Load configurations into testbench
     for (auto &peConf : cPeConfigs) {
         testbench.appendPeConfiguration(peConf);
     }
@@ -62,6 +75,7 @@ int sc_main(int argc, char **argv)
     sc_core::sc_vector<sc_core::sc_signal<cgra::VCGRA::data_output_type_t>> s_outputs("outputs",
                                                                                       vcgra.data_outputs.size());
 
+    // Connect toplevel and testbench
     vcgra.clk.bind(s_clk);
     testbench.clk.bind(s_clk);
     vcgra.pe_config.bind(s_peConfig);
@@ -97,17 +111,20 @@ int sc_main(int argc, char **argv)
     sc_core::sc_trace(fp, s_rst, s_rst.basename());
     sc_core::sc_trace(fp, s_ready, s_ready.basename());
     sc_core::sc_trace(fp, s_start, s_start.basename());
-    for(auto& in : s_inputs) {
+    for (auto &in : s_inputs) {
         sc_core::sc_trace(fp, in, in.basename());
     }
-    for(auto& out : s_outputs) {
+    for (auto &out : s_outputs) {
         sc_core::sc_trace(fp, out, out.basename());
     }
 
+    // Start simulation
     sc_core::sc_start();
 
+    // Write result image
     testbench.writeResultImagetoFile("./vcgra_only_result_image.pgm");
 
+    // Close trace file
     sc_core::sc_close_vcd_trace_file(fp);
 
     return EXIT_SUCCESS;

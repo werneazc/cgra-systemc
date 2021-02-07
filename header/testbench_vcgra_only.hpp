@@ -86,6 +86,13 @@ class Testbench : public sc_core::sc_module
      */
     std::size_t appendChConfiguration(std::vector<uint8_t> chConfA);
 
+    /**
+     * @brief Write result image as pgm-file
+     * 
+     * @param pathA Path to the target file
+     * @return true Success
+     * @return false Failure
+     */
     bool writeResultImagetoFile(const std::string &pathA) const;
 
     /**
@@ -128,12 +135,12 @@ class Testbench : public sc_core::sc_module
     //!< Sobel coefficients in y-direction
 
     static constexpr uint8_t cInputSize{64};
-    ///!< Input image dimension
+    //!< Input image dimension
     std::array<uint16_t, cInputSize * cInputSize> mInputValues;
-    ///!< Input image values
+    //!< Input image values
     
     static constexpr uint8_t cOutputSize{64};
-    ///!< Output image dimension
+    //!< Output image dimension
     std::array<int16_t, cOutputSize * cOutputSize> mSobelxValues;
     //!< Output image values after sobel operation in x direction
     std::array<int16_t, cOutputSize * cOutputSize> mSobelyValues;
