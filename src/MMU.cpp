@@ -18,8 +18,9 @@ MMU::MMU(const sc_core::sc_module_name& nameA,
 {
 
 	//Initialize cache feature list; Check if the constructor parameter will have the correct size
-	if((pCacheFeatures.size() * pCacheFeatures.at(CACHE_TYPE::CONF_CC).size()) != cacheFeaturesA.size())
+	if((pCacheFeatures.size() * pCacheFeatures.at(CACHE_TYPE::CONF_CC).size()) != cacheFeaturesA.size()) {
 		SC_REPORT_ERROR("MMU Constructor Error", "Size of initializer list for cache features not equal 12.");
+	}
 	else
 	{
 		uint8_t idx = 0;
@@ -32,15 +33,11 @@ MMU::MMU(const sc_core::sc_module_name& nameA,
 
 	SC_METHOD(state_machine);
 	sensitive << clk.pos();
-
-	return;
 }
 
 MMU::~MMU()
 {
 	free(pMemStartPtr);
-
-	return;
 }
 
 void MMU::end_of_elaboration()
@@ -78,7 +75,7 @@ void MMU::state_machine()
 			{
 				pBlockTransmission = true;
 				//Get cache line size in bits to calculate number of transmissions for whole data block.
-				uint16_t tCacheLineSize = pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::LINESIZE)* 8u;
+				uint16_t tCacheLineSize = pCacheFeatures.at(pCurrentCache).at(FEATURE_SELECT::LINESIZE)* 8U;
 
 				//Temporary variable to store stream bitwidth depending on cache targets.
 				uint16_t tStreamDataWidth{1};
@@ -102,10 +99,12 @@ void MMU::state_machine()
 				 * False if tCacheLineSize MOD tStreamDataWidth = 0
 				 * Transmission needs to be one step smaller because of zero based counting
 				 */
-				if(tCacheLineSize % tStreamDataWidth)
+				if(tCacheLineSize % tStreamDataWidth){
 					pNumOfTransmission = tCacheLineSize / tStreamDataWidth;
-				else
+				}
+				else {
 					pNumOfTransmission = tCacheLineSize / tStreamDataWidth - 1;
+				}
 
 				//Calculate address step width for block data transfers
 				pAddressStepSize = tStreamDataWidth / (8 * sizeof(memory_size_type_t));
@@ -144,8 +143,9 @@ void MMU::state_machine()
 					pState = STATES::AWAIT;
 				}
 			}
-			else
+			else {
 				pState = STATES::PROCESS;
+			}
 
 			break;
 		}
@@ -175,7 +175,7 @@ void MMU::state_machine()
 		{
 #ifdef MCPAT
 			++m_readAccesses; // Write to target is read from memory
-            ++m_totalAccesses;
+			++m_totalAccesses;
 #endif
 
 			//Set data output regarding current handled cache type
@@ -206,13 +206,15 @@ void MMU::state_machine()
 		{
 			if(ack.read())
 			{
-				if(pCurrentCache == CACHE_TYPE::DATA_OUTPUT)
+				if(pCurrentCache == CACHE_TYPE::DATA_OUTPUT) {
 					pState = STATES::READ_DATA;
+				}
 				else
 				{
 					write_enable.write(false);
-					if(pBlockTransmission)
+					if(pBlockTransmission) {
 						pState = STATES::BLOCK;
+					}
 					else
 					{
 						ready.write(true);
@@ -227,13 +229,14 @@ void MMU::state_machine()
 		{
 #ifdef MCPAT
 			++m_totalAccesses;
-            ++m_writeAccesses; // Read from target is write to memory
+			++m_writeAccesses; // Read from target is write to memory
 #endif
 
 			process_data_output();
 			write_enable.write(false);
-			if(pBlockTransmission)
+			if(pBlockTransmission) {
 				pState = STATES::BLOCK;
+			}
 			else
 			{
 				ready.write(true);
@@ -246,27 +249,29 @@ void MMU::state_machine()
 		{
 			uint16_t tAddress = pAddress.read().to_uint() + pAddressStepSize;
 			pAddress.write(tAddress);
-			if(!(--pNumOfTransmission))
+			if(!(--pNumOfTransmission)) {
 				pBlockTransmission = false;
+			}
 
 			uint16_t tPlace = static_cast<uint16_t>(pPlaceOut.read().to_uint()) + 1;
 			pPlaceOut.write(tPlace);
 			pState = STATES::PROCESS;
 			break;
 		}
-        case STATES::FINISH:
-        {
+		case STATES::FINISH:
+		{
 			if(ready.read() && start.read())
-            {    
+			{
 				ready.write(false);
-                pState = STATES::FINISH;
-            }
-            else if(!ready.read() && !start.read())
-                pState = STATES::AWAIT;
-            
-            break;
-            
-        }
+				pState = STATES::FINISH;
+			}
+			else if(!ready.read() && !start.read()) {
+				pState = STATES::AWAIT;
+			}
+
+			break;
+
+		}
 		default:
 		{
 			pState=STATES::AWAIT;
@@ -274,15 +279,14 @@ void MMU::state_machine()
 			break;
 		}
 	}
-
-	return;
 }
 
 void MMU::process_data_input()
 {
 
-	if(pAddress.read().to_uint() + (cgra::cDataValueBitwidth/(8 * sizeof(memory_size_type_t))) >= cgra::cMemorySize)
+	if(pAddress.read().to_uint() + (cgra::cDataValueBitwidth/(8 * sizeof(memory_size_type_t))) >= cgra::cMemorySize) {
 		SC_REPORT_WARNING("MMU Transmission Error", "Addressed value out of memory.");
+	}
 	else
 	{
 		//Temporary variable for data to write to data stream
@@ -297,8 +301,6 @@ void MMU::process_data_input()
 		memcpy(&tvalue, pCurrentMemPtr, (cgra::cDataValueBitwidth / (8 * sizeof(memory_size_type_t))));
 		data_value_out_stream.write(tvalue);
 	}
-
-	return;
 }
 
 void MMU::process_configuration()
@@ -309,8 +311,9 @@ void MMU::process_configuration()
 	 * The bitwidth of a data connections is set in number of bits. Thus, a previous devision by
 	 * 8 calculates a data path size in the number of bytes.
 	 */
-	if(pAddress.read().to_uint() + (cgra::cDataStreamBitWidthConfCaches / (8 * sizeof(memory_size_type_t))) >= cgra::cMemorySize)
+	if(pAddress.read().to_uint() + (cgra::cDataStreamBitWidthConfCaches / (8 * sizeof(memory_size_type_t))) >= cgra::cMemorySize){
 		SC_REPORT_WARNING("MMU Transmission Error", "Addressed value out of memory.");
+	}
 	else
 	{
 		//Temporary variable for data to write to data stream
@@ -325,8 +328,6 @@ void MMU::process_configuration()
 		memcpy(&tvalue, pCurrentMemPtr, (cgra::cDataStreamBitWidthConfCaches / (8 * sizeof(memory_size_type_t))));
 		conf_cache_stream.write(tvalue);
 	}
-
-	return;
 }
 
 void MMU::dump(std::ostream& os) const
@@ -361,15 +362,14 @@ void MMU::dump(std::ostream& os) const
 	os << "Data value out stream:\t\t" << std::setw(3) << data_value_out_stream.read().to_string(sc_dt::SC_HEX) << std::endl;
 	os << "config. cache stream:\t\t" << std::setw(3) << conf_cache_stream.read().to_string(sc_dt::SC_HEX) << std::endl;
 	os << "Current place:\t\t\t" << std::setw(3) << cache_place.read().to_string(sc_dt::SC_DEC, false) << std::endl;
-
-	return;
 }
 
 void MMU::process_data_output()
 {
 
-	if(pAddress.read().to_uint() + (cgra::cDataValueBitwidth/(8 * sizeof(memory_size_type_t))) >= cgra::cMemorySize)
+	if(pAddress.read().to_uint() + (cgra::cDataValueBitwidth/(8 * sizeof(memory_size_type_t))) >= cgra::cMemorySize) {
 		SC_REPORT_WARNING("MMU Transmission Error", "Addressed value out of memory.");
+	}
 	else
 	{
 		//Temporary variable for data to read from data stream
@@ -379,8 +379,6 @@ void MMU::process_data_output()
 		tvalue = data_value_in_stream.read().to_int();
 		memcpy(pCurrentMemPtr, &tvalue, (cgra::cDataValueBitwidth / (8 * sizeof(memory_size_type_t))));
 	}
-
-	return;
 }
 
 } /* End namespace cgra */
