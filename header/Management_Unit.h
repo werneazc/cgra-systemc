@@ -168,6 +168,15 @@ public:
 	sc_core::sc_fifo<bool> m_readyInterrupt{"VCGRA_Ready_Interrupt", 1};
 	//!< \brief Interrupt buffer for VCGRA ready signal if ManagementUnit does not wait active.
 
+#ifdef MCPAT
+	 /**
+	 * \brief Dump runtime statistics for McPAT simulation
+	 * 
+	 * \param os Define used outstream [default: std::cout]
+	 */
+	void dumpMcpatStatistics(std::ostream& os = ::std::cout) const;
+#endif
+
 private:
 
 	//Private Members
@@ -179,6 +188,12 @@ private:
 	assembler_type_t* m_programPointer;
 	//!< \brief Program pointer for assembler program
 
+#ifdef MCPAT
+	//McPAT dynamic statistic counters:
+	uint32_t m_totalCycles;   //!< \brief Count total number of executed cycles
+	uint32_t m_idleCycles;    //!< \brief Count number of idle cycles
+	uint32_t m_busyCycles;    //!< \brief Count number of working cycles
+#endif
 
 	//Internal signals
 	/*! ManagementUnit processing status */
