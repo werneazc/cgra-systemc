@@ -9,7 +9,7 @@
 		<param name="number_of_L2Directories" value="0"/>
 		<param name="number_of_L2s" value="0"/> <!-- This number means how many L2 clusters in each cluster there can be multiple banks/ports -->
 		<param name="Private_L2" value="0"/><!--1 Private, 0 shared/coherent -->
-		<param name="number_of_L3s" value="0"/> <!-- This number means how many L3 clusters -->
+		<param name="number_of_L3s" value="1"/> <!-- This number means how many L3 clusters -->
 		<param name="number_of_NoCs" value="4"/>
 		<param name="homogeneous_cores" value="0"/><!--1 means homo -->
 		<param name="homogeneous_L2s" value="0"/>
@@ -2844,7 +2844,27 @@
 			<stat name="MUL_cdb_duty_cycle" value="0.82"/>
 			<stat name="FPU_cdb_duty_cycle" value="0.0"/>
 		</component>
-		<!-- *********************** NOCs ******************* -->
+<!--**********************************************************************-->
+        <component id="system.L30" name="L3">
+            <!-- Data input pre-fetcher -->
+            <!-- Capacity is in byte. Demo application requires 88 Bytes for all pre-fetchers.-->
+            <param name="L3_config" value="96,2,2,1,1,1"/>
+            <!-- the parameters are capacity,block_width, associativity,bank, throughput w.r.t. core clock, latency w.r.t. core clock,-->
+            <param name="clockrate" value="5"/>
+            <param name="ports" value="1,1,0,1"/>
+            <!-- number of r, w, rw, search ports -->
+            <param name="device_type" value="0"/>
+            <param name="buffer_sizes" value="0, 0, 0, 0"/>
+            <!-- cache controller buffer sizes: miss_buffer_size(MSHR),fill_buffer_size,prefetch_buffer_size,wb_buffer_size-->	
+            <stat name="read_accesses" value="11824"/>
+            <stat name="write_accesses" value="11276"/>
+            <stat name="read_misses" value="1632"/>
+            <stat name="write_misses" value="183"/>
+            <stat name="conflicts" value="0"/>	
+            <stat name="duty_cycle" value="1.0"/>	
+        </component>
+<!--**********************************************************************-->
+<!--******************************** NOCs ********************************-->
 		<component id="system.NoC0" name="noc0">
 			<param name="clockrate" value="5"/>
 			<param name="type" value="1"/>
