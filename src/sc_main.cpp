@@ -298,6 +298,10 @@ int sc_main(int argc, char* arcv[])
   toplevel->vcgra.dumpMcpatStatistics(fp_mcpatStats);
   toplevel->mmu.dumpMcpatStatistics(fp_mcpatStats);
   toplevel->mu.dumpMcpatStatistics(fp_mcpatStats);
+  toplevel->data_in_cache.dumpMcpatStatistics(fp_mcpatStats);
+  toplevel->data_out_cache.dumpMcpatStatistics(fp_mcpatStats);
+  toplevel->pe_confCache.dumpMcpatStatistics(fp_mcpatStats);
+  toplevel->ch_confCache.dumpMcpatStatistics(fp_mcpatStats);
   fp_mcpatStats.close();
 #endif
 
