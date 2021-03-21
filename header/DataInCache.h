@@ -93,8 +93,7 @@ public:
 	 *
 	 * \param[in] nameA SystemC module name for DataInCache instance
 	 */
-	DataInCache(const sc_core::sc_module_name& nameA) :
-		sc_core::sc_module(nameA)
+	DataInCache(const sc_core::sc_module_name &nameA) : sc_core::sc_module(nameA)
 	{
 		SC_METHOD(storeValueInCacheLine);
 		sensitive << clk.pos();
@@ -108,16 +107,19 @@ public:
 	/*!
 	 * \brief Initialize output signals of module
 	 */
-	virtual void end_of_elaboration() override
+	void end_of_elaboration() override
 	{
-		//Initialize current value output with zero
-		for(auto& value : currentValues)
+		// Initialize current value output with zero
+		for (auto &value : currentValues) {
 			value.write(0);
+		}
 
-		//Initialize all buffers with zero
-		for(auto& line : m_cacheLines)
-			for(auto& value : line)
+		// Initialize all buffers with zero
+		for (auto &line : m_cacheLines) {
+			for (auto &value : line) {
 				value.write(0);
+			}
+		}
 
 		ack.write(false);
 	}
@@ -132,38 +134,30 @@ public:
 	 */
 	void storeValueInCacheLine()
 	{
-		//Check if selected place in cache line is valid
-		if(N <= slt_place.read().to_uint())
-		{
+		// Check if selected place in cache line is valid
+		if (N <= slt_place.read().to_uint()) {
 			SC_REPORT_WARNING("Cache Warning", "Selected place not in range of cache size");
 			ack.write(true);
-			return;
 		}
-		else if(L <= slt_in.read().to_uint())
-		{
+		else if (L <= slt_in.read().to_uint()) {
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
 			ack.write(true);
-			return;
 		}
-		else if(write.read() && !ack.read())
-		{
-			//Check if selected cache line is currently in use
-			if(slt_in.read().to_uint() != slt_out.read().to_uint())
-			{
-				auto& value = m_cacheLines[slt_in.read().to_uint()][slt_place.read().to_uint()];
+		else if (write.read() && !ack.read()) {
+			// Check if selected cache line is currently in use
+			if (slt_in.read().to_uint() != slt_out.read().to_uint()) {
+				auto &value = m_cacheLines[slt_in.read().to_uint()][slt_place.read().to_uint()];
 				value.write(dataInStream.read());
 				ack.write(true);
 			}
-			else
-			{
+			else {
 				SC_REPORT_WARNING("Cache Warning", "Selected cache-line currently in use. Value is unchanged");
 				ack.write(true);
 			}
 		}
-		else if (ack.read() && !write.read())
+		else if (ack.read() && !write.read()){
 			ack.write(false);
-
-		return;
+		}
 	}
 
 	/*!
@@ -176,29 +170,29 @@ public:
 	 */
 	void switchCacheLine()
 	{
-		//Check if selected place in cache line is valid
-		if(L <= slt_out.read().to_uint())
-		{
+		// Check if selected place in cache line is valid
+		if (L <= slt_out.read().to_uint()) {
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
-			return;
 		}
 
 		auto tmp_cacheline = slt_out.read().to_uint();
 
-		//Check if selected cache line is currently used for data input
-		if(slt_in.read().to_uint() == tmp_cacheline && write.read())
+		// Check if selected cache line is currently used for data input
+		if (slt_in.read().to_uint() == tmp_cacheline && write.read()) {
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line is currently in use. Value is not changed.");
-		else
-			for(uint32_t idx = 0; N > idx; ++idx)
+		}
+		else {
+			for (uint32_t idx = 0; N > idx; ++idx) {
 				currentValues.at(idx).write(m_cacheLines.at(tmp_cacheline).at(idx).read());
-
-		return;
+			}
+		}
 	}
 
 	/*!
 	 * \brief Print kind of SystemC module
 	 */
-	virtual const char* kind() const override {
+	const char *kind() const override
+	{
 		return "Data Input Cache";
 	}
 
@@ -207,7 +201,7 @@ public:
 	 *
 	 * \param[out] os Define used outstream [default: std::cout]
 	 */
-	virtual void print(std::ostream& os = std::cout) const override
+	void print(std::ostream &os = std::cout) const override
 	{
 		os << name();
 	}
@@ -217,7 +211,7 @@ public:
 	 *
 	 * \param[out] os Define used outstream [default: std::cout]
 	 */
-	virtual void dump(std::ostream& os = std::cout) const override
+	void dump(std::ostream &os = std::cout) const override
 	{
 		os << name() << ": " << kind() << std::endl;
 		os << "Number of cache lines:\t\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
@@ -231,14 +225,12 @@ public:
 		os << "Cache content\n";
 		os << "=============\n";
 
-		uint32_t line_iter = 1; //Running index for cache line
-		for(auto& line : m_cacheLines)
-		{
+		uint32_t line_iter = 1; // Running index for cache line
+		for (auto &line : m_cacheLines) {
 
-			os << std::setw(3) << line_iter++ <<":\t";
+			os << std::setw(3) << line_iter++ << ":\t";
 			uint32_t value_iter = 1;
-			for(auto& value : line)
-			{
+			for (auto &value : line) {
 				os << value_iter++ << ": ";
 				value.print(os);
 				os << ", ";
@@ -253,18 +245,16 @@ public:
 	 * \param[in] 	line 	Select cache line to print
 	 * \param[out] 	os 		Select outstream to write [default: std::cout]
 	 */
-	void print_cache_line(uint32_t line, std::ostream& os = std::cout) const
+	void print_cache_line(uint32_t line, std::ostream &os = std::cout) const
 	{
-		//Check if selected place in cache line is valid
-		if(L <= line)
-		{
+		// Check if selected place in cache line is valid
+		if (L <= line) {
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
 			return;
 		}
 
 		uint32_t value_iter = 1;
-		for(auto& value : m_cacheLines.at(line))
-		{
+		for (auto &value : m_cacheLines.at(line)) {
 			os << value_iter++ << ": ";
 			value.print(os);
 			os << ", ";
@@ -275,12 +265,18 @@ public:
 	/*!
 	 * \brief Return the size of a cache line
 	 */
-	uint16_t size() const { return m_numOfBytes; }
+	uint16_t size() const
+	{
+		return m_numOfBytes;
+	}
 
 	/*!
 	 * \brief Return number of cache lines
 	 */
-	uint8_t cache_size() const { return m_cacheLines.size(); }
+	uint8_t cache_size() const
+	{
+		return m_cacheLines.size();
+	}
 
 private:
 	//Forbidden Constructors
@@ -297,6 +293,6 @@ private:
 	//!< \brief Cache line size in bytes
 };
 
-} //End namespace CGRA
+} // namespace cgra
 
 #endif /* HEADER_DATAINCACHE_H_ */
