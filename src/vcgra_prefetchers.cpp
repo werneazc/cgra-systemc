@@ -12,6 +12,7 @@
 #include "Testbench_VcgraPreloaders.hpp"
 #include <systemc>
 #include <type_traits>
+#include <fstream>
 
 namespace
 {
@@ -163,6 +164,14 @@ int sc_main(int argc, char **argv)
     // Write result image
     testbench.writeResultImagetoFile("./vcgra_prefetchers_result_image.pgm");
 
+#ifdef MCPAT
+    std::ofstream fp_mcpatStats{"mcpat_stats_vcgra_prefetchers.log", std::ios_base::out};
+    toplevel.vcgra.dumpMcpatStatistics(fp_mcpatStats);
+    toplevel.pe_config_prefetcher.dumpMcpatStatistics(fp_mcpatStats);
+    toplevel.ch_config_prefetcher.dumpMcpatStatistics(fp_mcpatStats);
+    fp_mcpatStats.close();
+#endif
+ 
     // Close trace file
     sc_core::sc_close_vcd_trace_file(fp);
 
