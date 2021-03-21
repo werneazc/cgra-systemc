@@ -14,6 +14,9 @@
 #include <iostream>
 #include <iomanip>
 #include "Typedef.h"
+#ifdef MCPAT
+#include "McPatCacheAccessCounter.hpp"
+#endif
 
 namespace cgra {
 
@@ -51,6 +54,9 @@ typedef DataOutCache<cgra::cDataValueBitwidth,
  */
 template <uint32_t B, uint32_t N, uint32_t L = 2>
 class DataOutCache : public sc_core::sc_module
+#ifdef MCPAT
+	,				protected cgra::McPatCacheAccessCounter
+#endif
 {
 public:
 	typedef sc_dt::sc_int<B> value_type_t;
@@ -114,15 +120,17 @@ public:
 	/*!
 	 * \brief Initialize output signals of module
 	 */
-	virtual void end_of_elaboration() override
+	void end_of_elaboration() override
 	{
 		//Initialize data output stream
 		dataOutStream.write(0);
 
 		//Initialize all buffers with zero
-		for(auto& line : m_cacheLines)
-			for(auto& value : line)
+		for(auto& line : m_cacheLines) {
+			for(auto& value : line) {
 				value.write(0);
+			}
+		}
 
 		ack.write(false);
 	}
@@ -137,27 +145,25 @@ public:
 	 */
 	void loadValueFromCacheLine()
 	{
+#ifdef MCPAT
+		++this->m_readAccessCounter;
+#endif
 		//Check if selected place in cache line is valid
 		if(N <= slt_place.read().to_uint())
 		{
 			SC_REPORT_WARNING("Cache Warning", "Selected place not in range of cache size");
 			ack.write(true);
-			return;
 		}
 		else if(L <= slt_out.read().to_uint())
 		{
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line not in range of cache size");
 			ack.write(true);
-			return;
 		}
-
 		else if (load.read() && update.read() && m_currentCachline == slt_out.read().to_uint())
 		{
 			SC_REPORT_WARNING("Cache Warning", "Selected cache line updated. Value not loaded.");
 			ack.write(true);
-			return;
 		}
-
 		else if(load.read() && !ack.read())
 		{
 			//Check if selected cache line is currently in use
@@ -165,11 +171,9 @@ public:
 			dataOutStream.write(tvalue->read());
 			ack.write(true);
 		}
-
-		else if (ack.read() && !load.read())
+		else if (ack.read() && !load.read()){
 			ack.write(false);
-
-		return;
+		}
 	}
 
 	/*!
@@ -184,6 +188,9 @@ public:
 	 */
 	void switchCacheLine()
 	{
+#ifdef MCPAT
+		++this->m_readAccessCounter;
+#endif
 		//Check if selected place in cache line is valid
 		if(L <= slt_in.read().to_uint())
 		{
@@ -192,13 +199,13 @@ public:
 		else if(slt_in.read().to_uint() != m_currentCachline)
 		{
 			//Check if selected cache line is currently used for data import/export
-			if(!load.read() && !update.read())
+			if(!load.read() && !update.read()) {
 				m_currentCachline = slt_in.read().to_uint();
-			else
+			}
+			else {
 				SC_REPORT_WARNING("Cache Warning", "Selected cache line is currently in use. Cache line is not changed.");
+			}
 		}
-
-		return;
 	}
 
 	/*!
@@ -211,21 +218,24 @@ public:
 	 */
 	void updateCacheLine()
 	{
+#ifdef MCPAT
+		++this->m_writeAccessCounter;
+#endif
 
 		//If positive edge update selected buffer with recent results at input port
 		if(update.read())
 		{
 			auto& t_currentCacheLine = m_cacheLines.at(m_currentCachline);
-			for(uint32_t idx = 0; N > idx; ++idx)
+			for(uint32_t idx = 0; N > idx; ++idx) {
 				t_currentCacheLine.at(idx).write(currentResults.at(idx).read());
+			}
 		}
-		return;
 	}
 
 	/*!
 	 * \brief Print kind of SystemC module
 	 */
-	virtual const char* kind() const override {
+	const char* kind() const override {
 		return "Data Output Cache";
 	}
 
@@ -234,7 +244,7 @@ public:
 	 *
 	 * \param[out] os Define used outstream [default: std::cout]
 	 */
-	virtual void print(std::ostream& os = std::cout) const override
+	void print(std::ostream& os = std::cout) const override
 	{
 		os << name();
 	}
@@ -244,7 +254,7 @@ public:
 	 *
 	 * \param[out] os Define used outstream [default: std::cout]
 	 */
-	virtual void dump(std::ostream& os = std::cout) const override
+	void dump(std::ostream& os = std::cout) const override
 	{
 		os << name() << "\t\t" << kind() << std::endl;
 		os << "Number of cache lines:\t\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
@@ -308,6 +318,21 @@ public:
 	 * \brief Return number of cache lines
 	 */
 	uint8_t cache_size() const { return m_cacheLines.size(); }
+
+#ifdef MCPAT
+	/**
+	 * @brief Dump statistics for McPAT simulation
+	 *
+	 * @param os[out] Out stream to write results to
+	 */
+	void dumpMcpatStatistics(std::ostream &os = ::std::cout) const override
+	{
+		os << name() << "\t\t" << kind() << "\n";
+		os << "read accesses: " << this->m_readAccessCounter << "\n";
+		os << "write accesses: " << this->m_writeAccessCounter << "\n";
+		os << std::endl;
+	}
+#endif
 
 private:
 	//Forbidden Constructors

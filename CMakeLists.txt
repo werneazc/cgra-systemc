@@ -13,6 +13,40 @@ OPTION (
   OFF
 )
 
+SET (CMAKE_CXX_FLAGS_OPTIMIZED -O1 -DNGEBUG)
+SET(CMAKE_CXX_FLAGS_OPTIMIZED "-O1 -DNDEBUG" CACHE STRING
+ "Flags used by the C++ compiler during maintainer builds."
+  FORCE)
+SET(CMAKE_C_FLAGS_OPTIMIZED "" CACHE STRING
+  "Flags used by the C compiler during maintainer builds."
+  FORCE)
+SET(CMAKE_EXE_LINKER_FLAGS_OPTIMIZED
+  "" CACHE STRING
+  "Flags used for linking binaries during maintainer builds."
+  FORCE)
+SET(CMAKE_SHARED_LINKER_FLAGS_OPTIMIZED
+  "" CACHE STRING
+  "Flags used by the shared libraries linker during maintainer builds."
+  FORCE)
+MARK_AS_ADVANCED(
+  CMAKE_CXX_FLAGS_OPTIMIZED
+  CMAKE_C_FLAGS_OPTIMIZED
+  CMAKE_EXE_LINKER_FLAGS_OPTIMIZED
+  CMAKE_SHARED_LINKER_FLAGS_OPTIMIZED)
+# Update the documentation string of CMAKE_BUILD_TYPE for GUIs
+SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
+  "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel Maintainer."
+  FORCE)
+
+IF(CMAKE_CONFIGURATION_TYPES)
+  LIST(APPEND CMAKE_CONFIGURATION_TYPES Optimized)
+  LIST(REMOVE_DUPLICATES CMAKE_CONFIGURATION_TYPES)
+  SET(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
+    "Add the configurations that we need"
+    FORCE)
+ENDIF()
+
+
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
                        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules
 )

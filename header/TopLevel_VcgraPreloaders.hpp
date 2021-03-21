@@ -162,7 +162,7 @@ struct TopLevel : public sc_core::sc_module
     //!< PE configuration signal binds VCGRA and PE configuration pre-fetcher
     sc_core::sc_signal<ch_config_type_t> s_ch_config{"ch_configuration"};
     //!< PE configuration signal binds VCGRA and virtual channel configuration pre-fetcher
-
+  public:
     // Components:
     // -----------
     cgra::VCGRA vcgra{"vcgra"};

@@ -187,6 +187,22 @@ public:
 	template<typename T>
 	bool read_shared_memory(const uint32_t startAddrA, T* startDataA, uint32_t numOfValuesA = 1) const;
 
+#ifdef MCPAT
+	/**
+	 * \brief Dump runtime statistics for McPAT simulation
+	 * 
+	 * \param os Define used outstream [default: std::cout]
+	 */
+	void dumpMcpatStatistics(std::ostream& os = ::std::cout) const
+	{
+		os << name() << "\t\t" << kind() << "\tID: " << "\n";
+		os << "total accesses: " << m_totalAccesses << "\n";
+		os << "read accesses: " << m_readAccesses << "\n";
+		os << "write accesses: " << m_writeAccesses << "\n";
+		os << std::endl;
+	}
+#endif
+
 private:
 	//Private type definitions
 	typedef std::array<std::array<uint16_t, 3>, 4> cache_features_type_t;
@@ -268,6 +284,13 @@ private:
 	//!< \brief Handle data transmission to configuration caches
 	void process_data_output();
 	//!< \brief Handle data transmission from data output cache
+
+#ifdef MCPAT
+	//McPAT dynamic statistic counters:
+	uint32_t m_totalAccesses{0};   //!< \brief Count total number of executed cycles
+	uint32_t m_readAccesses{0};    //!< \brief Count number read accesses
+	uint32_t m_writeAccesses{0};    //!< \brief Count number of write accesses
+#endif
 
 };
 

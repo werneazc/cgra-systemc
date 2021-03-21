@@ -8,6 +8,7 @@
 #include "testbench_vcgra_only.hpp"
 #include <systemc>
 #include <type_traits>
+#include <fstream>
 
 namespace
 {
@@ -124,6 +125,11 @@ int sc_main(int argc, char **argv)
     // Write result image
     testbench.writeResultImagetoFile("./vcgra_only_result_image.pgm");
 
+#ifdef MCPAT
+    std::ofstream fp_mcpatStats{"mcpat_stats_vcgra_only.log", std::ios_base::out};
+    vcgra.dumpMcpatStatistics(fp_mcpatStats);
+    fp_mcpatStats.close();
+#endif
     // Close trace file
     sc_core::sc_close_vcd_trace_file(fp);
 

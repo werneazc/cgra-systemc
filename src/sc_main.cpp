@@ -249,7 +249,7 @@ int sc_main(int argc, char* arcv[])
       
     std::array<uint16_t, 64*64> tdataValues;
     tdataValues.fill(0x0000);
-    if(!readPgm("./lena.pgm", tdataValues.data(), 64, 64))
+    if(!readPgm("../demo/lena.pgm", tdataValues.data(), 64, 64))
     {
         return EXIT_FAILURE;
     }
@@ -277,12 +277,12 @@ int sc_main(int argc, char* arcv[])
 
       auto t_max = *(std::max_element(t_result.begin(), t_result.end()));
 
-      writePgm("./outlena.pgm", t_result.data(), 62, 62, t_max);
+      writePgm("./fullarchitecture_result_image.pgm", t_result.data(), 62, 62, t_max);
 
   }
 
   //#ifdef DEBUG
-  std::ofstream fp_dump{"simulation_dump.log", std::ios_base::out};
+  std::ofstream fp_dump{"simulation_dump_fullarchitecture.log", std::ios_base::out};
   toplevel->dump(fp_dump);
   fp_dump << "Memory Dump" << std::endl;
   toplevel->mmu.dump_memory<int16_t>(0x170, 0x180, sc_dt::SC_DEC, true, fp_dump);
@@ -294,9 +294,15 @@ int sc_main(int argc, char* arcv[])
   //#endif //DEBUG
 
 #ifdef MCPAT
-    std::ofstream fp_mcpatStats{"mcpat_stats.log", std::ios_base::out};
-     toplevel->vcgra.dumpMcpatStatistics(fp_mcpatStats);
-    fp_mcpatStats.close();
+  std::ofstream fp_mcpatStats{"mcpat_stats_full_architecture.log", std::ios_base::out};
+  toplevel->vcgra.dumpMcpatStatistics(fp_mcpatStats);
+  toplevel->mmu.dumpMcpatStatistics(fp_mcpatStats);
+  toplevel->mu.dumpMcpatStatistics(fp_mcpatStats);
+  toplevel->data_in_cache.dumpMcpatStatistics(fp_mcpatStats);
+  toplevel->data_out_cache.dumpMcpatStatistics(fp_mcpatStats);
+  toplevel->pe_confCache.dumpMcpatStatistics(fp_mcpatStats);
+  toplevel->ch_confCache.dumpMcpatStatistics(fp_mcpatStats);
+  fp_mcpatStats.close();
 #endif
 
 //#############################################################################

@@ -35,6 +35,9 @@ ManagementUnit::ManagementUnit(const sc_core::sc_module_name& nameA,
 		const uint64_t sizeA)
 	: sc_core::sc_module(nameA), m_programPointer(&m_programMemory.front()),
 	   m_activeState(ACTIVE_STATE::STOP), m_current_state(STATE::NOOP)
+#ifdef MCPAT
+	, m_totalCycles{0}, m_busyCycles{0}, m_idleCycles{0}
+#endif
 {
 	//Register state machine process to simulator
 	SC_METHOD(state_machine);
@@ -84,8 +87,17 @@ ManagementUnit::ManagementUnit(const sc_core::sc_module_name& nameA,
 
 void ManagementUnit::state_machine()
 {
+
+#ifdef MCPAT
+	++m_totalCycles;
+#endif
+
 	if(ACTIVE_STATE::RUN == m_activeState)
 	{
+
+#ifdef MCPAT
+		++m_busyCycles;
+#endif
 		switch (m_current_state)
 		{
 			case STATE::NOOP:
@@ -105,6 +117,11 @@ void ManagementUnit::state_machine()
 				break;
 			case STATE::WAIT_READY:
 			{
+#ifdef MCPAT
+				++m_idleCycles;
+				--m_busyCycles;
+				// If case is a wait, the busyCycles need to be reduced.
+#endif
 				/*
 				 * If assembler commands are performed in parallel to
 				 * a processing VCGRA, an interrupt is stored. If the
@@ -153,10 +170,18 @@ void ManagementUnit::state_machine()
 	}
 	else if(ACTIVE_STATE::ERROR == m_activeState)
 	{
+#ifdef MCPAT
+		++m_busyCycles;
+#endif
 		this->dump();
 		SC_REPORT_FATAL("MU", "Runtime error");
 		show_finish_state();
 	}
+#ifdef MCPAT
+	else{
+		++m_idleCycles;
+	}
+#endif
 
 	return;
 }
@@ -519,5 +544,21 @@ void ManagementUnit::show_finish_state()
 
 	return;
 }
+
+#ifdef MCPAT
+/**
+ * \brief Dump runtime statistics for McPAT simulation
+ * 
+ * \param os Define used outstream [default: std::cout]
+ */
+void ManagementUnit::dumpMcpatStatistics(std::ostream& os) const
+{
+	os << name() << "\t\t" << kind() << "\n";
+	os << "total cycles: " << m_totalCycles << "\n";
+	os << "idle cycles: " << m_idleCycles << "\n";
+	os << "busy cycles: " << m_busyCycles << "\n";
+	os << std::endl;
+}
+#endif
 
 } // end namespace cgra

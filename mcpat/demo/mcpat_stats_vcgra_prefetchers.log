@@ -1,0 +1,113 @@
+toplevel_instance.vcgra.VCGRA_PEs_0		Processing Element	ID:   0
+total cycles: 2229664
+idle cycles: 2183536
+busy cycles: 46128
+
+toplevel_instance.vcgra.VCGRA_PEs_1		Processing Element	ID:   1
+total cycles: 2229664
+idle cycles: 2183536
+busy cycles: 46128
+
+toplevel_instance.vcgra.VCGRA_PEs_2		Processing Element	ID:   2
+total cycles: 2229664
+idle cycles: 2183536
+busy cycles: 46128
+
+toplevel_instance.vcgra.VCGRA_PEs_3		Processing Element	ID:   3
+total cycles: 2229664
+idle cycles: 2191224
+busy cycles: 38440
+
+toplevel_instance.vcgra.VCGRA_PEs_4		Processing Element	ID:   4
+total cycles: 2229664
+idle cycles: 2206600
+busy cycles: 23064
+
+toplevel_instance.vcgra.VCGRA_PEs_5		Processing Element	ID:   5
+total cycles: 2229664
+idle cycles: 2183536
+busy cycles: 46128
+
+toplevel_instance.vcgra.VCGRA_PEs_6		Processing Element	ID:   6
+total cycles: 2229664
+idle cycles: 2198912
+busy cycles: 30752
+
+toplevel_instance.vcgra.VCGRA_PEs_7		Processing Element	ID:   7
+total cycles: 2229664
+idle cycles: 2198912
+busy cycles: 30752
+
+toplevel_instance.vcgra.VCGRA_PEs_8		Processing Element	ID:   8
+total cycles: 2229664
+idle cycles: 2229664
+busy cycles: 0
+
+toplevel_instance.vcgra.VCGRA_PEs_9		Processing Element	ID:   9
+total cycles: 2229664
+idle cycles: 2206600
+busy cycles: 23064
+
+toplevel_instance.vcgra.VCGRA_PEs_10		Processing Element	ID:  10
+total cycles: 2229664
+idle cycles: 2183536
+busy cycles: 46128
+
+toplevel_instance.vcgra.VCGRA_PEs_11		Processing Element	ID:  11
+total cycles: 2229664
+idle cycles: 2214288
+busy cycles: 15376
+
+toplevel_instance.vcgra.VCGRA_PEs_12		Processing Element	ID:  12
+total cycles: 2229664
+idle cycles: 2229664
+busy cycles: 0
+
+toplevel_instance.vcgra.VCGRA_PEs_13		Processing Element	ID:  13
+total cycles: 2229664
+idle cycles: 2229664
+busy cycles: 0
+
+toplevel_instance.vcgra.VCGRA_PEs_14		Processing Element	ID:  14
+total cycles: 2229664
+idle cycles: 2183536
+busy cycles: 46128
+
+toplevel_instance.vcgra.VCGRA_PEs_15		Processing Element	ID:  15
+total cycles: 2229664
+idle cycles: 2229664
+busy cycles: 0
+
+toplevel_instance.vcgra.Input_Channel	Virtual Channel
+total cycles: 2229665
+idle cycles: 0
+busy cycles: 2229665
+
+toplevel_instance.vcgra.VCGRA_Channels_0	Virtual Channel
+total cycles: 2229665
+idle cycles: 0
+busy cycles: 2229665
+
+toplevel_instance.vcgra.VCGRA_Channels_1	Virtual Channel
+total cycles: 2229665
+idle cycles: 0
+busy cycles: 2229665
+
+toplevel_instance.vcgra.VCGRA_Channels_2	Virtual Channel
+total cycles: 2229665
+idle cycles: 0
+busy cycles: 2229665
+
+toplevel_instance.vcgra.VCGRA_Sync		Synchronizer
+total cycles: 2229665
+idle cycles: 0
+busy cycles: 2229665
+
+toplevel_instance.pe_prefetcher		Configuration Cache
+read accesses: 2229665
+write accesses: 2229665
+
+toplevel_instance.ch_prefetcher		Configuration Cache
+read accesses: 2229665
+write accesses: 2229665
+
