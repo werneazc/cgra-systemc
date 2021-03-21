@@ -45,8 +45,3 @@ and power.
 | Area Central Control Unit<br>[mm^2]   |         - |                          - |             0.035019 |
 | Area Memory Management Unit<br>[mm^2] |         - |                          - |            0.0370991 |
 | Peak Power Consumption Chip [mW]      |       342 |                        345 |                  371 |
-
-## Limitations
-
-The assembler unrolls loops in the assembler file. This generates big machine code files. These files are currently strings in a static array
-in an auto generated header file. For large assambler code files this increases the compilation time heavily.
