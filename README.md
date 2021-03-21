@@ -50,4 +50,3 @@ and power.
 
 The assembler unrolls loops in the assembler file. This generates big machine code files. These files are currently strings in a static array
 in an auto generated header file. For large assambler code files this increases the compilation time heavily.
-:w
