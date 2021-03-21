@@ -3023,10 +3023,10 @@
             <param name="device_type" value="0"/>
             <param name="buffer_sizes" value="0, 0, 0, 0"/>
             <!-- cache controller buffer sizes: miss_buffer_size(MSHR),fill_buffer_size,prefetch_buffer_size,wb_buffer_size-->
-            <stat name="read_accesses" value="11824"/>
-            <stat name="write_accesses" value="11276"/>
-            <stat name="read_misses" value="1632"/>
-            <stat name="write_misses" value="183"/>
+            <stat name="read_accesses" value="13304025"/>
+            <stat name="write_accesses" value="8005480"/>
+            <stat name="read_misses" value="0"/>
+            <stat name="write_misses" value="0"/>
             <stat name="conflicts" value="0"/>
             <stat name="duty_cycle" value="1.0"/>
         </component>
