@@ -115,8 +115,6 @@ public:
 		sensitive << clk.pos();
 		SC_METHOD(switchCacheLine);
 		sensitive << clk.pos();
-
-		return;
 	}
 
 
@@ -126,14 +124,13 @@ public:
 	/*!
 	 * \brief Initialize output signals of module
 	 */
-	virtual void end_of_elaboration() override
+	void end_of_elaboration() override
 	{
 		currentConfig.write(0);
-		for (uint32_t i = 0; i < L; ++i)
+		for (uint32_t i = 0; i < L; ++i){
 			m_cachelines[i].write(0);
+		}
 		ack.write(false);
-
-		return;
 	}
 
 	/*!
@@ -159,14 +156,14 @@ public:
 				m_cachelines[slt_in.read().to_uint()].write(tmp_cacheline);
 				ack.write(true);
 			}
-			else
+			else {
 				SC_REPORT_WARNING("Configuration Warning", "Selected cache-line currently in use. Configuration is unchanged");
+			}
 		}
 
-		if (ack.read() && !write.read())
+		if (ack.read() && !write.read()) {
 			ack.write(false);
-
-		return;
+		}
 	}
 
 	/*!
@@ -181,15 +178,13 @@ public:
 
 //		if(slt_in.read().to_uint() != tmp_cacheline)
 //#Todo: This line is currently disabled. Otherwise MU cannot switch cache lines!
-			currentConfig.write(m_cachelines[tmp_cacheline].read());
-
-		return;
+		currentConfig.write(m_cachelines[tmp_cacheline].read());
 	}
 
 	/*!
 	 * \brief Print kind of SystemC module
 	 */
-	virtual const char* kind() const override {
+	const char* kind() const override {
 		return "Configuration Cache";
 	}
 
@@ -198,11 +193,9 @@ public:
 	 *
 	 * \param[out] os Define used outstream [default: std::cout]
 	 */
-	virtual void print(std::ostream& os = std::cout) const override
+	void print(std::ostream& os = std::cout) const override
 	{
 		os << name();
-
-		return;
 	}
 
 	/*!
@@ -210,7 +203,7 @@ public:
 	 *
 	 * \param[out] os Define used outstream [default: std::cout]
 	 */
-	virtual void dump(std::ostream& os = std::cout) const override
+	void dump(std::ostream& os = std::cout) const override
 	{
 		os << name() << "\t\t" << kind() << std::endl;
 		os << "Number of cache lines:\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
@@ -229,8 +222,6 @@ public:
 			os << line.read().to_string(sc_dt::SC_HEX);
 			os << "\n";
 		}
-
-		return;
 	}
 
 	/*!
@@ -243,8 +234,6 @@ public:
 	{
 		sc_assert(L > line);
 		os << m_cachelines.at(line).read().to_string(sc_dt::SC_HEX) << std::endl;
-
-		return;
 	}
 
 	/*!
