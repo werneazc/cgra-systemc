@@ -1,0 +1,131 @@
+TopLevel.vcgra.VCGRA_PEs_0		Processing Element	ID:   0
+total cycles: 2660804
+idle cycles: 2614676
+busy cycles: 46128
+
+TopLevel.vcgra.VCGRA_PEs_1		Processing Element	ID:   1
+total cycles: 2660804
+idle cycles: 2614676
+busy cycles: 46128
+
+TopLevel.vcgra.VCGRA_PEs_2		Processing Element	ID:   2
+total cycles: 2660804
+idle cycles: 2614676
+busy cycles: 46128
+
+TopLevel.vcgra.VCGRA_PEs_3		Processing Element	ID:   3
+total cycles: 2660804
+idle cycles: 2622364
+busy cycles: 38440
+
+TopLevel.vcgra.VCGRA_PEs_4		Processing Element	ID:   4
+total cycles: 2660804
+idle cycles: 2637740
+busy cycles: 23064
+
+TopLevel.vcgra.VCGRA_PEs_5		Processing Element	ID:   5
+total cycles: 2660804
+idle cycles: 2614676
+busy cycles: 46128
+
+TopLevel.vcgra.VCGRA_PEs_6		Processing Element	ID:   6
+total cycles: 2660804
+idle cycles: 2630052
+busy cycles: 30752
+
+TopLevel.vcgra.VCGRA_PEs_7		Processing Element	ID:   7
+total cycles: 2660804
+idle cycles: 2630052
+busy cycles: 30752
+
+TopLevel.vcgra.VCGRA_PEs_8		Processing Element	ID:   8
+total cycles: 2660804
+idle cycles: 2660804
+busy cycles: 0
+
+TopLevel.vcgra.VCGRA_PEs_9		Processing Element	ID:   9
+total cycles: 2660804
+idle cycles: 2637740
+busy cycles: 23064
+
+TopLevel.vcgra.VCGRA_PEs_10		Processing Element	ID:  10
+total cycles: 2660804
+idle cycles: 2614676
+busy cycles: 46128
+
+TopLevel.vcgra.VCGRA_PEs_11		Processing Element	ID:  11
+total cycles: 2660804
+idle cycles: 2645428
+busy cycles: 15376
+
+TopLevel.vcgra.VCGRA_PEs_12		Processing Element	ID:  12
+total cycles: 2660804
+idle cycles: 2660804
+busy cycles: 0
+
+TopLevel.vcgra.VCGRA_PEs_13		Processing Element	ID:  13
+total cycles: 2660804
+idle cycles: 2660804
+busy cycles: 0
+
+TopLevel.vcgra.VCGRA_PEs_14		Processing Element	ID:  14
+total cycles: 2660804
+idle cycles: 2614676
+busy cycles: 46128
+
+TopLevel.vcgra.VCGRA_PEs_15		Processing Element	ID:  15
+total cycles: 2660804
+idle cycles: 2660804
+busy cycles: 0
+
+TopLevel.vcgra.Input_Channel	Virtual Channel
+total cycles: 2660805
+idle cycles: 0
+busy cycles: 2660805
+
+TopLevel.vcgra.VCGRA_Channels_0	Virtual Channel
+total cycles: 2660805
+idle cycles: 0
+busy cycles: 2660805
+
+TopLevel.vcgra.VCGRA_Channels_1	Virtual Channel
+total cycles: 2660805
+idle cycles: 0
+busy cycles: 2660805
+
+TopLevel.vcgra.VCGRA_Channels_2	Virtual Channel
+total cycles: 2660805
+idle cycles: 0
+busy cycles: 2660805
+
+TopLevel.vcgra.VCGRA_Sync		Synchronizer
+total cycles: 2660805
+idle cycles: 0
+busy cycles: 2660805
+
+TopLevel.mmu		MMU	ID: 
+total accesses: 146160
+read accesses: 123096
+write accesses: 23064
+
+TopLevel.mu		Management Unit
+total cycles: 2660805
+idle cycles: 1322906
+busy cycles: 1337899
+
+TopLevel.dic		Data Input Cache
+read accesses: 2660805
+write accesses: 2660805
+
+TopLevel.doc		Data Output Cache
+read accesses: 5321610
+write accesses: 23065
+
+TopLevel.pe_cc		Configuration Cache
+read accesses: 2660805
+write accesses: 2660805
+
+TopLevel.ch_cc		Configuration Cache
+read accesses: 2660805
+write accesses: 2660805
+

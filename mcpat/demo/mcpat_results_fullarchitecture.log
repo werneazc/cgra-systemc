@@ -1,0 +1,52 @@
+McPAT (version 1.4 of March, 2021) is computing the target processor...
+ 
+
+McPAT (version 1.4 of March, 2021) results (current print level is 1, please increase print level to see the details in components): 
+*****************************************************************************************
+  Technology 40 nm
+  Interconnect metal projection= aggressive interconnect technology projection
+  Core clock Rate(MHz) 5
+
+*****************************************************************************************
+Processor: 
+  Area = 0.722449 mm^2
+  Peak Power = 0.371248 W
+  Total Leakage = 0.369219 W
+  Peak Dynamic = 0.00202879 W
+  Subthreshold Leakage = 0.327829 W
+  Gate Leakage = 0.0413896 W
+  Runtime Dynamic = 0.000172606 W
+
+  Total Cores: 18 cores 
+  Device Type= ITRS high performance device type
+    Area = 0.630356 mm^2
+    Peak Dynamic = 0.00155963 W
+    Subthreshold Leakage = 0.317395 W
+    Gate Leakage = 0.0392883 W
+    Runtime Dynamic = 7.66329e-05 W
+
+  Total L3s: 
+  Device Type= ITRS high performance device type
+    Area = 0.015885 mm^2
+    Peak Dynamic = 0.000106266 W
+    Subthreshold Leakage = 0.00261223 W
+    Gate Leakage = 0.000339096 W
+    Runtime Dynamic = 4.31069e-05 W
+
+  Total NoCs (Network/Bus): 
+  Device Type= ITRS high performance device type
+    Area = 0.0391092 mm^2
+    Peak Dynamic = 0.000119465 W
+    Subthreshold Leakage = 0.00301135 W
+    Gate Leakage = 0.000480396 W
+    Runtime Dynamic = 1.49331e-05 W
+
+  Total MCs: 1 Memory Controllers 
+  Device Type= ITRS high performance device type
+    Area = 0.0370991 mm^2
+    Peak Dynamic = 0.000243422 W
+    Subthreshold Leakage = 0.00481099 W
+    Gate Leakage = 0.00128182 W
+    Runtime Dynamic = 3.79334e-05 W
+
+*****************************************************************************************
