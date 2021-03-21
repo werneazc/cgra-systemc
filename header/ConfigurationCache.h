@@ -14,6 +14,9 @@
 #include <iostream>
 #include <iomanip>
 #include "Typedef.h"
+#ifdef MCPAT
+#include "McPatCacheAccessCounter.hpp"
+#endif
 
 namespace cgra {
 
@@ -59,7 +62,11 @@ typedef ConfigurationCache<cgra::ch_config_type_t,
  * \tparam N Bitwidth of serial configuration input
  */
 template <typename T, uint8_t M = 2, uint8_t L = 4, uint8_t N = 8>
-class ConfigurationCache : public sc_core::sc_module {
+class ConfigurationCache : public sc_core::sc_module
+#ifdef MCPAT
+	,					protected cgra::McPatCacheAccessCounter
+#endif
+{
 public:
 	typedef T config_type_t;
 	//!< \brief Type for stored configuration data per line
@@ -139,6 +146,9 @@ public:
 	 */
 	void storeCacheLine()
 	{
+#ifdef MCPAT
+		++this->m_writeAccessCounter;
+#endif
 		if(write.read() && !ack.read())
 		{
 			if(slt_in.read().to_uint() != slt_out.read().to_uint())
@@ -164,6 +174,9 @@ public:
 	 */
 	void switchCacheLine()
 	{
+#ifdef MCPAT
+		++this->m_readAccessCounter;
+#endif
 		auto tmp_cacheline = slt_out.read().to_uint();
 
 //		if(slt_in.read().to_uint() != tmp_cacheline)
@@ -243,6 +256,21 @@ public:
 	 * \brief Return number of cache lines
 	 */
 	uint8_t cache_size() const { return m_cachelines.size(); }
+
+#ifdef MCPAT
+	/**
+	 * @brief Dump statistics for McPAT simulation
+	 *
+	 * @param[out] os Out stream to write results to
+	 */
+	void dumpMcpatStatistics(std::ostream &os = ::std::cout) const override
+	{
+		os << name() << "\t\t" << kind() << "\n";
+		os << "read accesses: " << this->m_readAccessCounter << "\n";
+		os << "write accesses: " << this->m_writeAccessCounter << "\n";
+		os << std::endl;
+	}
+#endif
 
 private:
 	std::array<sc_core::sc_buffer<config_type_t>, L> m_cachelines;
