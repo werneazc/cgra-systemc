@@ -3015,7 +3015,7 @@
         <component id="system.L30" name="L3">
             <!-- Data input pre-fetcher -->
             <!-- Capacity is in byte. Demo application requires 88 Bytes for all pre-fetchers.-->
-            <param name="L3_config" value="96,2,2,1,1,1"/>
+            <param name="L3_config" value="128,2,2,1,1,1"/>
             <!-- the parameters are capacity,block_width, associativity,bank, throughput w.r.t. core clock, latency w.r.t. core clock,-->
             <param name="clockrate" value="5"/>
             <param name="ports" value="1,1,0,1"/>
