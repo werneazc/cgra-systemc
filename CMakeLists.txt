@@ -13,6 +13,14 @@ OPTION (
   OFF
 )
 
+# Enable/disable McPAT statistic outputs to mcpat_stats.log file
+OPTION (
+  GSYSC_ENABLED
+  "Enable gSysC GUI. Requires gSysC libary."
+  ON
+)
+
+# Create new compile target with small optimizations
 SET (CMAKE_CXX_FLAGS_OPTIMIZED -O1 -DNGEBUG)
 SET(CMAKE_CXX_FLAGS_OPTIMIZED "-O1 -DNDEBUG" CACHE STRING
  "Flags used by the C++ compiler during maintainer builds."
@@ -50,7 +58,12 @@ ENDIF()
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
                        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules
 )
+
 FIND_PACKAGE (SystemC REQUIRED)
+
+IF(GSYSC_ENABLED)
+    find_package(GsysC)
+ENDIF(GSYSC_ENABLED)
 
 ADD_SUBDIRECTORY (src/)
 

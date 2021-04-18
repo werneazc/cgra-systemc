@@ -45,3 +45,19 @@ and power.
 | Area Central Control Unit<br>[mm^2]   |         - |                          - |             0.035019 |
 | Area Memory Management Unit<br>[mm^2] |         - |                          - |            0.0370991 |
 | Peak Power Consumption Chip [mW]      |       342 |                        345 |                  371 |
+
+## Visualization
+
+### Requirements
+
+- [gSysC](https://github.com/werneazc/gsysc.git) library
+- Qt5 libraries installed at the development host-PC
+- Linux CMD-line variable `GSYSC_ROOT` pointing to the root directory of your gSysC clone.
+
+### Usability
+
+Please add the following option to your CMake configuration command: `DGSYSC_ENABLED=ON`.
+The project will be compiled with GUI support. If one of the compile [targets](#architecture-variants) is started
+from Linux CMD, the GUI opens automatically. On can browse the module hirarchy as well as
+performing a step-by-step simulation and observe the state of individual signals in a
+signal browser.
