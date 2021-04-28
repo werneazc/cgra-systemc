@@ -6,6 +6,11 @@
 #include <iostream>
 #include <array>
 
+#ifdef GSYSC
+#include <gsysc.h>
+#include "utils.hpp"
+#endif
+
 namespace cgra {
 
 
@@ -54,6 +59,12 @@ public:
 
 		SC_METHOD(demultiplex);
 		sensitive << config_input;
+
+		#ifdef GSYSC
+        {
+            RENAME_PORT(config_input, (create_name<std::string, uint32_t>("p_conf_in",0)));
+        }
+		#endif
 	}
 
 	/*!
