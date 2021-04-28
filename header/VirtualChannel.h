@@ -7,6 +7,11 @@
 #include "Multiplexer.h"
 #include "Typedef.h"
 
+#ifdef GSYSC
+#include <gsysc.h>
+#include "utils.hpp"
+#endif
+
 namespace cgra {
 
 /*!
@@ -111,16 +116,15 @@ public:
 		SC_METHOD(split_select);
 		sensitive << conf.value_changed();
 
+#ifdef GSYSC
+        for(auto& mux : m_multiplexers){
+            REG_MODULE(mux,
+                cgra::create_name<std::string>(this->basename(), mux.basename()),
+                this);
+        }
+#endif
 
 		//Build virtual channel from buffers and multiplexers
-		//----------------------------------------------------
-
-//		// channel input to  input-buffer connection
-//		for(uint32_t i = 0; i < R; ++i)
-//		{
-//			channel_inputs[i].bind(m_inputBuffers[i]);
-//			valids[i].bind(m_validBuffer[i]);
-//		}
 
 		// buffer to multiplexer connection
 		for(uint32_t i = 0; i < T; ++i)
@@ -129,15 +133,35 @@ public:
 			{
 				m_multiplexers[i].data_inputs[j].bind(m_inputBuffers[j]);
 				m_multiplexers[i].valid_inputs[j].bind(m_validBuffer[j]);
+#ifdef GSYSC
+                RENAME_SIGNAL(&m_validBuffer[j],
+                        (cgra::create_name<std::string,uint32_t>("s_valid_", j)));
+                RENAME_SIGNAL(&m_inputBuffers[j],
+                        (cgra::create_name<std::string,uint32_t>("s_input_", j)));
+                REG_PORT(&m_multiplexers[i].data_inputs[j], &m_multiplexers[i], m_inputBuffers[j]);
+                REG_PORT(&m_multiplexers[i].valid_inputs[j], &m_multiplexers[i],m_validBuffer[i]);
+#endif
 			}
 				m_multiplexers[i].select.bind(m_selectLines[i]);
+#ifdef GSYSC
+                RENAME_SIGNAL(&m_selectLines[i],
+                        (cgra::create_name<std::string,uint32_t>("s_lines_", i)));
+                REG_PORT(&m_multiplexers[i].select, m_multiplexers[i], m_selectLines[i]);
+#endif
 		}
-
 		//multiplexer to output-buffer connection
 		for(uint32_t i = 0; i < T; ++i)
 		{
 			m_multiplexers[i].sel_data.bind(m_outputBuffers[i]);
 			m_multiplexers[i].sel_valid.bind(m_enablesBuffer[i]);
+#ifdef GSYSC
+            RENAME_SIGNAL(&m_outputBuffers[i],
+                    (cgra::create_name<std::string,uint32_t>("s_output_", i)));
+            RENAME_SIGNAL(&m_enablesBuffer[i],
+                    (cgra::create_name<std::string,uint32_t>("s_enables_", i)));
+            REG_PORT(&m_multiplexers[i].sel_valid, &m_multiplexers[i], m_enablesBuffer[i]);
+            REG_PORT(&m_multiplexers[i].sel_data, &m_multiplexers[i], m_outputBuffers[i]);
+#endif
 		}
 
 	}
