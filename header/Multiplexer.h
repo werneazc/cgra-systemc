@@ -6,6 +6,10 @@
 #include <iostream>
 #include <array>
 
+#ifdef GSYSC
+#include "utils.hpp"
+#include <gsysc.h>
+#endif
 namespace cgra {
 
 
@@ -49,6 +53,7 @@ public:
 	sc_core::sc_out<data_type_t> sel_data{"selected_data"};
 	//!< \brief Output port for corresponding selected input data
 
+
 	SC_HAS_PROCESS(Multiplexer);
 	/*!
 	 * \brief General Constructor
@@ -62,6 +67,18 @@ public:
 
 		for (uint32_t i = 0; i < K; ++i)
 			sensitive << valid_inputs[i] << data_inputs[i];
+#ifdef GSYSC
+        {
+            size_t i=0;
+            for(auto &in : data_inputs){
+                RENAME_PORT(in, (create_name<std::string, uint32_t>("p_input",i++)));
+            }
+            i=0;
+            for(auto &in : valid_inputs){
+                RENAME_PORT(in, (create_name<std::string, uint32_t>("p_valid_in",i++)));
+            }
+        }
+#endif
 	}
 
 	/*!
