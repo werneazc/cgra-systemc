@@ -10,6 +10,11 @@
 #include <type_traits>
 #include <fstream>
 
+#ifdef GSYSC
+#include <gsysc.h>
+#include "utils.hpp"
+#endif
+
 namespace
 {
 
@@ -42,6 +47,17 @@ template <typename T, typename G, typename U> void array_bind(T &p_inputs, G &p_
         for (std::size_t iter = 0; iter < p_inputs.size(); ++iter) {
             p_inputs.at(iter).bind(p_signals.at(iter));
             p_outputs.at(iter).bind(p_signals.at(iter));
+
+            #ifdef GSYSC
+            RENAME_SIGNAL(p_signals.at(iter),
+                (cgra::create_name<std::string,uint32_t>("p_signals_", iter)));
+            REG_PORT(p_inputs.at(iter), 
+                     p_inputs, 
+                     p_signals.at(iter));
+            REG_PORT(p_outputs.at(iter), 
+                     p_outputs, 
+                     p_signals.at(iter));
+            #endif
         }
     }
     else {
@@ -109,6 +125,34 @@ int sc_main(int argc, char **argv)
     testbench.rst.bind(s_rst);
     testbench.ready.bind(s_ready);
     vcgra.ready.bind(s_ready);
+
+    #ifdef GSYSC
+            RENAME_SIGNAL(s_clk,
+                (cgra::create_name<std::string,uint32_t>("p_clk_", 0)));
+            RENAME_SIGNAL(s_peConfig,
+                (cgra::create_name<std::string,uint32_t>("s_peConfig_", 0)));
+            RENAME_SIGNAL(s_chConfig,
+                (cgra::create_name<std::string,uint32_t>("s_chConfig_", 0)));
+            RENAME_SIGNAL(s_start,
+                (cgra::create_name<std::string,uint32_t>("s_start_", 0)));
+            RENAME_SIGNAL(s_rst,
+                (cgra::create_name<std::string,uint32_t>("s_rst_", 0)));
+            RENAME_SIGNAL(s_ready,
+                (cgra::create_name<std::string,uint32_t>("s_ready_", 0)));
+
+            REG_PORT(vcgra.clk,           vcgra,     s_clk);
+            REG_PORT(testbench.clk,       testbench, s_clk);
+            REG_PORT(vcgra.pe_config,     vcgra,     s_peConfig);
+            REG_PORT(testbench.pe_config, testbench, s_peConfig);
+            REG_PORT(vcgra.ch_config,     vcgra,     s_chConfig);
+            REG_PORT(testbench.ch_config, testbench, s_chConfig);
+            REG_PORT(vcgra.start,         vcgra,     s_start);
+            REG_PORT(testbench.start,     testbench, s_start);
+            REG_PORT(vcgra.rst,           vcgra,     s_rst);
+            REG_PORT(testbench.rst,       testbench, s_rst);
+            REG_PORT(testbench.ready,     testbench, s_ready);
+            REG_PORT(vcgra.ready,         vcgra,     s_ready);
+    #endif
 
     try {
         array_bind(vcgra.data_inputs, testbench.data_inputs, s_inputs);

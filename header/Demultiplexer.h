@@ -62,7 +62,12 @@ public:
 
 		#ifdef GSYSC
         {
-            RENAME_PORT(config_input, (create_name<std::string, uint32_t>("p_conf_in",0)));
+        	size_t i=0;
+        	for(auto &con : config_parts){
+				REG_MODULE(con,
+                	cgra::create_name<std::string>(this->basename(), con.basename()),
+                	this);
+        	}
         }
 		#endif
 	}

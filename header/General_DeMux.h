@@ -13,6 +13,11 @@
 #include <iostream>
 #include "Typedef.h"
 
+#ifdef GSYSC
+#include "utils.hpp"
+#include <gsysc.h>
+#endif
+
 namespace cgra {
 
 /*!
@@ -63,6 +68,17 @@ public:
 
 		SC_METHOD(update);
 		sensitive << input.value_changed();
+
+		#ifdef GSYSC
+        {
+        	size_t i=0;
+        	for(auto &out : outputs){
+				REG_MODULE(out,
+                cgra::create_name<std::string>(this->basename(), out.basename()),
+                this);
+        	}
+        }
+		#endif
 
 		return;
 	}

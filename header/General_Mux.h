@@ -13,6 +13,11 @@
 #include <iostream>
 #include "Typedef.h"
 
+#ifdef GSYSC
+#include <gsysc.h>
+#include "utils.hpp"
+#endif
+
 namespace cgra {
 
 /*!
@@ -62,6 +67,12 @@ public:
 		sensitive << select.value_changed();
 		for(uint16_t idx = 0; N > idx; ++idx)
 			sensitive << inputs.at(idx).value_changed();
+			
+			#ifdef GSYSC
+			{
+            RENAME_PORT(inputs.at(idx), (create_name<std::string, uint32_t>("p_gen_in",idx)));
+        	}
+			#endif
 
 		return;
 	}
@@ -180,9 +191,13 @@ public:
 	{
 		SC_METHOD(multiplex);
 		sensitive << select.value_changed();
-		for(uint16_t idx = 0; N > idx; ++idx)
+		for(uint16_t idx = 0; N > idx; ++idx) {
 			sensitive << inputs.at(idx).value_changed();
 
+			#ifdef GSYSC
+            RENAME_PORT(inputs.at(idx), (create_name<std::string, uint32_t>("p_gen_in",idx)));
+			#endif
+		}
 		return;
 	}
 

@@ -18,6 +18,11 @@
 #include "Synchronizer.h"
 #include "Selector.h"
 
+#ifdef GSYSC
+#include "utils.hpp"
+#include <gsysc.h>
+#endif
+
 namespace cgra {
 /*!
  * \class VCGRA
@@ -103,7 +108,23 @@ public:
     /*!
      * \brief General constructor
      */
-    VCGRA(const sc_core::sc_module_name& nameA);
+    VCGRA(const sc_core::sc_module_name& nameA)
+    {
+        //Register gSysC modules
+        #ifdef GSYSC
+        for(auto& data_i : data_inputs){
+            REG_MODULE(data_i,
+                cgra::create_name<std::string>(this->basename(), data_i.basename()),
+                this);
+        }
+
+        for(auto& data_o : data_outputs){
+            REG_MODULE(data_o,
+                cgra::create_name<std::string>(this->basename(), data_o.basename()),
+                this);
+        }
+        #endif
+    };
     
     /*!
      * \brief Initialize output signals

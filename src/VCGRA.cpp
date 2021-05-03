@@ -8,6 +8,11 @@
 #include "VCGRA.h"
 #include <numeric>
 
+#ifdef GSYSC
+#include "utils.hpp"
+#include <gsysc.h>
+#endif
+
 namespace cgra {
 
 static constexpr uint32_t pe_unique_id_start_value{0};
@@ -31,27 +36,97 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
     m_input_channel_selector.config_input.bind(ch_config);
     m_input_channel_selector.config_parts.at(0).bind(s_input_ch_configuration);
     m_channel_selector.config_input.bind(ch_config);
+
+    #ifdef GSYSC
+        REG_PORT(m_input_channel_selector.config_input, 
+                 m_input_channel_selector, 
+                 ch_config);
+        REG_PORT(m_input_channel_selector.config_parts.at(0), 
+                 m_input_channel_selector, 
+                 s_input_ch_configuration);
+        REG_PORT(m_channel_selector.config_input, 
+                 m_channel_selector, 
+                 ch_config);
+    #endif
+
     for(uint32_t i = 0; m_channel_selector.config_parts.size() > i; ++i) {
         m_channel_selector.config_parts.at(i).bind(s_ch_configurations.at(i));}
+
+        #ifdef GSYSC
+        REG_PORT(m_channel_selector.config_parts.at(i), 
+                 m_channel_selector, 
+                 s_ch_configurations.at(i));
+        #endif
+
     m_sync_selector.config_input.bind(ch_config);
     m_sync_selector.config_parts.at(0).bind(s_sync_configuration);
     m_pe_config_demux.config_input.bind(pe_config);
+
+    #ifdef GSYSC
+        REG_PORT(m_sync_selector.config_input, 
+                 m_sync_selector, 
+                 ch_config);
+        REG_PORT(m_sync_selector.config_parts, 
+                 m_sync_selector, 
+                 s_sync_configuration);
+        REG_PORT(m_pe_config_demux.config_input, 
+                 m_pe_config_demux, 
+                 pe_config);
+    #endif
+
     for(uint32_t i = 0; m_pe_config_demux.config_parts.size() > i; ++i) {
         m_pe_config_demux.config_parts.at(i).bind(s_pe_configurations.at(i));}
+
+        #ifdef GSYSC
+        REG_PORT(m_pe_config_demux.config_parts.at(i), 
+                 m_pe_config_demux, 
+                 s_pe_configurations.at(i));
+        #endif
     
     //Connect Input Channel ports
     m_input_channel.clk.bind(clk);
     m_input_channel.rst.bind(rst);
     m_input_channel.conf.bind(s_input_ch_configuration);
+
+    #ifdef GSYSC
+        REG_PORT(m_input_channel.clk, 
+                 m_input_channel, 
+                 clk);
+        REG_PORT(m_input_channel.rst, 
+                 m_input_channel, 
+                 rst);
+        REG_PORT(m_input_channel.conf, 
+                 m_input_channel, 
+                 s_input_ch_configuration);
+    #endif
+
     for(uint32_t i = 0; cgra::cInputChannel_NumOfInputs > i; ++i)
     {
         m_input_channel.valids.at(i).bind(start);
         m_input_channel.channel_inputs.at(i).bind(data_inputs.at(i));
+
+        #ifdef GSYSC
+        REG_PORT(m_input_channel.valids.at(i), 
+                 m_input_channel, 
+                 start);
+        REG_PORT(m_input_channel.channel_inputs.at(i), 
+                 m_input_channel, 
+                 data_inputs.at(i));
+        #endif
     }
     for(uint32_t i = 0; cgra::cInputChannel_NumOfOutputs > i; ++i)
     {
         m_input_channel.enables.at(i).bind(s_enables.at(i));
         m_input_channel.channel_outputs.at(i).bind(s_pe_data_input_signals.at(i));
+
+        #ifdef GSYSC
+        REG_PORT(m_input_channel.enables.at(i), 
+                 m_input_channel, 
+                 s_enables.at(i));
+        REG_PORT(m_input_channel.channel_outputs.at(i), 
+                 m_input_channel, 
+                 s_pe_data_input_signals.at(i));
+        #endif
     }
     
     {
@@ -69,11 +144,28 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
             pe.in1.bind(s_pe_data_input_signals.at(t_in_idx++));
             pe.in2.bind(s_pe_data_input_signals.at(t_in_idx++));
             pe.valid.bind(s_pe_valid_signals.at(t_pe_idx));
+
+            #ifdef GSYSC
+            REG_PORT(pe.clk,          pe, clk);
+            REG_PORT(pe.conf,         pe, s_pe_configurations.at(t_pe_idx));
+            REG_PORT(pe.enable.at(0), pe, s_enables.at(t_en_idx++));
+            REG_PORT(pe.enable.at(1), pe, s_enables.at(t_en_idx++));
+            REG_PORT(pe.in1,          pe, s_pe_data_input_signals.at(t_in_idx++));
+            REG_PORT(pe.in2,          pe, s_pe_data_input_signals.at(t_in_idx++));
+            REG_PORT(pe.valid,        pe, s_pe_valid_signals.at(t_pe_idx));
+            #endif
+
             if((cgra::cNumOfPe - cgra::cPeLevels.back()) > t_pe_idx) {
                 pe.res.bind(s_pe_data_output_signals.at(t_pe_idx));
+                #ifdef GSYSC
+                REG_PORT(pe.res, pe, s_pe_data_output_signals.at(t_pe_idx));
+                #endif
             }
             else {
                 pe.res.bind(data_outputs.at(t_out_idx++));
+                #ifdef GSYSC
+                REG_PORT(pe.res, pe, data_outputs.at(t_out_idx++));
+                #endif
             }
             
             ++t_pe_idx;
@@ -89,7 +181,12 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
             vch.clk.bind(clk);
             vch.rst.bind(rst);
             vch.conf.bind(s_ch_configurations.at(t_ch_num));
-            
+
+            #ifdef GSYSC
+            REG_PORT(vch.clk,  vch, clk));
+            REG_PORT(vch.rst,  vch, rst);
+            REG_PORT(vch.conf, vch, s_ch_configurations.at(t_ch_num));
+            #endif
             
             for(uint16_t j = 0 , k = 0; cgra::cPeLevels.at(t_pe_level) > j; ++j, k += 2)
             {
@@ -113,6 +210,27 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
                     t_offset_out + k));
                 vch.enables.at(k + 1).bind(s_enables.at(
                     t_offset_out + k + 1));
+
+                    #ifdef GSYSC
+                    REG_PORT(vch.channel_inputs.at(j),  
+                             vch, 
+                             s_pe_data_output_signals.at(t_offset_in + j)));
+                    REG_PORT(vch.valids.at(j),  
+                             vch, 
+                             s_pe_valid_signals.at(t_offset_in + j));
+                    REG_PORT(vch.channel_outputs.at(k), 
+                             vch, 
+                             s_pe_data_input_signals.at(t_offset_out + k));
+                    REG_PORT(vch.channel_outputs.at(k + 1),  
+                             vch, 
+                             s_pe_data_input_signals.at(t_offset_out + k + 1));
+                    REG_PORT(vch.enables.at(k),  
+                             vch, 
+                             s_enables.at(t_offset_out + k));
+                    REG_PORT(vch.enables.at(k + 1),  
+                             vch, 
+                             s_enables.at(t_offset_out + k + 1));
+                    #endif
             }
             
             ++t_ch_num;
@@ -124,6 +242,13 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
     m_sync.clk.bind(clk);
     m_sync.conf.bind(s_sync_configuration);
     m_sync.ready.bind(ready);
+
+    #ifdef GSYSC
+    REG_PORT(m_sync.clk,   m_sync, clk);
+    REG_PORT(m_sync.conf,  m_sync, s_sync_configuration);
+    REG_PORT(m_sync.ready, m_sync, ready);
+    #endif
+
     for(uint32_t i = 0; cgra::cPeLevels.back() > i; ++i)
     {
         /*
@@ -133,6 +258,12 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
          */ 
         m_sync.valid_inputs.at(i).bind(s_pe_valid_signals.at((
             cgra::cNumOfPe - cgra::cPeLevels.back()) + i));
+        
+        #ifdef GSYSC
+        REG_PORT(m_sync.valid_inputs.at(i), 
+                 m_sync, 
+                 s_pe_valid_signals.at((cgra::cNumOfPe - cgra::cPeLevels.back()) + i));
+        #endif
     }
     
 }
