@@ -45,6 +45,7 @@ public:
 	typedef sc_dt::sc_lv<B> select_type_t;
 	//!< \brief Type for select port of demultiplexer
 
+#ifndef GSYSC
 	//Module ports
 	sc_core::sc_vector<sc_core::sc_out<value_type_t>> outputs{"OutputPorts", N};
 	//!< \brief These are the demultiplexed outputs of input data, selected by select-input.
@@ -52,6 +53,15 @@ public:
 	//!< \brief Select input to choose an output port for input data.
 	sc_core::sc_in<value_type_t> input{"input"};
 	//!< \brief Data input port which should be distributed to output consumers.
+#else
+	//Module ports
+    sc_core::sc_vector<sc_out<value_type_t>> outputs{"OutputPorts", N};
+	//!< \brief These are the demultiplexed outputs of input data, selected by select-input.
+	sc_in<select_type_t> select{"select"};
+	//!< \brief Select input to choose an output port for input data.
+	sc_in<value_type_t> input{"input"};
+	//!< \brief Data input port which should be distributed to output consumers.
+#endif
 
 	//Ctor
 	SC_HAS_PROCESS(General_DeMux);
@@ -68,17 +78,6 @@ public:
 
 		SC_METHOD(update);
 		sensitive << input.value_changed();
-
-		#ifdef GSYSC
-        {
-        	size_t i=0;
-        	for(auto &out : outputs){
-				REG_MODULE(out,
-                cgra::create_name<std::string>(this->basename(), out.basename()),
-                this);
-        	}
-        }
-		#endif
 
 		return;
 	}
