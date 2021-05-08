@@ -30,41 +30,6 @@ const std::vector<std::vector<uint8_t>> cChConfigs = {
 };
 //! Vector of channel configurations
 
-/**
- * @brief Bind signals of vectors
- *
- * @tparam T Type of input ports
- * @tparam G Type of output ports
- * @tparam U Type of signal to bind
- * @param p_inputs Reference to array of input ports
- * @param p_outputs Reference to array of output ports
- * @param p_signals Reference to array of signals
- */
-template <typename T, typename G, typename U> void array_bind(T &p_inputs, G &p_outputs, U &p_signals)
-{
-
-    if (p_inputs.size() == p_outputs.size() && p_signals.size() == p_inputs.size()) {
-        for (std::size_t iter = 0; iter < p_inputs.size(); ++iter) {
-            p_inputs.at(iter).bind(p_signals.at(iter));
-            p_outputs.at(iter).bind(p_signals.at(iter));
-
-            #ifdef GSYSC
-            RENAME_SIGNAL(p_signals.at(iter),
-                (cgra::create_name<std::string,uint32_t>("p_signals_", iter)));
-            REG_PORT(p_inputs.at(iter), 
-                     p_inputs, 
-                     p_signals.at(iter));
-            REG_PORT(p_outputs.at(iter), 
-                     p_outputs, 
-                     p_signals.at(iter));
-            #endif
-        }
-    }
-    else {
-        throw std::invalid_argument("Bounded arrays need to have the same sizes.");
-    }
-}
-
 } // namespace
 
 #ifdef GSYSC
@@ -91,6 +56,10 @@ int sc_main(int argc, char **argv)
 {
     cgra::Testbench testbench("vcgra_testbench", "../demo/lena.pgm");
     cgra::VCGRA vcgra("VCGRA_Instance");
+#ifdef GSYSC
+    REG_MODULE(&vcgra, const_cast<char*>(vcgra.basename()), nullptr);
+    REG_MODULE(&testbench, const_cast<char*>(testbench.basename()), nullptr);
+#endif
 
     // Load configurations into testbench
     for (auto &peConf : cPeConfigs) {
@@ -101,6 +70,7 @@ int sc_main(int argc, char **argv)
         testbench.appendChConfiguration(chConf);
     }
 
+#ifndef GSYSC
     // Signals
     sc_core::sc_clock s_clk("clk", 200, sc_core::SC_NS);
     sc_core::sc_signal<cgra::start_type_t> s_start("start");
@@ -111,6 +81,18 @@ int sc_main(int argc, char **argv)
     sc_core::sc_vector<sc_core::sc_signal<cgra::VCGRA::data_input_type_t>> s_inputs("inputs", vcgra.data_inputs.size());
     sc_core::sc_vector<sc_core::sc_signal<cgra::VCGRA::data_output_type_t>> s_outputs("outputs",
                                                                                       vcgra.data_outputs.size());
+#else
+    // Signals
+    sc_clock s_clk("clk", 200, SC_NS);
+    sc_signal<cgra::start_type_t> s_start("start");
+    sc_signal<cgra::reset_type_t> s_rst("rst");
+    sc_signal<cgra::ready_type_t> s_ready("ready");
+    sc_signal<cgra::pe_config_type_t> s_peConfig("peConfig");
+    sc_signal<cgra::ch_config_type_t> s_chConfig("chConfig");
+    sc_vector<sc_signal<cgra::VCGRA::data_input_type_t>> s_inputs("inputs", vcgra.data_inputs.size());
+    sc_vector<sc_signal<cgra::VCGRA::data_output_type_t>> s_outputs("outputs",
+                                                                                vcgra.data_outputs.size());
+#endif
 
     // Connect toplevel and testbench
     vcgra.clk.bind(s_clk);
@@ -127,44 +109,49 @@ int sc_main(int argc, char **argv)
     vcgra.ready.bind(s_ready);
 
     #ifdef GSYSC
-            RENAME_SIGNAL(s_clk,
+            RENAME_SIGNAL(&s_clk,
                 (cgra::create_name<std::string,uint32_t>("p_clk_", 0)));
-            RENAME_SIGNAL(s_peConfig,
+            RENAME_SIGNAL(&s_peConfig,
                 (cgra::create_name<std::string,uint32_t>("s_peConfig_", 0)));
-            RENAME_SIGNAL(s_chConfig,
+            RENAME_SIGNAL(&s_chConfig,
                 (cgra::create_name<std::string,uint32_t>("s_chConfig_", 0)));
-            RENAME_SIGNAL(s_start,
+            RENAME_SIGNAL(&s_start,
                 (cgra::create_name<std::string,uint32_t>("s_start_", 0)));
-            RENAME_SIGNAL(s_rst,
+            RENAME_SIGNAL(&s_rst,
                 (cgra::create_name<std::string,uint32_t>("s_rst_", 0)));
-            RENAME_SIGNAL(s_ready,
+            RENAME_SIGNAL(&s_ready,
                 (cgra::create_name<std::string,uint32_t>("s_ready_", 0)));
 
-            REG_PORT(vcgra.clk,           vcgra,     s_clk);
-            REG_PORT(testbench.clk,       testbench, s_clk);
-            REG_PORT(vcgra.pe_config,     vcgra,     s_peConfig);
-            REG_PORT(testbench.pe_config, testbench, s_peConfig);
-            REG_PORT(vcgra.ch_config,     vcgra,     s_chConfig);
-            REG_PORT(testbench.ch_config, testbench, s_chConfig);
-            REG_PORT(vcgra.start,         vcgra,     s_start);
-            REG_PORT(testbench.start,     testbench, s_start);
-            REG_PORT(vcgra.rst,           vcgra,     s_rst);
-            REG_PORT(testbench.rst,       testbench, s_rst);
-            REG_PORT(testbench.ready,     testbench, s_ready);
-            REG_PORT(vcgra.ready,         vcgra,     s_ready);
+            REG_PORT(&vcgra.clk,           &vcgra,     &s_clk);
+            REG_PORT(&testbench.clk,       &testbench, &s_clk);
+            REG_PORT(&vcgra.pe_config,     &vcgra,     &s_peConfig);
+            REG_PORT(&testbench.pe_config, &testbench, &s_peConfig);
+            REG_PORT(&vcgra.ch_config,     &vcgra,     &s_chConfig);
+            REG_PORT(&testbench.ch_config, &testbench, &s_chConfig);
+            REG_PORT(&vcgra.start,         &vcgra,     &s_start);
+            REG_PORT(&testbench.start,     &testbench, &s_start);
+            REG_PORT(&vcgra.rst,           &vcgra,     &s_rst);
+            REG_PORT(&testbench.rst,       &testbench, &s_rst);
+            REG_PORT(&testbench.ready,     &testbench, &s_ready);
+            REG_PORT(&vcgra.ready,         &vcgra,     &s_ready);
     #endif
 
-    try {
-        array_bind(vcgra.data_inputs, testbench.data_inputs, s_inputs);
-        array_bind(testbench.data_outputs, vcgra.data_outputs, s_outputs);
+    for (std::size_t iter = 0; iter < vcgra.data_inputs.size(); ++iter) {
+        vcgra.data_inputs.at(iter).bind(s_inputs.at(iter));
+        testbench.data_inputs.at(iter).bind(s_inputs.at(iter));
+#ifdef GSYSC
+        REG_PORT(&vcgra.data_inputs.at(iter), &vcgra, &s_inputs.at(iter));
+        REG_PORT(&testbench.data_inputs.at(iter), &testbench, &s_inputs.at(iter));
+#endif
     }
-    catch (const std::invalid_argument &e) {
-        std::cerr << e.what() << '\n';
-        return EXIT_FAILURE;
-    }
-    catch (...) {
-        std::cerr << "Unknown exception\n";
-        return EXIT_FAILURE;
+
+    for (std::size_t iter = 0; iter < vcgra.data_outputs.size(); ++iter) {
+        vcgra.data_outputs.at(iter).bind(s_outputs.at(iter));
+        testbench.data_outputs.at(iter).bind(s_outputs.at(iter));
+#ifdef GSYSC
+        REG_PORT(&vcgra.data_outputs.at(iter), &vcgra, &s_outputs.at(iter));
+        REG_PORT(&testbench.data_outputs.at(iter), &testbench, &s_outputs.at(iter));
+#endif
     }
 
     // create and setup trace file;
@@ -184,7 +171,11 @@ int sc_main(int argc, char **argv)
     }
 
     // Start simulation
+#ifndef GSYSC
     sc_core::sc_start();
+#else
+    sc_start();
+#endif
 
     // Write result image
     testbench.writeResultImagetoFile("./vcgra_only_result_image.pgm");
