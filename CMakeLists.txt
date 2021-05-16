@@ -13,7 +13,7 @@ OPTION (
   OFF
 )
 
-# Enable/disable McPAT statistic outputs to mcpat_stats.log file
+# Enable/disable GUI using gSysC
 OPTION (
   GSYSC_ENABLED
   "Enable gSysC GUI. Requires gSysC libary."
@@ -62,9 +62,10 @@ SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 FIND_PACKAGE (SystemC REQUIRED)
 
 IF(GSYSC_ENABLED)
-    find_package(GsysC)
-    set(CMAKE_AUTOMOC ON)
-    find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED )
+    FIND_PACKAGE (Threads REQUIRED)
+    FIND_PACKAGE(GsysC)
+    SET(CMAKE_AUTOMOC ON)
+    FIND_PACKAGE(Qt5 COMPONENTS Core Gui Widgets REQUIRED )
 ENDIF(GSYSC_ENABLED)
 
 ADD_SUBDIRECTORY (src/)
@@ -113,6 +114,7 @@ IF (GSYSC_ENABLED)
         PRIVATE Qt5Widget_INCLUDE_DIR)
     TARGET_LINK_LIBRARIES (vcgra_only
         PRIVATE ${GSYSC_LIBRARY}
+        PRIVATE Threads::Threads
         PRIVATE Qt5::Widgets)
     ADD_COMPILE_DEFINITIONS (GSYSC)
     TARGET_COMPILE_DEFINITIONS(vcgra_only
