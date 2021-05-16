@@ -40,12 +40,19 @@ public:
 	//!< \brief Type of input configuration vector
 	typedef sc_dt::sc_lv<L / N> configpart_type_t;
 	//!< \brief Select type for Demultiplexer input signals
-
+#ifndef GSYSC
 	//Entity ports:
 	sc_core::sc_in<config_type_t> config_input{"full_config_vector"};
 	//!< \brief Output port for corresponding selected input data
 	std::array<sc_core::sc_out<configpart_type_t>, N> config_parts;
 	//!< \brief std::array of configuration parts
+#else
+	//Entity ports:
+	sc_in<config_type_t> config_input{"full_config_vector"};
+	//!< \brief Output port for corresponding selected input data
+	std::array<sc_out<configpart_type_t>, N> config_parts;
+	//!< \brief std::array of configuration parts
+#endif
 
 	SC_HAS_PROCESS(Demultiplexer);
 	/*!
@@ -64,9 +71,8 @@ public:
         {
         	size_t i=0;
         	for(auto &con : config_parts){
-				REG_MODULE(con,
-                	cgra::create_name<std::string>(this->basename(), con.basename()),
-                	this);
+				RENAME_PORT(&con,
+                	(cgra::create_name<std::string, uint32_t>("p_config", i++)));
         	}
         }
 		#endif

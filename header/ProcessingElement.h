@@ -15,6 +15,11 @@
 #include <iomanip>
 #include "Typedef.h"
 
+#ifdef GSYSC
+#include <gsysc.h>
+#include "utils.hpp"
+#endif
+
 namespace cgra
 {
 
@@ -64,6 +69,7 @@ class Processing_Element : public sc_core::sc_module
 		BUF				//!< \brief Buffer Input one for one clock cycle
 	};
 
+#ifndef GSYSC
 	//interfaces
 	sc_core::sc_in<input_type_t> in1{"In1"};  			//!< \brief input one
 	sc_core::sc_in<input_type_t> in2{"In2"};   			//!< \brief input two
@@ -72,6 +78,16 @@ class Processing_Element : public sc_core::sc_module
 	std::array<sc_core::sc_in<enable_type_t>,2> enable; //!< \brief synchronization of inputs
 	sc_core::sc_out<output_type_t> res{"res"}; 			//!< \brief operation result
 	sc_core::sc_out<valid_type_t> valid{"valid"};		//!< \brief synchronization of output
+#else
+	//interfaces
+	sc_in<input_type_t> in1{"In1"};  			//!< \brief input one
+	sc_in<input_type_t> in2{"In2"};   			//!< \brief input two
+	sc_in<config_type_t> conf{"conf"};   		//!< \brief configuration of PE (operation)
+	sc_in<clock_type_t> clk{"clk"};			    //!< \brief clock
+	std::array<sc_in<enable_type_t>,2> enable;  //!< \brief synchronization of inputs
+	sc_out<output_type_t> res{"res"}; 			//!< \brief operation result
+	sc_out<valid_type_t> valid{"valid"};		//!< \brief synchronization of output
+#endif
 
 	//Constructor
 	SC_HAS_PROCESS(Processing_Element);

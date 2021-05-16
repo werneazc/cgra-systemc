@@ -65,6 +65,7 @@ public:
 	typedef sc_dt::sc_int<U> output_type_t;
 	//!< \brief Type of VirtualChannel data output
 
+#ifndef GSYSC
 	//Entity ports
 	sc_core::sc_in<clock_type_t> clk{"clk"};
 	//!< \brief Clock port of a VC
@@ -80,8 +81,28 @@ public:
 	//!< \brief Data outputs for all succeding PEs
 	std::array<sc_core::sc_out<enables_type_t>, T> enables;
 	//!< \brief Corresponding Enable signals for succeeding PEs
+#else
+	//Entity ports
+	sc_in<clock_type_t> clk{"clk"};
+	//!< \brief Clock port of a VC
+	sc_in<reset_type_t> rst{"rst"};
+	//!< \brief Reset VC buffers if rst equals false
+	std::array<sc_in<valid_type_t>, R > valids;
+	//!< \brief Input port for all valid signals of the preceding PEs
+	sc_in<conf_type_t> conf{"conf"};
+	//!< \brief Configuration bitstream for internal Multiplexers
+	std::array<sc_in<input_type_t>, R> channel_inputs;
+	//!< \brief Data inputs of all preceding PEs
+	std::array<sc_out<output_type_t>, T> channel_outputs;
+	//!< \brief Data outputs for all succeding PEs
+	std::array<sc_out<enables_type_t>, T> enables;
+	//!< \brief Corresponding Enable signals for succeeding PEs
+#endif
 
 private:
+	sc_core::sc_vector<mux_type_t> m_multiplexers{"Multiplexers", T};
+	//!< \brief Array of internal Multiplexers (# depends on # of outputs)
+#ifndef GSYSC
 	//Internal Signals
 	std::array<sc_core::sc_buffer<valid_type_t>, R> m_validBuffer;
 	//!< \brief Internal buffer for incoming valid-signals
@@ -91,10 +112,21 @@ private:
 	//!< \brief Internal buffers for data-inputs of a VC
 	std::array<sc_core::sc_buffer<internal_type_t>, T> m_outputBuffers;
 	//!< \brief Internal buffers for data-outputs of a VC
-	sc_core::sc_vector<mux_type_t> m_multiplexers{"Multiplexers", T};
-	//!< \brief Array of internal Multiplexers (# depends on # of outputs)
 	std::array<sc_core::sc_signal<select_type_t>, T> m_selectLines;
 	//!< \brief Select signals for every Multiplexer
+#else
+	//Internal Signals
+	std::array<sc_signal<valid_type_t>, R> m_validBuffer;
+	//!< \brief Internal buffer for incoming valid-signals
+	std::array<sc_signal<enables_type_t>, T> m_enablesBuffer;
+	//!< \brief Internal buffer for outgoing enable-signals
+	std::array<sc_signal<internal_type_t>, R> m_inputBuffers;
+	//!< \brief Internal buffers for data-inputs of a VC
+	std::array<sc_signal<internal_type_t>, T> m_outputBuffers;
+	//!< \brief Internal buffers for data-outputs of a VC
+	std::array<sc_signal<select_type_t>, T> m_selectLines;
+	//!< \brief Select buffers for every Multiplexer
+#endif
 
 public:
 	SC_HAS_PROCESS(VirtualChannel);
@@ -118,7 +150,7 @@ public:
 
 #ifdef GSYSC
         for(auto& mux : m_multiplexers){
-            REG_MODULE(mux,
+            REG_MODULE(&mux,
                 cgra::create_name<std::string>(this->basename(), mux.basename()),
                 this);
         }
@@ -138,15 +170,15 @@ public:
                         (cgra::create_name<std::string,uint32_t>("s_valid_", j)));
                 RENAME_SIGNAL(&m_inputBuffers[j],
                         (cgra::create_name<std::string,uint32_t>("s_input_", j)));
-                REG_PORT(&m_multiplexers[i].data_inputs[j], &m_multiplexers[i], m_inputBuffers[j]);
-                REG_PORT(&m_multiplexers[i].valid_inputs[j], &m_multiplexers[i],m_validBuffer[i]);
+                REG_PORT(&m_multiplexers[i].data_inputs[j], &m_multiplexers[i], &m_inputBuffers[j]);
+                REG_PORT(&m_multiplexers[i].valid_inputs[j], &m_multiplexers[i], &m_validBuffer[i]);
 #endif
 			}
 				m_multiplexers[i].select.bind(m_selectLines[i]);
 #ifdef GSYSC
                 RENAME_SIGNAL(&m_selectLines[i],
                         (cgra::create_name<std::string,uint32_t>("s_lines_", i)));
-                REG_PORT(&m_multiplexers[i].select, m_multiplexers[i], m_selectLines[i]);
+                REG_PORT(&m_multiplexers[i].select, &m_multiplexers[i], &m_selectLines[i]);
 #endif
 		}
 		//multiplexer to output-buffer connection
@@ -159,8 +191,8 @@ public:
                     (cgra::create_name<std::string,uint32_t>("s_output_", i)));
             RENAME_SIGNAL(&m_enablesBuffer[i],
                     (cgra::create_name<std::string,uint32_t>("s_enables_", i)));
-            REG_PORT(&m_multiplexers[i].sel_valid, &m_multiplexers[i], m_enablesBuffer[i]);
-            REG_PORT(&m_multiplexers[i].sel_data, &m_multiplexers[i], m_outputBuffers[i]);
+            REG_PORT(&m_multiplexers[i].sel_valid, &m_multiplexers[i], &m_enablesBuffer[i]);
+            REG_PORT(&m_multiplexers[i].sel_data, &m_multiplexers[i], &m_outputBuffers[i]);
 #endif
 		}
 
@@ -224,7 +256,7 @@ public:
 #ifdef MCPAT
 	/**
 	 * \brief Dump runtime statistics for McPAT simulation
-	 * 
+	 *
 	 * \param os Define used outstream [default: std::cout]
 	 */
 	void dumpMcpatStatistics(std::ostream& os = ::std::cout) const
@@ -245,7 +277,7 @@ public:
 	{
 
 #ifdef MCPAT
-		/* A virtual channel always changes its input and output buffer states. 
+		/* A virtual channel always changes its input and output buffer states.
 		 * Thus the component is always busy and has no idle state.
 		 */
 		++m_totalCycles;

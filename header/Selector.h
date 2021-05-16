@@ -6,6 +6,11 @@
 #include <iostream>
 #include <array>
 
+#ifdef GSYSC
+#include <gsysc.h>
+#include "utils.hpp"
+#endif
+
 namespace cgra {
 
 /*!
@@ -54,11 +59,19 @@ public:
 	typedef sc_dt::sc_lv<M> configpart_type_t;
 	//!< \brief Select type for Selector input signals
 
+#ifndef GSYSC
 	//Entity ports:
 	sc_core::sc_in<config_type_t> config_input{"full_config_vector"};
 	//!< \brief Output port for corresponding selected input data
 	std::array<sc_core::sc_out<configpart_type_t>, cgra::array_size(L, N, M)> config_parts;
 	//!< \brief std::array of configuration parts
+#else
+	//Entity ports:
+	sc_in<config_type_t> config_input{"full_config_vector"};
+	//!< \brief Output port for corresponding selected input data
+	std::array<sc_out<configpart_type_t>, cgra::array_size(L, N, M)> config_parts;
+	//!< \brief std::array of configuration parts
+#endif
 
 	SC_HAS_PROCESS(Selector);
 	/*!

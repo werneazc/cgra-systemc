@@ -34,6 +34,7 @@ public:
 	typedef sc_dt::sc_lv<N> config_type_t;
 	//!< \brief Type of configuration input signal
 
+#ifndef GSYSC
 	//Entity ports:
 	std::array<sc_core::sc_in<T>, N> valid_inputs;
 	//!< \brief Output port for corresponding selected input data
@@ -43,6 +44,17 @@ public:
 	//!< \brief Clock input
 	sc_core::sc_out<ready_type_t> ready{"ready"};
 	//!< \brief Synchronization output to indicate finished data processing
+#else
+	//Entity ports:
+	std::array<sc_in<T>, N> valid_inputs;
+	//!< \brief Output port for corresponding selected input data
+	sc_in<config_type_t> conf{"Configuration"};
+	//!< \brief configuration input
+	sc_in<clock_type_t> clk{"clk"};
+	//!< \brief Clock input
+	sc_out<ready_type_t> ready{"ready"};
+	//!< \brief Synchronization output to indicate finished data processing
+#endif
 
 	SC_HAS_PROCESS(Synchronizer);
 	/*!
@@ -82,7 +94,7 @@ public:
 #ifdef MCPAT
 	/**
 	 * \brief Dump runtime statistics for McPAT simulation
-	 * 
+	 *
 	 * \param os Define used outstream [default: std::cout]
 	 */
 	void dumpMcpatStatistics(std::ostream& os = ::std::cout) const
@@ -111,7 +123,7 @@ public:
 	void sync()
 	{
 #ifdef MCPAT
-		/* A synchronizer always updates its input and output buffer states. 
+		/* A synchronizer always updates its input and output buffer states.
 		 * Thus the component is always busy and has no idle state.
 		 */
 		++m_totalCycles;

@@ -42,6 +42,7 @@ public:
 	typedef sc_dt::sc_lv<L> select_type_t;
 	//!< \brief Select type for Multiplexer input signals
 
+#ifndef GSYSC
 	//Entity ports:
 	std::array<sc_core::sc_in<data_type_t>, K> data_inputs;
 	//!< \brief std::array of input ports for incoming mux data
@@ -53,7 +54,19 @@ public:
 	//!< \brief Output port for selected input data
 	sc_core::sc_out<data_type_t> sel_data{"selected_data"};
 	//!< \brief Output port for corresponding selected input data
-
+#else
+	//Entity ports:
+	std::array<sc_in<data_type_t>, K> data_inputs;
+	//!< \brief std::array of input ports for incoming mux data
+	std::array<sc_in<valid_type_t>, K> valid_inputs;
+	//!< \brief std::array of input ports for incoming valid signals
+	sc_in<select_type_t> select{"select"};
+	//!< \brief Select line to switch between data and valid inports
+	sc_out<valid_type_t> sel_valid{"selected_valid"};
+	//!< \brief Output port for selected input data
+	sc_out<data_type_t> sel_data{"selected_data"};
+	//!< \brief Output port for corresponding selected input data
+#endif
 
 	SC_HAS_PROCESS(Multiplexer);
 	/*!
@@ -72,11 +85,11 @@ public:
         {
         	size_t i=0;
         	for(auto &in : data_inputs){
-        	    RENAME_PORT(in, (create_name<std::string, uint32_t>("p_input",i++)));
+        	    RENAME_PORT(&in, (create_name<std::string, uint32_t>("p_input",i++)));
         	}
         	i=0;
         	for(auto &in : valid_inputs){
-        	    RENAME_PORT(in, (create_name<std::string, uint32_t>("p_valid_in",i++)));
+        	    RENAME_PORT(&in, (create_name<std::string, uint32_t>("p_valid_in",i++)));
         	}
         }
 		#endif
