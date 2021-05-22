@@ -6,10 +6,10 @@ install:
   - sudo ln -s /usr/bin/make /usr/bin/gmake
   - pushd /tmp/systemc-2.3.3 && mkdir objdir && cd objdir && ../configure --prefix=/tmp/systemc --with-unix-layout --enable-pthreads && gmake && sudo gmake install && popd
   - git clone https://github.com/werneazc/gsysc.git /tmp/gsysc
-  - mkdir -p /tmp/gsysc/build 
+  - mkdir -p /tmp/gsysc/build
   - pushd /tmp/gsysc && cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
   - cmake --build ./build -- -j2 && popd
- 
+
 jobs:
   include:
     os: linux
@@ -24,7 +24,7 @@ jobs:
         packages:
           - cmake
           - doxygen
-          - qtbase5-dev
+          - qt5-default
 
 script:
   - mkdir build
