@@ -1,4 +1,7 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 3.14)
+
+INCLUDE(cmake/Modules/PreventInSourceBuilds.cmake)
+
 PROJECT (
   cgra_systemc
   VERSION 0.1.1
