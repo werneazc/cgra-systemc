@@ -46,7 +46,7 @@ MARK_AS_ADVANCED(
   CMAKE_SHARED_LINKER_FLAGS_OPTIMIZED)
 # Update the documentation string of CMAKE_BUILD_TYPE for GUIs
 SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
-  "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel Maintainer."
+  "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel Optimized."
   FORCE)
 
 IF(CMAKE_CONFIGURATION_TYPES)
