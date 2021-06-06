@@ -28,7 +28,17 @@ jobs:
 
 script:
   - mkdir build
-  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles"
-  - cd build && cmake --build ./ --config Release --target vcgra_only -- -j2
-  - cmake --build ./ --config Release --target vcgra_prefetchers -- -j2
-  - cmake --build ./ --config Release --target full_architecture  -- -j2
+  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Optimized -G "Unix Makefiles"
+  - cmake --build ./build --target vcgra_only -- -j2
+  - cmake --build ./build  --target vcgra_prefetchers -- -j2
+  - cmake --build ./build --target full_architecture  -- -j2
+  - mkdir build_gui
+  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Optimized -DGSYSC_EMABLED -G "Unix Makefiles"
+  - cmake --build ./build_gui --target vcgra_only -- -j2
+  - cmake --build ./build_gui  --target vcgra_prefetchers -- -j2
+  - cmake --build ./build_gui --target full_architecture  -- -j2
+  - mkdir build_mcpat
+  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Optimized -DMCPAT_ENABLED -G "Unix Makefiles"
+  - cmake --build ./build_mcpat --target vcgra_only -- -j2
+  - cmake --build ./build_mcpat  --target vcgra_prefetchers -- -j2
+  - cmake --build ./build_mcpat --target full_architecture  -- -j2
