@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 3.14)
 
 INCLUDE(cmake/Modules/PreventInSourceBuilds.cmake)
+INCLUDE(cmake/Modules/CompilerWarnings.cmake)
 
 PROJECT (
   cgra_systemc
@@ -20,7 +21,7 @@ OPTION (
 OPTION (
   GSYSC_ENABLED
   "Enable gSysC GUI. Requires gSysC libary."
-  ON
+  OFF
 )
 
 # Create new compile target with small optimizations
@@ -71,80 +72,42 @@ IF(GSYSC_ENABLED)
     FIND_PACKAGE(Qt5 COMPONENTS Core Gui Widgets REQUIRED )
 ENDIF(GSYSC_ENABLED)
 
-ADD_SUBDIRECTORY (src/)
+# Link this 'library' to use the warnings specified in CompilerWarnings.cmake
+ADD_LIBRARY(project_warnings INTERFACE)
+# Standard compiler warnings
+set_project_warnings(project_warnings)
 
-# Create full_architecture with all its components
-ADD_EXECUTABLE (
-  full_architecture
-  src/sc_main.cpp
-  src/TopLevel.cpp
-  src/Testbench_TopLevel.cpp
-)
-TARGET_INCLUDE_DIRECTORIES (
-  full_architecture
-  PUBLIC header/
-  PRIVATE ${SYSTEMC_INCLUDE_DIRS}
-)
-TARGET_COMPILE_FEATURES (full_architecture PUBLIC cxx_std_14)
-TARGET_LINK_LIBRARIES (
-  full_architecture
-  PRIVATE COMPONENTS
-  PRIVATE "${SYSTEMC_LIBRARIES}"
-)
-IF (MCPAT_ENABLED)
-  ADD_COMPILE_DEFINITIONS (MCPAT)
-ENDIF (MCPAT_ENABLED)
 
 # Create VCGRA with all its components
-ADD_EXECUTABLE (vcgra_only src/vcgra_only.cpp src/testbench_vcgra_only.cpp)
-TARGET_INCLUDE_DIRECTORIES (
-  vcgra_only
-  PUBLIC header/
-  PRIVATE ${SYSTEMC_INCLUDE_DIRS}
+ADD_EXECUTABLE (vcgra_only
+    ""
 )
-TARGET_COMPILE_FEATURES (vcgra_only PUBLIC cxx_std_14)
-TARGET_LINK_LIBRARIES (
-  vcgra_only
-  PRIVATE COMPONENTS
-  PRIVATE "${SYSTEMC_LIBRARIES}"
+TARGET_LINK_LIBRARIES(vcgra_only
+    PRIVATE
+        project_warnings
 )
-IF (MCPAT_ENABLED)
-  ADD_COMPILE_DEFINITIONS (MCPAT)
-ENDIF (MCPAT_ENABLED)
-IF (GSYSC_ENABLED)
-    TARGET_INCLUDE_DIRECTORIES (vcgra_only
-        PUBLIC ${GSYSC_INCLUDE_DIR}
-        PRIVATE Qt5Widget_INCLUDE_DIR)
-    TARGET_LINK_LIBRARIES (vcgra_only
-        PRIVATE ${GSYSC_LIBRARY}
-        PRIVATE Threads::Threads
-        PRIVATE Qt5::Widgets)
-    ADD_COMPILE_DEFINITIONS (GSYSC)
-    TARGET_COMPILE_DEFINITIONS(vcgra_only
-        PRIVATE SC_USE_SC_STRING_OLD)
-ENDIF(GSYSC_ENABLED)
 
 # Create VCGRA and pre-fetchers with all its components
 ADD_EXECUTABLE (
   vcgra_prefetchers
-  src/TopLevel_VcgraPreloaders.cpp
-  src/Testbench_VcgraPreloaders.cpp
-  src/vcgra_prefetchers.cpp
+  ""
 )
-TARGET_INCLUDE_DIRECTORIES (
-  vcgra_prefetchers
-  PUBLIC header/
-  PRIVATE ${SYSTEMC_INCLUDE_DIRS}
+TARGET_LINK_LIBRARIES(vcgra_prefetchers
+    PRIVATE
+        project_warnings
 )
-TARGET_COMPILE_FEATURES (vcgra_prefetchers PUBLIC cxx_std_14)
-TARGET_LINK_LIBRARIES (
-  vcgra_prefetchers
-  PRIVATE COMPONENTS
-  PRIVATE "${SYSTEMC_LIBRARIES}"
+
+# Create full_architecture with all its components
+ADD_EXECUTABLE (
+  full_architecture
+  ""
 )
-IF (MCPAT_ENABLED)
-  ADD_COMPILE_DEFINITIONS (MCPAT)
-ENDIF (MCPAT_ENABLED)
+TARGET_LINK_LIBRARIES(full_architecture
+    PRIVATE
+        project_warnings
+)
+
+ADD_SUBDIRECTORY (src/)
 
 # Add doxygen documentation
 FIND_PACKAGE (Doxygen)
