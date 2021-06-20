@@ -27,18 +27,21 @@ jobs:
           - qt5-default
 
 script:
-  - mkdir build
-  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Optimized -G "Unix Makefiles"
+  - mkdir build{,_full}
+  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
   - cmake --build ./build --target vcgra_only -- -j2
   - cmake --build ./build  --target vcgra_prefetchers -- -j2
-  - cmake --build ./build --target full_architecture  -- -j2
-  - mkdir build_gui
-  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Optimized -DGSYSC_EMABLED -G "Unix Makefiles"
+  - cmake -B build_full -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles"
+  - cmake --build ./build_full --target full_architecture  -- -j2
+  - mkdir build_gui{,_full}
+  - cmake -B build_gui -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -DGSYSC_EMABLED -G "Unix Makefiles"
   - cmake --build ./build_gui --target vcgra_only -- -j2
   - cmake --build ./build_gui  --target vcgra_prefetchers -- -j2
-  - cmake --build ./build_gui --target full_architecture  -- -j2
-  - mkdir build_mcpat
-  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Optimized -DMCPAT_ENABLED -G "Unix Makefiles"
+  - cmake -B build_gui_full -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Debug -DGSYSC_EMABLED -G "Unix Makefiles"
+  - cmake --build ./build_gui_full --target full_architecture  -- -j2
+  - mkdir build_mcpat{,_full}
+  - cmake -B build_mcpat -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -DMCPAT_ENABLED -G "Unix Makefiles"
   - cmake --build ./build_mcpat --target vcgra_only -- -j2
   - cmake --build ./build_mcpat  --target vcgra_prefetchers -- -j2
-  - cmake --build ./build_mcpat --target full_architecture  -- -j2
+  - cmake -B build_mcpat_full -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -DMCPAT_ENABLED -G "Unix Makefiles"
+  - cmake --build ./build_mcpat_full --target full_architecture  -- -j2
