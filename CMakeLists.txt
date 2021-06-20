@@ -24,6 +24,13 @@ OPTION (
   OFF
 )
 
+#Enable/disable warnings
+OPTION (
+  WARNINGS_ENABLED
+  "Enable/disable warnings during compiling"
+  OFF
+)
+
 # Create new compile target with small optimizations
 SET (CMAKE_CXX_FLAGS_OPTIMIZED -O1 -DNGEBUG)
 SET(CMAKE_CXX_FLAGS_OPTIMIZED "-O1 -DNDEBUG" CACHE STRING
@@ -82,30 +89,36 @@ set_project_warnings(project_warnings)
 ADD_EXECUTABLE (vcgra_only
     ""
 )
+IF(WARNINGS_ENABLED)
 TARGET_LINK_LIBRARIES(vcgra_only
     PRIVATE
         project_warnings
 )
+ENDIF()
 
 # Create VCGRA and pre-fetchers with all its components
 ADD_EXECUTABLE (
   vcgra_prefetchers
   ""
 )
+IF(WARNINGS_ENABLED)
 TARGET_LINK_LIBRARIES(vcgra_prefetchers
     PRIVATE
         project_warnings
 )
+ENDIF()
 
 # Create full_architecture with all its components
 ADD_EXECUTABLE (
   full_architecture
   ""
 )
+IF(WARNINGS_ENABLED)
 TARGET_LINK_LIBRARIES(full_architecture
     PRIVATE
         project_warnings
 )
+ENDIF()
 
 ADD_SUBDIRECTORY (src/)
 
