@@ -43,5 +43,5 @@ script:
   - cmake -B build_mcpat -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -DMCPAT_ENABLED=ON -G "Unix Makefiles"
   - cmake --build ./build_mcpat --target vcgra_only -- -j2
   - cmake --build ./build_mcpat  --target vcgra_prefetchers -- -j2
-  - cmake -B build_mcpat_full -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -DMCPAT_ENABLED=ON -G "Unix Makefiles"
+  - cmake -B build_mcpat_full -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Debug -DMCPAT_ENABLED=ON -G "Unix Makefiles"
   - cmake --build ./build_mcpat_full --target full_architecture  -- -j2
