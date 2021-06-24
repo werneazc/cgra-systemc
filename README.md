@@ -52,12 +52,13 @@ and power.
 
 - [gSysC](https://github.com/werneazc/gsysc.git) library
 - Qt5 libraries installed at the development host-PC
-- Linux CMD-line variable `GSYSC_ROOT` pointing to the root directory of your gSysC clone.
+- Linux CMD-line variable `GSYSC_ROOT` pointing to the root directory of your gSysC clone and
+  `SYSTEMC_LIBRARIES` pointing to library file of SystemC. 
 
 ### Usability
 
 Please add the following option to your CMake configuration command: `DGSYSC_ENABLED=ON`.
 The project will be compiled with GUI support. If one of the compile [targets](#architecture-variants) is started
-from Linux CMD, the GUI opens automatically. On can browse the module hirarchy as well as
+from Linux CMD, the GUI opens automatically. One can browse the module hierarchy as well as
 performing a step-by-step simulation and observe the state of individual signals in a
 signal browser.
