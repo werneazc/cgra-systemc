@@ -13,7 +13,6 @@
 
 namespace cgra {
 
-
 /*!
  * \class Multiplexer
  *

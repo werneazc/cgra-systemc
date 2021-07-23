@@ -45,23 +45,23 @@ public:
 	typedef sc_dt::sc_lv<B> select_type_t;
 	//!< \brief Type for select port of demultiplexer
 
-#ifndef GSYSC
-	//Module ports
-	sc_core::sc_vector<sc_core::sc_out<value_type_t>> outputs{"OutputPorts", N};
-	//!< \brief These are the demultiplexed outputs of input data, selected by select-input.
-	sc_core::sc_in<select_type_t> select{"select"};
-	//!< \brief Select input to choose an output port for input data.
-	sc_core::sc_in<value_type_t> input{"input"};
-	//!< \brief Data input port which should be distributed to output consumers.
-#else
-	//Module ports
-    sc_core::sc_vector<sc_out<value_type_t>> outputs{"OutputPorts", N};
-	//!< \brief These are the demultiplexed outputs of input data, selected by select-input.
-	sc_in<select_type_t> select{"select"};
-	//!< \brief Select input to choose an output port for input data.
-	sc_in<value_type_t> input{"input"};
-	//!< \brief Data input port which should be distributed to output consumers.
-#endif
+	#ifndef GSYSC
+		//Module ports
+		sc_core::sc_vector<sc_core::sc_out<value_type_t>> outputs{"OutputPorts", N};
+		//!< \brief These are the demultiplexed outputs of input data, selected by select-input.
+		sc_core::sc_in<select_type_t> select{"select"};
+		//!< \brief Select input to choose an output port for input data.
+		sc_core::sc_in<value_type_t> input{"input"};
+		//!< \brief Data input port which should be distributed to output consumers.
+	#else
+		//Module ports
+	    sc_vector<sc_out<value_type_t>> outputs{"OutputPorts", N};
+		//!< \brief These are the demultiplexed outputs of input data, selected by select-input.
+		sc_in<select_type_t> select{"select"};
+		//!< \brief Select input to choose an output port for input data.
+		sc_in<value_type_t> input{"input"};
+		//!< \brief Data input port which should be distributed to output consumers.
+	#endif
 
 	//Ctor
 	SC_HAS_PROCESS(General_DeMux);
@@ -196,13 +196,23 @@ public:
 	typedef sc_dt::sc_lv<B> select_type_t;
 	//!< \brief Type for select port of demultiplexer
 
-	//Module ports
-	sc_core::sc_vector<sc_core::sc_out<value_type_t>> outputs{"OutputPorts", N};
-	//!< \brief These are the demultiplexed outputs of input data, selected by select-input.
-	sc_core::sc_in<select_type_t> select{"select"};
-	//!< \brief Select input to choose an output port for input data.
-	sc_core::sc_in<value_type_t> input{"input"};
-	//!< \brief Data input port which should be distributed to output consumers.
+	#ifndef GSYSC
+		//Module ports
+		sc_core::sc_vector<sc_core::sc_out<value_type_t>> outputs{"OutputPorts", N};
+		//!< \brief These are the demultiplexed outputs of input data, selected by select-input.
+		sc_core::sc_in<select_type_t> select{"select"};
+		//!< \brief Select input to choose an output port for input data.
+		sc_core::sc_in<value_type_t> input{"input"};
+		//!< \brief Data input port which should be distributed to output consumers.
+	#else
+		//Module ports
+	    sc_vector<sc_out<value_type_t>> outputs{"OutputPorts", N};
+		//!< \brief These are the demultiplexed outputs of input data, selected by select-input.
+		sc_in<select_type_t> select{"select"};
+		//!< \brief Select input to choose an output port for input data.
+		sc_in<value_type_t> input{"input"};
+		//!< \brief Data input port which should be distributed to output consumers.
+	#endif
 
 	//Ctor
 	SC_HAS_PROCESS(General_DeMux);

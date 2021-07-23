@@ -53,6 +53,21 @@ IF (MCPAT_ENABLED)
         PRIVATE
             MCPAT)
 ENDIF (MCPAT_ENABLED)
+IF (GSYSC_ENABLED)
+    TARGET_INCLUDE_DIRECTORIES (vcgra_prefetchers
+        PRIVATE ${GSYSC_INCLUDE_DIRS}
+        PRIVATE Qt5Widget_INCLUDE_DIR)
+    TARGET_LINK_LIBRARIES (vcgra_prefetchers
+        PRIVATE ${GSYSC_LIBRARY}
+        PRIVATE Threads::Threads
+        PRIVATE Qt5::Widgets)
+    TARGET_COMPILE_DEFINITIONS(vcgra_prefetchers
+        PRIVATE
+            GSYSC)
+    TARGET_COMPILE_DEFINITIONS(vcgra_prefetchers
+        PRIVATE SC_USE_SC_STRING_OLD)
+ENDIF(GSYSC_ENABLED)
+
 
 TARGET_SOURCES(full_architecture
     PRIVATE
@@ -77,3 +92,17 @@ IF (MCPAT_ENABLED)
         PRIVATE
             MCPAT)
 ENDIF (MCPAT_ENABLED)
+IF (GSYSC_ENABLED)
+    TARGET_INCLUDE_DIRECTORIES (full_architecture
+        PRIVATE ${GSYSC_INCLUDE_DIRS}
+        PRIVATE Qt5Widget_INCLUDE_DIR)
+    TARGET_LINK_LIBRARIES (full_architecture
+        PRIVATE ${GSYSC_LIBRARY}
+        PRIVATE Threads::Threads
+        PRIVATE Qt5::Widgets)
+    TARGET_COMPILE_DEFINITIONS(full_architecture
+        PRIVATE
+            GSYSC)
+    TARGET_COMPILE_DEFINITIONS(full_architecture
+        PRIVATE SC_USE_SC_STRING_OLD)
+ENDIF(GSYSC_ENABLED)

@@ -34,27 +34,27 @@ public:
 	typedef sc_dt::sc_lv<N> config_type_t;
 	//!< \brief Type of configuration input signal
 
-#ifndef GSYSC
-	//Entity ports:
-	std::array<sc_core::sc_in<T>, N> valid_inputs;
-	//!< \brief Output port for corresponding selected input data
-	sc_core::sc_in<config_type_t> conf{"Configuration"};
-	//!< \brief configuration input
-	sc_core::sc_in<clock_type_t> clk{"clk"};
-	//!< \brief Clock input
-	sc_core::sc_out<ready_type_t> ready{"ready"};
-	//!< \brief Synchronization output to indicate finished data processing
-#else
-	//Entity ports:
-	std::array<sc_in<T>, N> valid_inputs;
-	//!< \brief Output port for corresponding selected input data
-	sc_in<config_type_t> conf{"Configuration"};
-	//!< \brief configuration input
-	sc_in<clock_type_t> clk{"clk"};
-	//!< \brief Clock input
-	sc_out<ready_type_t> ready{"ready"};
-	//!< \brief Synchronization output to indicate finished data processing
-#endif
+	#ifndef GSYSC
+		//Entity ports:
+		std::array<sc_core::sc_in<T>, N> valid_inputs;
+		//!< \brief Output port for corresponding selected input data
+		sc_core::sc_in<config_type_t> conf{"Configuration"};
+		//!< \brief configuration input
+		sc_core::sc_in<clock_type_t> clk{"clk"};
+		//!< \brief Clock input
+		sc_core::sc_out<ready_type_t> ready{"ready"};
+		//!< \brief Synchronization output to indicate finished data processing
+	#else
+		//Entity ports:
+		std::array<sc_in<T>, N> valid_inputs;
+		//!< \brief Output port for corresponding selected input data
+		sc_in<config_type_t> conf{"Configuration"};
+		//!< \brief configuration input
+		sc_in<clock_type_t> clk{"clk"};
+		//!< \brief Clock input
+		sc_out<ready_type_t> ready{"ready"};
+		//!< \brief Synchronization output to indicate finished data processing
+	#endif
 
 	SC_HAS_PROCESS(Synchronizer);
 	/*!

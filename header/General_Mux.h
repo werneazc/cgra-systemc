@@ -45,13 +45,23 @@ public:
 	typedef sc_dt::sc_lv<B> select_type_t;
 	//!< \brief Type for select port of Multiplexer
 
-	//Module ports
-	sc_core::sc_vector<sc_core::sc_in<value_type_t>> inputs{"InputPorts", N};
-	//!< \brief These are the multiplexed inputs, selected by select-input.
-	sc_core::sc_in<select_type_t> select{"select"};
-	//!< \brief Select input to choose an input port for output data.
-	sc_core::sc_out<value_type_t> output{"output"};
-	//!< \brief Data output port
+	#ifndef GSYSC
+		//Module ports
+		sc_core::sc_vector<sc_core::sc_in<value_type_t>> inputs{"InputPorts", N};
+		//!< \brief These are the multiplexed inputs, selected by select-input.
+		sc_core::sc_in<select_type_t> select{"select"};
+		//!< \brief Select input to choose an input port for output data.
+		sc_core::sc_out<value_type_t> output{"output"};
+		//!< \brief Data output port
+	#else
+			//Module ports
+		sc_vector<sc_in<value_type_t>> inputs{"InputPorts", N};
+		//!< \brief These are the multiplexed inputs, selected by select-input.
+		sc_in<select_type_t> select{"select"};
+		//!< \brief Select input to choose an input port for output data.
+		sc_out<value_type_t> output{"output"};
+		//!< \brief Data output port
+	#endif
 
 	//Ctor
 	SC_HAS_PROCESS(General_Mux);
@@ -171,13 +181,23 @@ public:
 	typedef sc_dt::sc_lv<B> select_type_t;
 	//!< \brief Type for select port of Multiplexer
 
-	//Module ports
-	sc_core::sc_vector<sc_core::sc_in<value_type_t>> inputs{"InputPorts", N};
-	//!< \brief These are the multiplexed inputs, selected by select-input.
-	sc_core::sc_in<select_type_t> select{"select"};
-	//!< \brief Select input to choose an input port for data output.
-	sc_core::sc_out<value_type_t> output{"output"};
-	//!< \brief Data output port
+	#ifndef GSYSC
+		//Module ports
+		sc_core::sc_vector<sc_core::sc_in<value_type_t>> inputs{"InputPorts", N};
+		//!< \brief These are the multiplexed inputs, selected by select-input.
+		sc_core::sc_in<select_type_t> select{"select"};
+		//!< \brief Select input to choose an input port for output data.
+		sc_core::sc_out<value_type_t> output{"output"};
+		//!< \brief Data output port
+	#else
+			//Module ports
+		sc_vector<sc_in<value_type_t>> inputs{"InputPorts", N};
+		//!< \brief These are the multiplexed inputs, selected by select-input.
+		sc_in<select_type_t> select{"select"};
+		//!< \brief Select input to choose an input port for output data.
+		sc_out<value_type_t> output{"output"};
+		//!< \brief Data output port
+	#endif
 
 	//Ctor
 	SC_HAS_PROCESS(General_Mux);

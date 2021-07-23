@@ -181,13 +181,22 @@ private:
     VCGRA(VCGRA&& src) = delete;                    //!< \brief because move not implemented for sc_module
     VCGRA& operator=(VCGRA&& src) = delete;         //!< \brief because move not implemented for sc_module
 
-    //VCGRA component instances
-    sc_core::sc_vector<pe_type_t> m_pe_instances{"VCGRA_PEs",};
-    //!< \brief Array of PE instances of the current VCGRA
+    #ifndef GSYSC
+        //VCGRA component instances
+        sc_core::sc_vector<pe_type_t> m_pe_instances{"VCGRA_PEs",};
+        //!< \brief Array of PE instances of the current VCGRA
+        sc_core::sc_vector<channel_type_t> m_channel_instances{"VCGRA_Channels"};
+        //!< \brief Array of VirtualChannel instances of the current VCGRA
+    #else
+        //VCGRA component instances
+        sc_vector<pe_type_t> m_pe_instances{"VCGRA_PEs",};
+        //!< \brief Array of PE instances of the current VCGRA
+        sc_vector<channel_type_t> m_channel_instances{"VCGRA_Channels"};
+        //!< \brief Array of VirtualChannel instances of the current VCGRA
+    #endif
+
     input_channel_type_t m_input_channel{"Input_Channel"};
     //!< \brief VirtualChannel instance of the first level
-    sc_core::sc_vector<channel_type_t> m_channel_instances{"VCGRA_Channels"};
-    //!< \brief Array of VirtualChannel instances of the current VCGRA
     synchronizer_type_t m_sync{"VCGRA_Sync"};
     //!< \brief Synchronizer for VCGRA ready signal generation.
     demux_type_t m_pe_config_demux{"PE_config_Demux"};
