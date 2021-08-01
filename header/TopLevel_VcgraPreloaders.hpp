@@ -113,7 +113,7 @@ struct TopLevel : public sc_core::sc_module
     sc_in<reset_type_t> reset{"vcgra_reset"};
     //!< VCGRA reset signal
     sc_vector<sc_in<data_input_type_t>> data_inputs{"vcgra_data_inputs",
-                                                      gra::cInputChannel_NumOfInputs};
+                                                      cgra::cInputChannel_NumOfInputs};
     //!< VCGRA data inputs
     sc_out<ready_type_t> ready{"vcgra_ready"};
     sc_vector<sc_out<data_output_type_t>> data_outputs{"vcgra_data_outputs", cgra::cPeLevels.back()};

@@ -19,6 +19,26 @@
 #include "utils.hpp"
 #endif
 
+#ifdef GSYSC
+namespace cgra {
+//gSysC renaming vector
+//--------------------------------------------------
+
+/*!
+ * \var gsysc_renaming_strings
+ *
+ * \brief Stored pointer to strings for port and signal renaming
+ *
+ * \details
+ * gSysC ports and signals store its corresponding name as a pointer to a char-array.
+ * If a string name needs to be constructed dynamically, it needs to be stored somewhere during
+ * simulation run. The strings are constructed on the heap and the pointer to the char-arrays
+ * are stored within this vector. They are deleted at the end of the simulation run.
+ */
+std::vector<char*> gsysc_renaming_strings{};
+}
+#endif
+
 namespace
 {
 
@@ -77,7 +97,7 @@ int sc_main(int argc, char **argv)
     // Signals
     sc_core::sc_clock s_clk("clk", 200, sc_core::SC_NS);
 
-    #ifdef GSYSC
+    #ifndef GSYSC
         sc_core::sc_signal<cgra::start_type_t> s_start("start");
         sc_core::sc_signal<cgra::reset_type_t> s_rst("rst");
         sc_core::sc_signal<cgra::ready_type_t> s_ready("ready");
@@ -185,7 +205,7 @@ int sc_main(int argc, char **argv)
     }
 
     // Run simulation
-    #ifdef GSYSC
+    #ifndef GSYSC
         sc_core::sc_start();
     #else
         sc_start();
@@ -201,7 +221,7 @@ int sc_main(int argc, char **argv)
     toplevel.ch_config_prefetcher.dumpMcpatStatistics(fp_mcpatStats);
     fp_mcpatStats.close();
 #endif
- 
+
     // Close trace file
     sc_core::sc_close_vcd_trace_file(fp);
 
