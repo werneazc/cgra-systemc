@@ -16,7 +16,7 @@ template < uint32_t bitwidth = 32 >
 static std::string integer2binaryCstr(const uint32_t numberA)
 {
 	std::ostringstream t_value{};
-	
+
 	for(uint32_t idx = 0; bitwidth > idx; ++idx)
 	{
 		if((numberA>>idx)&1)
@@ -24,7 +24,7 @@ static std::string integer2binaryCstr(const uint32_t numberA)
 		else
 			t_value << '0';
 	}
-	
+
 	return t_value.str();
 }
 
@@ -67,7 +67,6 @@ ManagementUnit::ManagementUnit(const sc_core::sc_module_name& nameA,
 
 	//Store Assembler commands form source in program memory
 	uint64_t t_size;
-	//auto t_ptr = const_cast<CommandInterpreter::assembler_type_t*>(program_assemblyA);
 
 	//Limit program size to program memory.
 	if(sizeA > cgra::cProgramMemorySize)
@@ -80,7 +79,6 @@ ManagementUnit::ManagementUnit(const sc_core::sc_module_name& nameA,
 
 	for(uint64_t i = 0; t_size > i; ++i)
 		m_programMemory.at(i) = *(program_assemblyA + i);
-	//memcpy(m_programMemory.data(), t_ptr, t_size * sizeof(CommandInterpreter::assembler_type_t));
 
 	return;
 }
@@ -548,7 +546,7 @@ void ManagementUnit::show_finish_state()
 #ifdef MCPAT
 /**
  * \brief Dump runtime statistics for McPAT simulation
- * 
+ *
  * \param os Define used outstream [default: std::cout]
  */
 void ManagementUnit::dumpMcpatStatistics(std::ostream& os) const
