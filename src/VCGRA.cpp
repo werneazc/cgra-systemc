@@ -85,6 +85,10 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
         #endif
     }
 #ifdef GSYSC
+    //TODO: Using const_cast may result in undefined behavior, because Register function results in new Hierarchy
+    //object that stores only a pointer to the name chat is char* and that can be modified. Basename returns a
+    //pointer to a string.c_str array that results in UB if it is written to that location. It is better to write
+    //wrapper to store a copy of basename as a char* to overcome UB.
     REG_MODULE(&m_pe_config_demux, const_cast<char *>(m_pe_config_demux.basename()), this);
     REG_MODULE(&m_input_channel_selector, const_cast<char *>(m_input_channel_selector.basename()), this);
     REG_MODULE(&m_channel_selector, const_cast<char *>(m_channel_selector.basename()), this);
