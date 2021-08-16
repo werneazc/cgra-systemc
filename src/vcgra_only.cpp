@@ -110,7 +110,7 @@ int sc_main(int argc, char **argv)
 
     #ifdef GSYSC
             RENAME_SIGNAL(&s_clk,
-                (cgra::create_name<std::string,uint32_t>("p_clk_", 0)));
+                (cgra::create_name<std::string,uint32_t>("s_clk_", 0)));
             RENAME_SIGNAL(&s_peConfig,
                 (cgra::create_name<std::string,uint32_t>("s_peConfig_", 0)));
             RENAME_SIGNAL(&s_chConfig,
