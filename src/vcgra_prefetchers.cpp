@@ -173,68 +173,68 @@ int sc_main(int argc, char **argv)
     toplevel.ch_input_stream.bind(s_ch_input_stream);
     testbench.ch_input_stream.bind(s_ch_input_stream);
 
-        #ifdef GSYSC
-            RENAME_SIGNAL(&s_clk,
-                (cgra::create_name<std::string,uint32_t>("s_clk_", 0)));
-            RENAME_SIGNAL(&s_peConfig,
-                (cgra::create_name<std::string,uint32_t>("s_peConfig_", 0)));
-            RENAME_SIGNAL(&s_chConfig,
-                (cgra::create_name<std::string,uint32_t>("s_chConfig_", 0)));
-            RENAME_SIGNAL(&s_start,
-                (cgra::create_name<std::string,uint32_t>("s_start_", 0)));
-            RENAME_SIGNAL(&s_rst,
-                (cgra::create_name<std::string,uint32_t>("s_rst_", 0)));
-            RENAME_SIGNAL(&s_ready,
-                (cgra::create_name<std::string,uint32_t>("s_ready_", 0)));
-            RENAME_SIGNAL(&s_pe_write_enable,
-                (cgra::create_name<std::string,uint32_t>("s_pe_write_enable_", 0)));
-            RENAME_SIGNAL(&s_pe_ack,
-                (cgra::create_name<std::string,uint32_t>("s_pe_ack_", 0)));
-            RENAME_SIGNAL(&s_pe_slct_in,
-                (cgra::create_name<std::string,uint32_t>("s_pe_slct_in_", 0)));
-            RENAME_SIGNAL(&s_pe_slct_out,
-                (cgra::create_name<std::string,uint32_t>("s_pe_slct_out_", 0)));
-            RENAME_SIGNAL(&s_pe_input_stream,
-                (cgra::create_name<std::string,uint32_t>("s_pe_input_stream_", 0)));
-            RENAME_SIGNAL(&s_ch_write_enable,
-                (cgra::create_name<std::string,uint32_t>("s_ch_write_enable_", 0)));
-            RENAME_SIGNAL(&s_ch_ack,
-                (cgra::create_name<std::string,uint32_t>("s_ch_ack_", 0)));
-            RENAME_SIGNAL(&s_ch_slct_in,
-                (cgra::create_name<std::string,uint32_t>("s_ch_slct_in_", 0)));
-            RENAME_SIGNAL(&s_ch_slct_out,
-                (cgra::create_name<std::string,uint32_t>("s_ch_slct_out_", 0)));
-            RENAME_SIGNAL(&s_ch_input_stream,
-                (cgra::create_name<std::string,uint32_t>("s_ch_input_stream_", 0)));
+    #ifdef GSYSC
+        RENAME_SIGNAL(&s_clk,
+            (cgra::create_name<std::string,uint32_t>("s_clk_", 0)));
+        RENAME_SIGNAL(&s_peConfig,
+            (cgra::create_name<std::string,uint32_t>("s_peConfig_", 0)));
+        RENAME_SIGNAL(&s_chConfig,
+            (cgra::create_name<std::string,uint32_t>("s_chConfig_", 0)));
+        RENAME_SIGNAL(&s_start,
+            (cgra::create_name<std::string,uint32_t>("s_start_", 0)));
+        RENAME_SIGNAL(&s_rst,
+            (cgra::create_name<std::string,uint32_t>("s_rst_", 0)));
+        RENAME_SIGNAL(&s_ready,
+            (cgra::create_name<std::string,uint32_t>("s_ready_", 0)));
+        RENAME_SIGNAL(&s_pe_write_enable,
+            (cgra::create_name<std::string,uint32_t>("s_pe_write_enable_", 0)));
+        RENAME_SIGNAL(&s_pe_ack,
+            (cgra::create_name<std::string,uint32_t>("s_pe_ack_", 0)));
+        RENAME_SIGNAL(&s_pe_slct_in,
+            (cgra::create_name<std::string,uint32_t>("s_pe_slct_in_", 0)));
+        RENAME_SIGNAL(&s_pe_slct_out,
+            (cgra::create_name<std::string,uint32_t>("s_pe_slct_out_", 0)));
+        RENAME_SIGNAL(&s_pe_input_stream,
+            (cgra::create_name<std::string,uint32_t>("s_pe_input_stream_", 0)));
+        RENAME_SIGNAL(&s_ch_write_enable,
+            (cgra::create_name<std::string,uint32_t>("s_ch_write_enable_", 0)));
+        RENAME_SIGNAL(&s_ch_ack,
+            (cgra::create_name<std::string,uint32_t>("s_ch_ack_", 0)));
+        RENAME_SIGNAL(&s_ch_slct_in,
+            (cgra::create_name<std::string,uint32_t>("s_ch_slct_in_", 0)));
+        RENAME_SIGNAL(&s_ch_slct_out,
+            (cgra::create_name<std::string,uint32_t>("s_ch_slct_out_", 0)));
+        RENAME_SIGNAL(&s_ch_input_stream,
+            (cgra::create_name<std::string,uint32_t>("s_ch_input_stream_", 0)));
 
-            REG_PORT(&toplevel.clk,             &toplevel,     &s_clk);
-            REG_PORT(&toplevel.start,           &toplevel,     &s_start);
-            REG_PORT(&toplevel.rst,             &toplevel,     &s_rst);
-            REG_PORT(&toplevel.ready,           &toplevel,     &s_ready);
-            REG_PORT(&toplevel.pe_write_enable, &toplevel,     &s_pe_write_enable);
-            REG_PORT(&toplevel.pe_ack,          &toplevel,     &s_pe_ack);
-            REG_PORT(&toplevel.pe_slct_in,      &toplevel,     &s_pe_slct_in);
-            REG_PORT(&toplevel.pe_slct_out,     &toplevel,     &s_pe_slct_out);
-            REG_PORT(&toplevel.pe_input_stream, &toplevel,     &s_pe_input_stream);
-            REG_PORT(&toplevel.ch_write_enable, &toplevel,     &s_ch_write_enable);
-            REG_PORT(&toplevel.ch_ack,          &toplevel,     &s_ch_ack);
-            REG_PORT(&toplevel.ch_slct_in,      &toplevel,     &s_ch_slct_in);
-            REG_PORT(&toplevel.ch_slct_out,     &toplevel,     &s_ch_slct_out);
-            REG_PORT(&toplevel.ch_input_stream, &toplevel,     &s_ch_input_stream);
-            REG_PORT(&testbench.clk,             &testbench,     &s_clk);
-            REG_PORT(&testbench.start,           &testbench,     &s_start);
-            REG_PORT(&testbench.rst,             &testbench,     &s_rst);
-            REG_PORT(&testbench.ready,           &testbench,     &s_ready);
-            REG_PORT(&testbench.pe_write_enable, &testbench,     &s_pe_write_enable);
-            REG_PORT(&testbench.pe_ack,          &testbench,     &s_pe_ack);
-            REG_PORT(&testbench.pe_slct_in,      &testbench,     &s_pe_slct_in);
-            REG_PORT(&testbench.pe_slct_out,     &testbench,     &s_pe_slct_out);
-            REG_PORT(&testbench.pe_input_stream, &testbench,     &s_pe_input_stream);
-            REG_PORT(&testbench.ch_write_enable, &testbench,     &s_ch_write_enable);
-            REG_PORT(&testbench.ch_ack,          &testbench,     &s_ch_ack);
-            REG_PORT(&testbench.ch_slct_in,      &testbench,     &s_ch_slct_in);
-            REG_PORT(&testbench.ch_slct_out,     &testbench,     &s_ch_slct_out);
-            REG_PORT(&testbench.ch_input_stream, &testbench,     &s_ch_input_stream);
+        REG_PORT(&toplevel.clk,             &toplevel,     &s_clk);
+        REG_PORT(&toplevel.start,           &toplevel,     &s_start);
+        REG_PORT(&toplevel.rst,             &toplevel,     &s_rst);
+        REG_PORT(&toplevel.ready,           &toplevel,     &s_ready);
+        REG_PORT(&toplevel.pe_write_enable, &toplevel,     &s_pe_write_enable);
+        REG_PORT(&toplevel.pe_ack,          &toplevel,     &s_pe_ack);
+        REG_PORT(&toplevel.pe_slct_in,      &toplevel,     &s_pe_slct_in);
+        REG_PORT(&toplevel.pe_slct_out,     &toplevel,     &s_pe_slct_out);
+        REG_PORT(&toplevel.pe_input_stream, &toplevel,     &s_pe_input_stream);
+        REG_PORT(&toplevel.ch_write_enable, &toplevel,     &s_ch_write_enable);
+        REG_PORT(&toplevel.ch_ack,          &toplevel,     &s_ch_ack);
+        REG_PORT(&toplevel.ch_slct_in,      &toplevel,     &s_ch_slct_in);
+        REG_PORT(&toplevel.ch_slct_out,     &toplevel,     &s_ch_slct_out);
+        REG_PORT(&toplevel.ch_input_stream, &toplevel,     &s_ch_input_stream);
+        REG_PORT(&testbench.clk,             &testbench,     &s_clk);
+        REG_PORT(&testbench.start,           &testbench,     &s_start);
+        REG_PORT(&testbench.rst,             &testbench,     &s_rst);
+        REG_PORT(&testbench.ready,           &testbench,     &s_ready);
+        REG_PORT(&testbench.pe_write_enable, &testbench,     &s_pe_write_enable);
+        REG_PORT(&testbench.pe_ack,          &testbench,     &s_pe_ack);
+        REG_PORT(&testbench.pe_slct_in,      &testbench,     &s_pe_slct_in);
+        REG_PORT(&testbench.pe_slct_out,     &testbench,     &s_pe_slct_out);
+        REG_PORT(&testbench.pe_input_stream, &testbench,     &s_pe_input_stream);
+        REG_PORT(&testbench.ch_write_enable, &testbench,     &s_ch_write_enable);
+        REG_PORT(&testbench.ch_ack,          &testbench,     &s_ch_ack);
+        REG_PORT(&testbench.ch_slct_in,      &testbench,     &s_ch_slct_in);
+        REG_PORT(&testbench.ch_slct_out,     &testbench,     &s_ch_slct_out);
+        REG_PORT(&testbench.ch_input_stream, &testbench,     &s_ch_input_stream);
     #endif
 
     try {
