@@ -119,7 +119,7 @@ cgra::TopLevel::TopLevel(const sc_core::sc_module_name& nameA,
         REG_PORT(&pe_confCache.currentConfig, &pe_confCache, &s_pe_config);
         REG_PORT(&pe_confCache.dataInStream,  &pe_confCache, &s_config_cache_stream);
         REG_PORT(&pe_confCache.ack,           &pe_confCache, &s_acknowledges.at(MMU::CACHE_TYPE::CONF_PE));
-        REG_PORT(&pe_confCache.write,         &pe_confCache, &s_write_enables.at(MMU::CACHE_TYPE::CONF_PE));
+        REG_PORT(&pe_confCache.w§rite,         &pe_confCache, &s_write_enables.at(MMU::CACHE_TYPE::CONF_PE));
         REG_PORT(&pe_confCache.slt_in,        &pe_confCache, &s_pe_select_signals.first);
         REG_PORT(&pe_confCache.slt_out,       &pe_confCache, &s_pe_select_signals.second);
     #endif

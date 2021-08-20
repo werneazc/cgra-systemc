@@ -27,7 +27,7 @@ class TestBench_CC: public sc_core::sc_module {
 private:
 	typedef cgra::ConfigurationCache<cgra::VirtualChannel<4, 8, 8, 8, 2>::conf_type_t, 2, 4> cache_type_t;
 public:
-
+#ifndef GSYSC
 	//Entity Ports
 	sc_core::sc_in<cache_type_t::config_type_t> r_current_configuration{"current_configuration"};
 	//!< \brief Input for current configuration
@@ -43,6 +43,23 @@ public:
 	//!< \brief Clock
 	sc_core::sc_in<cache_type_t::ack_type_t> r_ack{"acknowledge"};
 	//!< \brief Synchronization for data stream exchange
+#else
+	//Entity Ports
+	sc_in<cache_type_t::config_type_t> r_current_configuration{"current_configuration"};
+	//!< \brief Input for current configuration
+	sc_out<cache_type_t::select_type_t> s_slt_in{"select_cache_input"};
+	//!< \brief Select Input Cache Line data stream saving
+	sc_out<cache_type_t::select_type_t> s_slt_out{"select_cache_out"};
+	//!< \brief Select Output Cache Line for configuration data
+	sc_out<cache_type_t::stream_type_t> s_stream_data_out{"stream_data_out"};
+	//!< \brief Data stream for configuration data
+	sc_out<cache_type_t::write_enable_type_t> s_write_enable{"write_enable"};
+	//!< \brief Write enable to store new configurations
+	sc_in<cache_type_t::clock_type_t> clk{"clk"};
+	//!< \brief Clock
+	sc_in<cache_type_t::ack_type_t> r_ack{"acknowledge"};
+	//!< \brief Synchronization for data stream exchange
+#endif
 
 	SC_HAS_PROCESS(TestBench_CC);
 	/*!

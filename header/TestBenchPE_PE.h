@@ -19,6 +19,7 @@ namespace cgra {
  */
 class TestBench_PE : public sc_core::sc_module {
 public:
+#ifndef GSYSC
 	//Entity ports:
 	sc_core::sc_out<sc_dt::sc_int<8>> s_in1{"s_In1"};
 	//!< \brief Input signal for operand one of a PE
@@ -32,6 +33,21 @@ public:
 	//!< \brief Output signal of a PE to mark current value as valid
 	sc_core::sc_out<sc_dt::sc_lv<4>> s_op{"s_op"};
 	//!< \brief Selects the operation of a PE
+#else
+	//Entity ports:
+	sc_out<sc_dt::sc_int<8>> s_in1{"s_In1"};
+	//!< \brief Input signal for operand one of a PE
+	sc_out<sc_dt::sc_int<8>> s_in2{"s_In2"};
+	//!< \brief Input signal for operand two of a PE
+	sc_in<sc_dt::sc_int<8>> s_res{"s_res"};
+	//!< \brief Output signal for result of a PE
+	std::array<sc_out<bool>,2> s_enable;
+	//!< \brief Input signals of a PE to mark an input as valid
+	sc_in<bool> s_valid{"s_valid"};
+	//!< \brief Output signal of a PE to mark current value as valid
+	sc_out<sc_dt::sc_lv<4>> s_op{"s_op"};
+	//!< \brief Selects the operation of a PE
+#endif
 
 	SC_HAS_PROCESS(TestBench_PE);
 	/*!

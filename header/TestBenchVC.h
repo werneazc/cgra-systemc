@@ -39,6 +39,7 @@ public:
 	typedef typename VirtualChannel<4, 8, 8, 8, 2>::input_type_t input_type_t;
 	typedef typename VirtualChannel<4, 8, 8, 8, 2>::output_type_t output_type_t;
 
+#ifndef GSYSC
 	//Entity Ports
 	sc_core::sc_out<conftype_t> s_config{"vcConfig"};
 	sc_core::sc_out<reset_type_t> s_rst{"reset"};
@@ -46,6 +47,15 @@ public:
 	std::array<sc_core::sc_in<output_type_t>, 8> r_outData;
 	std::array<sc_core::sc_out<input_type_t>, 4> s_inData;
 	std::array<sc_core::sc_out<valid_type_t>, 4> s_inValid;
+#else
+	//Entity Ports
+	sc_out<conftype_t> s_config{"vcConfig"};
+	sc_out<reset_type_t> s_rst{"reset"};
+	std::array<sc_in<enables_type_t>, 8> r_enables;
+	std::array<sc_in<output_type_t>, 8> r_outData;
+	std::array<sc_out<input_type_t>, 4> s_inData;
+	std::array<sc_out<valid_type_t>, 4> s_inValid;
+#endif
 
 	//Constructors
 	SC_HAS_PROCESS(TestBenchVC);

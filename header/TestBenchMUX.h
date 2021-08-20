@@ -25,6 +25,8 @@ namespace cgra {
  */
 class TestBench_MUX: public sc_core::sc_module {
 public:
+
+#ifndef GSYSC
 	//Entity Ports
 	sc_core::sc_in<Multiplexer<4,3>::data_type_t> r_sel_data{"selected_data"};
 	//!< \brief result of selected data input
@@ -36,7 +38,19 @@ public:
 	//!< \brief vector of mux-valid-stimuli-ports
 	sc_core::sc_out<Multiplexer<4,3>::select_type_t> s_select{"s_select"};
 	//!< \brief select stimuli for mux
-
+#else
+	//Entity Ports
+	sc_in<Multiplexer<4,3>::data_type_t> r_sel_data{"selected_data"};
+	//!< \brief result of selected data input
+	sc_in<Multiplexer<4,3>::valid_type_t> r_sel_valid{"selected_valid"};
+	//!< \brief result of selected valid input
+	std::array<sc_out<Multiplexer<4,3>::data_type_t>, 4> s_mux_in;
+	//!< \brief vector of mux-data-stimuli-ports
+	std::array<sc_out<Multiplexer<4,3>::valid_type_t>, 4> s_valid_in;
+	//!< \brief vector of mux-valid-stimuli-ports
+	sc_out<Multiplexer<4,3>::select_type_t> s_select{"s_select"};
+	//!< \brief select stimuli for mux
+#endif
 
 	//CTOR
 	SC_HAS_PROCESS(TestBench_MUX);
