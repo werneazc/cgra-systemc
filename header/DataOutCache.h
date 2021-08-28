@@ -76,6 +76,7 @@ public:
 	typedef sc_dt::sc_uint<cgra::calc_bitwidth(cgra::cMaxNumberOfValuesPerCacheLine)> select_value_type_t;
 	//!< \brief Select cache place in cache line to process data
 
+#ifndef GSYSC
 	//Entity Ports
 	std::array<sc_core::sc_in<value_type_t>, N> currentResults;
 	//!< \brief Last recent results from last PE level
@@ -95,7 +96,27 @@ public:
 	//!< \brief Data stream to shared memory
 	sc_core::sc_out<ack_type_t> ack{"acknowledge"};
 	//!< \brief Acknowledges the request of a new data to stream
-
+#else
+	//Entity Ports
+	std::array<sc_in<value_type_t>, N> currentResults;
+	//!< \brief Last recent results from last PE level
+	sc_in<update_type_t> update{"update"};
+	//!< \brief Rising edge stores new data in selected input cache line
+	sc_in<clock_type_t> clk{"clk"};
+	//!< \brief Clock of data cache
+	sc_in<load_enable_type_t> load{"load_new_value"};
+	//!< \brief If a positive edge occurs, datum from data-out-stream is copied into shared memory location
+	sc_in<select_lines_type_t> slt_in{"data_in_cache_line"};
+	//!< \brief Select cache line to store datum from data-out-stream
+	sc_in<select_value_type_t> slt_place{"data_place"};
+	//!< \brief Select current cache place for data out stream
+	sc_in<select_lines_type_t> slt_out{"data_out_cache_line"};
+	//!< \brief Select current cache line for data out stream.
+	sc_out<stream_type_t> dataOutStream{"data_out_stream"};
+	//!< \brief Data stream to shared memory
+	sc_out<ack_type_t> ack{"acknowledge"};
+	//!< \brief Acknowledges the request of a new data to stream
+#endif
 	//Ctor
 	SC_HAS_PROCESS(DataOutCache);
 	/*!

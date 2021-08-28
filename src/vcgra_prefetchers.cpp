@@ -75,9 +75,6 @@ template <typename T, typename G, typename U> void array_bind(T &p_inputs, G &p_
              #ifdef GSYSC
                 RENAME_SIGNAL(&p_signals.at(iter),
                     (cgra::create_name<std::string,uint32_t>("p_signal_", iter)));
-
-                REG_PORT(&p_inputs.at(iter), &p_inputs, &p_signals.at(iter));
-                REG_PORT(&p_outputs.at(iter), &p_outputs, &p_signals.at(iter));
             #endif
         }
     }
@@ -176,10 +173,6 @@ int sc_main(int argc, char **argv)
     #ifdef GSYSC
         RENAME_SIGNAL(&s_clk,
             (cgra::create_name<std::string,uint32_t>("s_clk_", 0)));
-        RENAME_SIGNAL(&s_peConfig,
-            (cgra::create_name<std::string,uint32_t>("s_peConfig_", 0)));
-        RENAME_SIGNAL(&s_chConfig,
-            (cgra::create_name<std::string,uint32_t>("s_chConfig_", 0)));
         RENAME_SIGNAL(&s_start,
             (cgra::create_name<std::string,uint32_t>("s_start_", 0)));
         RENAME_SIGNAL(&s_rst,
@@ -209,7 +202,7 @@ int sc_main(int argc, char **argv)
 
         REG_PORT(&toplevel.clk,             &toplevel,     &s_clk);
         REG_PORT(&toplevel.start,           &toplevel,     &s_start);
-        REG_PORT(&toplevel.rst,             &toplevel,     &s_rst);
+        REG_PORT(&toplevel.reset,           &toplevel,     &s_rst);
         REG_PORT(&toplevel.ready,           &toplevel,     &s_ready);
         REG_PORT(&toplevel.pe_write_enable, &toplevel,     &s_pe_write_enable);
         REG_PORT(&toplevel.pe_ack,          &toplevel,     &s_pe_ack);
@@ -223,7 +216,7 @@ int sc_main(int argc, char **argv)
         REG_PORT(&toplevel.ch_input_stream, &toplevel,     &s_ch_input_stream);
         REG_PORT(&testbench.clk,             &testbench,     &s_clk);
         REG_PORT(&testbench.start,           &testbench,     &s_start);
-        REG_PORT(&testbench.rst,             &testbench,     &s_rst);
+        REG_PORT(&testbench.reset,           &testbench,     &s_rst);
         REG_PORT(&testbench.ready,           &testbench,     &s_ready);
         REG_PORT(&testbench.pe_write_enable, &testbench,     &s_pe_write_enable);
         REG_PORT(&testbench.pe_ack,          &testbench,     &s_pe_ack);

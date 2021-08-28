@@ -74,6 +74,7 @@ public:
 	typedef sc_dt::sc_uint<cgra::calc_bitwidth(cgra::cMaxNumberOfValuesPerCacheLine)> select_value_type_t;
 	//!< \brief Select cache place in cache line to store data
 
+#ifndef GSYSC
 	//Entity Ports
 	sc_core::sc_in<stream_type_t> dataInStream{"data_in_stream"};
 	//!< \brief New data value to be stored in a cache line
@@ -91,6 +92,25 @@ public:
 	//!< \brief Currently set values to process
 	sc_core::sc_out<ack_type_t> ack{"acknowledge"};
 	//!< \brief Acknowledges the income of a new data-stream
+#else
+	//Entity Ports
+	sc_in<stream_type_t> dataInStream{"data_in_stream"};
+	//!< \brief New data value to be stored in a cache line
+	sc_in<clock_type_t> clk{"clk"};
+	//!< \brief Clock of data input cache
+	sc_in<write_enable_type_t> write{"write_new_value"};
+	//!< \brief If a positive edge occurs, datum from data-in-stream is copied into cache line
+	sc_in<select_lines_type_t> slt_in{"data_in_cache_line"};
+	//!< \brief Select cache line to store datum from data-in-stream
+	sc_in<select_value_type_t> slt_place{"data_place"};
+	//!< \brief Select current cache place for to store value at data in stream
+	sc_in<select_lines_type_t> slt_out{"data_out_cache_line"};
+	//!< \brief Select current cache line for current-data set
+	std::array<sc_out<value_type_t>, N> currentValues;
+	//!< \brief Currently set values to process
+	sc_out<ack_type_t> ack{"acknowledge"};
+	//!< \brief Acknowledges the income of a new data-stream
+#endif
 
 	//Ctor
 	SC_HAS_PROCESS(DataInCache);
