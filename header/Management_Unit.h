@@ -63,6 +63,8 @@ public:
 
 	//Entity Ports
 	//============
+
+#ifndef GSYSC
 	sc_core::sc_in<run_type_t> run{"run"};
 	//!< \brief ManagementUnit run port to start execution
 	sc_core::sc_out<finish_type_t> finish{"finish"};
@@ -95,6 +97,40 @@ public:
 	//!< \brief Select line outputs (select_in, select_out) for Processing_Element ConfigurationCache
 	std::pair<sc_core::sc_out<ch_cc_slct_type_t>, sc_core::sc_out<ch_cc_slct_type_t>> ch_cc_select_lines;
 	//!< \brief Select line outputs (select_in, select_out) for Processing_Element ConfigurationCache
+#else
+	sc_in<run_type_t> run{"run"};
+	//!< \brief ManagementUnit run port to start execution
+	sc_out<finish_type_t> finish{"finish"};
+	//!< \brief ManagementUnit finish port to indicate finish state
+	sc_in<pause_type_t> pause{"pause"};
+	//!< \brief ManagementUnit pause port to pause execution
+	sc_in<reset_type_t> rst{"reset"};
+	//!< \brief ManagementUnit reset port to restart execution
+	sc_in<clock_type_t> clk{"clock"};
+	//!< \brief ManagementUnit clock port
+	sc_in<ready_type_t> ready{"ready"};
+	//!< \brief (Synchronization) Ready signal port of VCGRA
+	sc_out<start_type_t> start{"start"};
+	//!< \brief (Synchronization) Start signal port for VCGRA
+	sc_out<address_type_t> address{"Address"};
+	//!< \brief Shared memory (start) address of data (sequence)
+	sc_out<place_type_t> place{"Place"};
+	//!< \brief Place in cache line to store data from or load data to
+	sc_out<MMU::cache_select_type_t> cache_select{"Cache_Select"};
+	//!< \brief Selection of source/target cache
+	sc_in<MMU::ready_type_t> mmu_ready{"MMU_Ready"};
+	//!< \brief If false, shared memory ready to process new command, else shared memory is processing.
+	sc_out<MMU::start_type_t> mmu_start{"MMU_start"};
+	//!< \brief If false, shared memory ready to process new command, else shared memory is processing.
+	std::pair<sc_out<dic_slct_type_t>, sc_out<dic_slct_type_t>> dic_select_lines;
+	//!< \brief Select line outputs (select_in, select_out) for DataInCache
+	std::pair<sc_out<doc_slct_type_t>, sc_out<doc_slct_type_t>> doc_select_lines;
+	//!< \brief Select line outputs (select_in, select_out) for DataOutCache
+	std::pair<sc_out<pe_cc_slct_type_t>, sc_out<pe_cc_slct_type_t>> pe_cc_select_lines;
+	//!< \brief Select line outputs (select_in, select_out) for Processing_Element ConfigurationCache
+	std::pair<sc_out<ch_cc_slct_type_t>, sc_out<ch_cc_slct_type_t>> ch_cc_select_lines;
+	//!< \brief Select line outputs (select_in, select_out) for Processing_Element ConfigurationCache
+#endif
 
 	//Methods
 	//=======

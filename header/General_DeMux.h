@@ -169,8 +169,13 @@ private:
 	General_DeMux& operator=(const General_DeMux& src) = delete; 	//!< \brief Because sc_module could not be copied
 	General_DeMux& operator=(General_DeMux&& src) = delete; 		//!< \brief Move semantic not implemented for sc_module
 
+#ifndef GSYSC
 	sc_core::sc_signal<select_type_t> m_latestSelect{"Latest_Select"};
 	//!< \brief Store latest select value to set latest output to zero for new selected value
+#else
+	sc_signal<select_type_t> m_latestSelect{"Latest_Select"};
+	//!< \brief Store latest select value to set latest output to zero for new selected value
+#endif
 
 }; /* end module General_DeMux */
 
@@ -316,8 +321,13 @@ private:
 	General_DeMux& operator=(const General_DeMux& src) = delete; 	//!< \brief Because sc_module could not be copied
 	General_DeMux& operator=(General_DeMux&& src) = delete; 		//!< \brief Move semantic not implemented for sc_module
 
+#ifndef GSYSC
 	sc_core::sc_signal<select_type_t> m_latestSelect{"Latest_Select"};
 	//!< \brief Store latest select value to set latest output to zero for new selected value
+#else
+	sc_signal<select_type_t> m_latestSelect{"Latest_Select"};
+	//!< \brief Store latest select value to set latest output to zero for new selected value
+#endif
 
 }; /* end module General_DeMux boolean*/
 

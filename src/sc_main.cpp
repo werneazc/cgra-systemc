@@ -163,11 +163,19 @@ int sc_main(int argc, char* arcv[])
 //#############################################################################
 
     //signals
+#ifndef GSYSC
      sc_core::sc_clock clk{"clk", 200, sc_core::SC_NS};
      sc_core::sc_signal<cgra::TopLevel::run_type_t> run{"run", true};
      sc_core::sc_signal<cgra::TopLevel::reset_type_t> rst{"rst", false};
      sc_core::sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"};
      sc_core::sc_signal<cgra::TopLevel::pause_type_t> pause{"pause", false};
+#else
+     sc_clock clk{"clk", 200, SC_NS};
+     sc_signal<cgra::TopLevel::run_type_t> run{"run"}; 
+     sc_signal<cgra::TopLevel::reset_type_t> rst{"rst"}; 
+     sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"}; 
+     sc_signal<cgra::TopLevel::pause_type_t> pause{"pause"}; 
+#endif
 
 //#############################################################################
 
@@ -267,7 +275,11 @@ int sc_main(int argc, char* arcv[])
   }
 
   // Run simulation
-  sc_core::sc_start(750, sc_core::SC_MS);
+  #ifndef GSYSC
+	sc_core::sc_start(750, sc_core::SC_MS);
+  #else
+	gsys_start(750);
+  #endif
 
   {
       std::array<int16_t, 62*62> t_result;

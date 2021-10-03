@@ -53,6 +53,7 @@ public:
 	typedef sc_dt::sc_uint<cgra::calc_bitwidth(cMaxNumberOfValuesPerCacheLine)> cache_place_type_t;
 	//!< \brief Data type for place signal lines to data caches
 
+#ifndef GSYSC
 	sc_core::sc_in<address_type_t> address{"Address"};
 	//!< \brief Shared memory address to load from/store to data
 	sc_core::sc_in<place_type_t> place{"Place"};
@@ -77,6 +78,32 @@ public:
 	//!< \brief Selected Cache place in data input/output caches.
 	sc_core::sc_in<clock_type_t> clk{"clock"};
 	//!< \brief System clock input
+#else
+	sc_in<address_type_t> address{"Address"};
+	//!< \brief Shared memory address to load from/store to data
+	sc_in<place_type_t> place{"Place"};
+	//!< \brief Cache line place in target cache
+	sc_in<cache_select_type_t> cache_select{"Cache_Select"};
+	//!< \brief Cache selection for latest operation
+	sc_in<start_type_t> start{"Start"};
+	//!< \brief A positive edge at this port starts a new operation sequence
+	sc_out<ready_type_t> ready{"Ready"};
+	//!< \brief Signal to show current processing; Ready for new command if false
+	sc_out<write_type_t> write_enable{"Write_Enable"};
+	//!< \brief Signal to load streamed data into a cache location
+	sc_in<ack_type_t> ack{"acknowledge"};
+	//!< \brief Signal acknowledge a valid cache transmission
+	sc_out<conf_stream_type_t> conf_cache_stream{"Conf_Cache_Stream"};
+	//!< \brief Configuration data stream to configuration caches
+	sc_out<data_stream_type_t> data_value_out_stream{"Data_Value_Out_Stream"};
+	//!< \brief Data value out stream to data input caches of VCGRA
+	sc_in<data_stream_type_t> data_value_in_stream{"Data_Value_In_Stream"};
+	//!< \brief Data value in stream from data output caches of VCGRA
+	sc_out<cache_place_type_t> cache_place{"Slct_Cache_Place"};
+	//!< \brief Selected Cache place in data input/output caches.
+	sc_in<clock_type_t> clk{"clock"};
+	//!< \brief System clock input
+#endif
 
 
 	/*! Definition of operating cache types */

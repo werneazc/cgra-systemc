@@ -45,15 +45,15 @@ public:
 	//!< \brief Output for command to process
 #else
 	//Entity ports
-	sc_in<assembler_type_t> assembler{"Assembler_Command_In"};
+	gsys_in<assembler_type_t> assembler{"Assembler_Command_In"};
 	//!< \brief Input port for Assembler Command
-	sc_out<address_type_t> address{"Address_Out"};
+	gsys_out<address_type_t> address{"Address_Out"};
 	//!< \brief Output for shared memory address
-	sc_out<line_type_t> line{":Line_Out"};
+	gsys_out<line_type_t> line{":Line_Out"};
 	//!< \brief Output for cache line
-	sc_out<place_type_t> place{"Place_Out"};
+	gsys_out<place_type_t> place{"Place_Out"};
 	//!< \brief Output for place in cache line
-	sc_out<command_type_t> command{"Command_Out"};
+	gsys_out<command_type_t> command{"Command_Out"};
 	//!< \brief Output for command to process
 #endif
 

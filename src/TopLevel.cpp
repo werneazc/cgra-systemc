@@ -52,7 +52,7 @@ cgra::TopLevel::TopLevel(const sc_core::sc_module_name& nameA,
         REG_PORT(&mu.clk,             &mu,             &clk);
         REG_PORT(&vcgra.rst,          &vcgra,          &rst);
         REG_PORT(&mu.rst,             &mu,             &rst);
-        REG_PORT(&mu.run,             &mu,             &rin);
+        REG_PORT(&mu.run,             &mu,             &run);
         REG_PORT(&mu.pause,           &mu,             &pause);
         REG_PORT(&mu.finish,          &mu,             &finish);
     #endif
@@ -80,7 +80,7 @@ cgra::TopLevel::TopLevel(const sc_core::sc_module_name& nameA,
         REG_PORT(&vcgra.pe_config, &vcgra, &s_pe_config);
     #endif
 
-    for(uint16_t idx = 0; 2 * cgra::cPeLevels.front() > idx; ++idx)
+    for(uint16_t idx = 0; 2 * cgra::cPeLevels.front() > idx; ++idx){
         vcgra.data_inputs.at(idx).bind(s_vcgra_data_inputs.at(idx));
         #ifdef GSYSC
             RENAME_SIGNAL(&s_vcgra_data_inputs.at(idx),
@@ -88,7 +88,8 @@ cgra::TopLevel::TopLevel(const sc_core::sc_module_name& nameA,
 
             REG_PORT(&vcgra.data_inputs, &vcgra, &s_vcgra_data_inputs.at(idx));
         #endif
-    for(uint16_t idx = 0; cgra::cPeLevels.back() > idx; ++idx)
+    }
+    for(uint16_t idx = 0; cgra::cPeLevels.back() > idx; ++idx) {
         vcgra.data_outputs.at(idx).bind(s_vcgra_data_outputs.at(idx));
         #ifdef GSYSC
             RENAME_SIGNAL(&s_vcgra_data_outputs.at(idx),
@@ -96,6 +97,7 @@ cgra::TopLevel::TopLevel(const sc_core::sc_module_name& nameA,
     
             REG_PORT(&vcgra.data_outputs, &vcgra, &s_vcgra_data_outputs.at(idx));
         #endif
+    }
     
     //PE configuration Cache
     pe_confCache.currentConfig.bind(s_pe_config);
@@ -119,7 +121,7 @@ cgra::TopLevel::TopLevel(const sc_core::sc_module_name& nameA,
         REG_PORT(&pe_confCache.currentConfig, &pe_confCache, &s_pe_config);
         REG_PORT(&pe_confCache.dataInStream,  &pe_confCache, &s_config_cache_stream);
         REG_PORT(&pe_confCache.ack,           &pe_confCache, &s_acknowledges.at(MMU::CACHE_TYPE::CONF_PE));
-        REG_PORT(&pe_confCache.w§rite,         &pe_confCache, &s_write_enables.at(MMU::CACHE_TYPE::CONF_PE));
+        REG_PORT(&pe_confCache.write,         &pe_confCache, &s_write_enables.at(MMU::CACHE_TYPE::CONF_PE));
         REG_PORT(&pe_confCache.slt_in,        &pe_confCache, &s_pe_select_signals.first);
         REG_PORT(&pe_confCache.slt_out,       &pe_confCache, &s_pe_select_signals.second);
     #endif
@@ -181,11 +183,12 @@ cgra::TopLevel::TopLevel(const sc_core::sc_module_name& nameA,
         REG_PORT(&data_out_cache.slt_place,     &data_out_cache, &s_cache_place);
     #endif
 
-    for(uint16_t idx = 0; cgra::cPeLevels.back() > idx; ++idx)
+    for(uint16_t idx = 0; cgra::cPeLevels.back() > idx; ++idx) {
         data_out_cache.currentResults.at(idx).bind(s_vcgra_data_outputs.at(idx));
         #ifdef GSYSC
             REG_PORT(&data_out_cache.currentResults, &data_out_cache, &s_vcgra_data_outputs.at(idx));
         #endif
+    }
     
     //Data Input Cache
     data_in_cache.ack.bind(s_acknowledges.at(MMU::CACHE_TYPE::DATA_INPUT));
@@ -305,14 +308,6 @@ cgra::TopLevel::TopLevel(const sc_core::sc_module_name& nameA,
     we_dmux.outputs.at(MMU::CACHE_TYPE::DATA_INPUT).bind(s_write_enables.at(MMU::CACHE_TYPE::DATA_INPUT));
     we_dmux.outputs.at(MMU::CACHE_TYPE::DATA_OUTPUT).bind(s_write_enables.at(MMU::CACHE_TYPE::DATA_OUTPUT));
     we_dmux.select.bind(s_cache_select);
-    #ifdef GSYSC
-        REG_PORT(&we_dmux.input,                                    &we_dmux, &s_write_enables.at(MMU::CACHE_TYPE::NONE));
-        REG_PORT(&we_dmux.outputs.at(MMU::CACHE_TYPE::CONF_PE),     &we_dmux, &s_write_enables.at(MMU::CACHE_TYPE::CONF_PE));
-        REG_PORT(&we_dmux.outputs.at(MMU::CACHE_TYPE::CONF_CC),     &we_dmux, &s_write_enables.at(MMU::CACHE_TYPE::CONF_CC));
-        REG_PORT(&we_dmux.outputs.at(MMU::CACHE_TYPE::DATA_INPUT),  &we_dmux, &s_write_enables.at(MMU::CACHE_TYPE::DATA_INPUT));
-        REG_PORT(&we_dmux.outputs.at(MMU::CACHE_TYPE::DATA_OUTPUT), &we_dmux, &s_write_enables.at(MMU::CACHE_TYPE::DATA_OUTPUT));
-        REG_PORT(&we_dmux.select,                                   &we_dmux, &s_cache_select);
-    #endif
     
     //Ack MUX
     ack_mux.output.bind(s_acknowledges.at(MMU::CACHE_TYPE::NONE));
@@ -321,14 +316,6 @@ cgra::TopLevel::TopLevel(const sc_core::sc_module_name& nameA,
     ack_mux.inputs.at(MMU::CACHE_TYPE::DATA_INPUT).bind(s_acknowledges.at(MMU::CACHE_TYPE::DATA_INPUT));
     ack_mux.inputs.at(MMU::CACHE_TYPE::DATA_OUTPUT).bind(s_acknowledges.at(MMU::CACHE_TYPE::DATA_OUTPUT));
     ack_mux.select.bind(s_cache_select);
-    #ifdef GSYSC
-        REG_PORT(&ack_mux.output,                                  &ack_mux, &s_acknowledges.at(MMU::CACHE_TYPE::NONE));
-        REG_PORT(&ack_mux.inputs.at(MMU::CACHE_TYPE::CONF_PE),     &ack_mux, &s_acknowledges.at(MMU::CACHE_TYPE::CONF_PE));
-        REG_PORT(&ack_mux.inputs.at(MMU::CACHE_TYPE::CONF_CC),     &ack_mux, &s_acknowledges.at(MMU::CACHE_TYPE::CONF_CC));
-        REG_PORT(&ack_mux.inputs.at(MMU::CACHE_TYPE::DATA_INPUT),  &ack_mux, &s_acknowledges.at(MMU::CACHE_TYPE::DATA_INPUT));
-        REG_PORT(&ack_mux.inputs.at(MMU::CACHE_TYPE::DATA_OUTPUT), &ack_mux, &s_acknowledges.at(MMU::CACHE_TYPE::DATA_OUTPUT));
-        REG_PORT(&ack_mux.select,                                  &ack_mux, &s_cache_select);
-    #endif
 
     return;
 }

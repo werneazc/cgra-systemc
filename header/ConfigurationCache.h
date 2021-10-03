@@ -82,6 +82,8 @@ public:
 	//!< \brief Acknowledge data type
 
 	//Entity Ports
+
+#ifndef GSYSC
 	sc_core::sc_in<stream_type_t> dataInStream{"data_in_stream"};
 	//!< \brief New configuration data to be stored in a cache line
 	sc_core::sc_in<clock_type_t> clk{"clk"};
@@ -96,6 +98,22 @@ public:
 	//!< \brief Currently set configuration
 	sc_core::sc_out<ack_type_t> ack{"acknowledge"};
 	//!< \brief Acknowledges the income of a new data-stream
+#else
+	sc_in<stream_type_t> dataInStream{"data_in_stream"};
+	//!< \brief New configuration data to be stored in a cache line
+	sc_in<clock_type_t> clk{"clk"};
+	//!< \brief Clock of configuration cache
+	sc_in<write_enable_type_t> write{"write_new_cache_line"};
+	//!< \brief If a positive edge occurs, datum from data-in-stream is copied into cache line
+	sc_in<select_type_t> slt_in{"data_in_cache_line"};
+	//!< \brief Select cache line to store datum from data-in-stream
+	sc_in<select_type_t> slt_out{"data_out_cache_line"};
+	//!< \brief Select current cache line for current-configuration
+	sc_out<config_type_t> currentConfig{"current_configuration"};
+	//!< \brief Currently set configuration
+	sc_out<ack_type_t> ack{"acknowledge"};
+	//!< \brief Acknowledges the income of a new data-stream
+#endif
 
 	//Ctor
 	SC_HAS_PROCESS(ConfigurationCache);
