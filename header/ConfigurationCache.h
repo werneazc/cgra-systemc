@@ -14,8 +14,14 @@
 #include <iostream>
 #include <iomanip>
 #include "Typedef.h"
+
 #ifdef MCPAT
 #include "McPatCacheAccessCounter.hpp"
+#endif
+
+#ifdef GSYSC
+#include <gsysc.h>
+#include "utils.hpp"
 #endif
 
 namespace cgra {

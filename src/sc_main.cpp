@@ -14,6 +14,11 @@
 #include "Testbench_TopLevel.h"
 #include "Assembler.hpp"
 
+#ifdef GSYSC
+#include <gsysc.h>
+#include "utils.hpp"
+#endif
+
 namespace {
 
 /*!
