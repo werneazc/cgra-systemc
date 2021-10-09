@@ -134,7 +134,7 @@ bool writePgm(const std::string& file_p, const int16_t* image, const uint32_t si
 
 } // namespace
 
-int sc_main(int argc, char* arcv[])
+int sc_main(int argc, char* argv[])
 {
 
 //#############################################################################
@@ -283,7 +283,7 @@ int sc_main(int argc, char* arcv[])
   #ifndef GSYSC
 	sc_core::sc_start(750, sc_core::SC_MS);
   #else
-	gsys_start(750);
+	sc_start(750);
   #endif
 
   {
