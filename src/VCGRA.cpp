@@ -8,11 +8,6 @@
 #include "VCGRA.h"
 #include <numeric>
 
-#ifdef GSYSC
-#include "utils.hpp"
-#include <gsysc.h>
-#endif
-
 namespace cgra {
 
 static constexpr uint32_t pe_unique_id_start_value{0};

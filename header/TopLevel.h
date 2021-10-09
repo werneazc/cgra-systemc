@@ -20,6 +20,10 @@
 #include "General_Mux.h"
 #include "General_DeMux.h"
 
+#ifdef GSYSC
+#include <gsysc.h>
+#endif
+
 namespace cgra 
 {
 /*!

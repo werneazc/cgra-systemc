@@ -5,6 +5,10 @@
 #include <systemc>
 #include <iostream>
 
+#ifdef GSYSC
+#include <gsysc.h>
+#endif
+
 namespace cgra {
 
 /*!
@@ -45,15 +49,15 @@ public:
 	//!< \brief Output for command to process
 #else
 	//Entity ports
-	gsys_in<assembler_type_t> assembler{"Assembler_Command_In"};
+	sc_in<assembler_type_t> assembler{"Assembler_Command_In"};
 	//!< \brief Input port for Assembler Command
-	gsys_out<address_type_t> address{"Address_Out"};
+	sc_out<address_type_t> address{"Address_Out"};
 	//!< \brief Output for shared memory address
-	gsys_out<line_type_t> line{":Line_Out"};
+	sc_out<line_type_t> line{":Line_Out"};
 	//!< \brief Output for cache line
-	gsys_out<place_type_t> place{"Place_Out"};
+	sc_out<place_type_t> place{"Place_Out"};
 	//!< \brief Output for place in cache line
-	gsys_out<command_type_t> command{"Command_Out"};
+	sc_out<command_type_t> command{"Command_Out"};
 	//!< \brief Output for command to process
 #endif
 

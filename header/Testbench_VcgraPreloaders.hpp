@@ -16,7 +16,6 @@
 #include <systemc>
 
 #ifdef GSYSC
-#include "utils.hpp"
 #include <gsysc.h>
 #endif
 

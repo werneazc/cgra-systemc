@@ -7,8 +7,8 @@
 #include <array>
 
 #ifdef GSYSC
-#include "utils.hpp"
 #include <gsysc.h>
+#include "utils.hpp"
 #endif
 
 namespace cgra {

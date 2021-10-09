@@ -14,7 +14,6 @@
 #include "Typedef.h"
 
 #ifdef GSYSC
-#include "utils.hpp"
 #include <gsysc.h>
 #endif
 

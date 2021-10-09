@@ -5,6 +5,10 @@
 #include <iostream>
 #include <array>
 
+#ifdef GSYSC
+#include <gsysc.h>
+#endif
+
 namespace cgra {
 
 /*!
