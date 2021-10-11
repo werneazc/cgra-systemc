@@ -1,6 +1,7 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+#pragma once
 #include <sstream>
 #include <vector>
 #include <cstring>
@@ -11,7 +12,7 @@
 
 namespace cgra {
 //Global cache for dynamically created port and signal names.
-extern std::vector<char*> gsysc_renaming_strings;
+extern std::vector<char*> gsysc_renaming_strings{""};
 
 /*!
  * \brief Create name string for GsysC hierarchy viewer
@@ -36,10 +37,9 @@ char* create_name(T part1, K part2)
 		char* t_name = new char[t_str.length()];
 		strncpy(t_name, t_str.c_str(),t_str.length());
 
-		/*gsysc_renaming_strings.push_back(t_name);
+		gsysc_renaming_strings.push_back(t_name);
 
-		return gsysc_renaming_strings.back();*/
-		return t_name;
+		return gsysc_renaming_strings.back();
 }
 
 } // namespace CGRA
