@@ -9,7 +9,6 @@
 
 #ifdef GSYSC
 #include <gsysc.h>
-#include "utils.hpp"
 #endif
 
 namespace cgra {
