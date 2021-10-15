@@ -16,7 +16,6 @@
 
 #ifdef GSYSC
 #include <gsysc.h>
-#include "utils.hpp"
 #endif
 
 namespace {
@@ -133,6 +132,27 @@ bool writePgm(const std::string& file_p, const int16_t* image, const uint32_t si
 }
 
 } // namespace
+
+
+#ifdef GSYSC
+namespace cgra {
+//gSysC renaming vector
+//--------------------------------------------------
+
+/*!
+ * \var gsysc_renaming_strings
+ *
+ * \brief Stored pointer to strings for port and signal renaming
+ *
+ * \details
+ * gSysC ports and signals store its corresponding name as a pointer to a char-array.
+ * If a string name needs to be constructed dynamically, it needs to be stored somewhere during
+ * simulation run. The strings are constructed on the heap and the pointer to the char-arrays
+ * are stored within this vector. They are deleted at the end of the simulation run.
+ */
+std::vector<char*> gsysc_renaming_strings{};
+}
+#endif
 
 int sc_main(int argc, char* argv[])
 {
