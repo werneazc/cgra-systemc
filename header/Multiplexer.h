@@ -84,11 +84,11 @@ public:
         {
         	size_t i=0;
         	for(auto &in : data_inputs){
-        	    RENAME_PORT(&in, (create_name<std::string, uint32_t>("p_input",i++)));
+        	    RENAME_PORT(&in, (cgra::create_name<std::string, uint32_t>("p_input",i++)));
         	}
         	i=0;
         	for(auto &in : valid_inputs){
-        	    RENAME_PORT(&in, (create_name<std::string, uint32_t>("p_valid_in",i++)));
+        	    RENAME_PORT(&in, (cgra::create_name<std::string, uint32_t>("p_valid_in",i++)));
         	}
         }
 		#endif

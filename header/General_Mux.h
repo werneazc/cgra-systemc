@@ -79,7 +79,7 @@ public:
 			
 			#ifdef GSYSC
 			{
-            RENAME_PORT(inputs.at(idx), (create_name<std::string, uint32_t>("p_gen_in",idx)));
+            RENAME_PORT(inputs.at(idx), (cgra::create_name<std::string, uint32_t>("p_gen_in",idx)));
         	}
 			#endif
 		}
