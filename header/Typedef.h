@@ -36,7 +36,7 @@ constexpr uint16_t calc_bitwidth(const uint16_t numOfCacheLinesA)
     constexpr std::array<uint16_t, 17> cBitwidth{
         0, 1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5};
     
-        return cBitwidth.at(numOfCacheLinesA);
+    return cBitwidth.at(numOfCacheLinesA);
 }
 
 /*!
@@ -46,7 +46,7 @@ constexpr uint16_t calc_bitwidth(const uint16_t numOfCacheLinesA)
  */
 constexpr uint32_t calc_numOfBytes(const uint32_t numOfBitsA)
 {
-	return (numOfBitsA % 8) ? (numOfBitsA / 8 + 1) : (numOfBitsA / 8);
+    return (numOfBitsA % 8) ? (numOfBitsA / 8 + 1) : (numOfBitsA / 8);
 }
 
 
@@ -189,10 +189,10 @@ static constexpr uint16_t cNumberDataOutCacheLines{2};
  *
  */
 static constexpr std::initializer_list<uint16_t> cCacheFeatures{
-	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cDataValueBitwidth * 2 * cgra::cPeLevels.front())), cgra::cNumberDataInCacheLines, cgra::cDataValueBitwidth,
-	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cDataValueBitwidth * cgra::cPeLevels.back())), cgra::cNumberDataOutCacheLines, cgra::cDataValueBitwidth,
-	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cPeConfigBitWidth)), cgra::cNumberOfPeCacheLines, cgra::cPeConfigBitWidth,
-	static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cVChConfigBitWidth)), cgra::cNumberOfVChCacheLines, cgra::cVChConfigBitWidth
+    static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cDataValueBitwidth * 2 * cgra::cPeLevels.front())), cgra::cNumberDataInCacheLines, cgra::cDataValueBitwidth,
+    static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cDataValueBitwidth * cgra::cPeLevels.back())), cgra::cNumberDataOutCacheLines, cgra::cDataValueBitwidth,
+    static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cPeConfigBitWidth)), cgra::cNumberOfPeCacheLines, cgra::cPeConfigBitWidth,
+    static_cast<uint16_t>(cgra::calc_numOfBytes(cgra::cVChConfigBitWidth)), cgra::cNumberOfVChCacheLines, cgra::cVChConfigBitWidth
 };
 
 }

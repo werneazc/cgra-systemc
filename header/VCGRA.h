@@ -61,15 +61,15 @@ public:
                 cgra::cNumOfPe,
                 cgra::cPeConfigBitWidth> demux_type_t;
     //!< \brief Demultiplexer type for distributing PE configuration
-	typedef cgra::Selector<cgra::ch_config_type_t,1,24,24> in_ch_config_selector_type_t;
-	//!< \brief Selector type for input channel configuration
-	typedef cgra::Selector<cgra::ch_config_type_t,3,16,48> ch_config_selector_type_t;
-	//!< \brief Selector type for general channel configurations
-	typedef cgra::Selector<cgra::ch_config_type_t,1,4,4> sync_selector_type_t;
-	//!< \brief Selector type for synchronization configuration
-	typedef cgra::Synchronizer<pe_type_t::valid_type_t,
+    typedef cgra::Selector<cgra::ch_config_type_t,1,24,24> in_ch_config_selector_type_t;
+    //!< \brief Selector type for input channel configuration
+    typedef cgra::Selector<cgra::ch_config_type_t,3,16,48> ch_config_selector_type_t;
+    //!< \brief Selector type for general channel configurations
+    typedef cgra::Selector<cgra::ch_config_type_t,1,4,4> sync_selector_type_t;
+    //!< \brief Selector type for synchronization configuration
+    typedef cgra::Synchronizer<pe_type_t::valid_type_t,
             cgra::cPeLevels.back()> synchronizer_type_t;
-	//!< \brief Synchonizer type for PS synchronization with VCGRA
+    //!< \brief Synchonizer type for PS synchronization with VCGRA
     typedef cgra::start_type_t start_type_t;
     //!< \brief VCGRA start port type definition
     typedef cgra::reset_type_t reset_type_t;
@@ -158,12 +158,12 @@ public:
     virtual void dump(::std::ostream& os = std::cout) const override;
 
 #ifdef MCPAT
-	/**
-	 * \brief Dump runtime statistics for McPAT simulation
-	 *
-	 * \param os Define used outstream [default: std::cout]
-	 */
-	void dumpMcpatStatistics(std::ostream& os = ::std::cout) const;
+    /**
+     * \brief Dump runtime statistics for McPAT simulation
+     *
+     * \param os Define used outstream [default: std::cout]
+     */
+    void dumpMcpatStatistics(std::ostream& os = ::std::cout) const;
 #endif
 
     /*!
@@ -180,19 +180,19 @@ private:
     VCGRA(VCGRA&& src) = delete;                    //!< \brief because move not implemented for sc_module
     VCGRA& operator=(VCGRA&& src) = delete;         //!< \brief because move not implemented for sc_module
 
-    #ifndef GSYSC
-        //VCGRA component instances
-        sc_core::sc_vector<pe_type_t> m_pe_instances{"VCGRA_PEs",};
-        //!< \brief Array of PE instances of the current VCGRA
-        sc_core::sc_vector<channel_type_t> m_channel_instances{"VCGRA_Channels"};
-        //!< \brief Array of VirtualChannel instances of the current VCGRA
-    #else
-        //VCGRA component instances
-        sc_vector<pe_type_t> m_pe_instances{"VCGRA_PEs",};
-        //!< \brief Array of PE instances of the current VCGRA
-        sc_vector<channel_type_t> m_channel_instances{"VCGRA_Channels"};
-        //!< \brief Array of VirtualChannel instances of the current VCGRA
-    #endif
+#ifndef GSYSC
+    //VCGRA component instances
+    sc_core::sc_vector<pe_type_t> m_pe_instances{"VCGRA_PEs",};
+    //!< \brief Array of PE instances of the current VCGRA
+    sc_core::sc_vector<channel_type_t> m_channel_instances{"VCGRA_Channels"};
+    //!< \brief Array of VirtualChannel instances of the current VCGRA
+#else
+    //VCGRA component instances
+    sc_vector<pe_type_t> m_pe_instances{"VCGRA_PEs",};
+    //!< \brief Array of PE instances of the current VCGRA
+    sc_vector<channel_type_t> m_channel_instances{"VCGRA_Channels"};
+    //!< \brief Array of VirtualChannel instances of the current VCGRA
+#endif
 
     input_channel_type_t m_input_channel{"Input_Channel"};
     //!< \brief VirtualChannel instance of the first level
@@ -270,50 +270,48 @@ private:
     //!< \brief PE valid signals
 #endif
 
-	/*!
-	 * \struct pe_creator
-	 *
-	 * \brief Functor to create PEs for Processing_Element vector.
-	 *
-	 * \details
-	 * It is necessary to create a unique ID for a Processing_Element.
-	 * The standard Constructor for a vector of SystemC
-	 * modules doesn't consists additional parameters
-	 * for further constructor arguments of its elements.
-	 * Therefore, we use a Functor to create the Processing_Element which than
-	 * is passed into the array.
-	 *
-	 * \param[in] pe_id Unique ID of a processing element.
-	 *
-	 */
-	struct pe_creator
-	{
-	public:
+    /*!
+     * \struct pe_creator
+     *
+     * \brief Functor to create PEs for Processing_Element vector.
+     *
+     * \details
+     * It is necessary to create a unique ID for a Processing_Element.
+     * The standard Constructor for a vector of SystemC
+     * modules doesn't consists additional parameters
+     * for further constructor arguments of its elements.
+     * Therefore, we use a Functor to create the Processing_Element which than
+     * is passed into the array.
+     *
+     * \param[in] pe_id Unique ID of a processing element.
+     *
+     */
+    struct pe_creator
+    {
+    public:
 
-		//Contructor
-		/*!
-		 * \brief Constructor for Processing_Element creator
-		 * \param[in] pe_id Unique ID of a processing element.
-		 */
-		pe_creator(uint32_t pe_id) : m_pe_id(pe_id) {};
+        //Contructor
+        /*!
+         * \brief Constructor for Processing_Element creator
+         * \param[in] pe_id Unique ID of a processing element.
+         */
+        pe_creator(uint32_t pe_id) : m_pe_id(pe_id) {};
 
-		//Functor
-		/*!
-		 * \brief Functor for an pe_type instance
-		 * \details
-		 * Parameters are defined by sc_core::sc_vector
-		 * constructor with creator.
-		 */
-		pe_type_t* operator()(const char* name, size_t size)
-		{
-			return new pe_type_t(name, m_pe_id++);
-		}
+        //Functor
+        /*!
+         * \brief Functor for an pe_type instance
+         * \details
+         * Parameters are defined by sc_core::sc_vector
+         * constructor with creator.
+         */
+        pe_type_t* operator()(const char* name, size_t size)
+        {
+            return new pe_type_t(name, m_pe_id++);
+        }
 
-		uint32_t m_pe_id;
-		//!< Unique Processing_Element ID
-	};
-
-
+        uint32_t m_pe_id;
+        //!< Unique Processing_Element ID
+    };
 };
 
 } /* End namespace cgra */

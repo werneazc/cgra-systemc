@@ -59,7 +59,7 @@ struct TopLevel : public sc_core::sc_module
     typedef typename cgra::VCGRA::data_output_type_t data_output_type_t;
     //!<
 
-  #ifndef GSYSC
+#ifndef GSYSC
     // Entity Ports
     // ------------
     sc_core::sc_in<clock_type_t> clk{"clk"};
@@ -100,7 +100,7 @@ struct TopLevel : public sc_core::sc_module
     //!< Select output signal for virtual channel pre-fetcher
     sc_core::sc_out<ack_type_t> ch_ack{"ch_prefetcher_ack"};
     //!< Acknowledge signal from virtual channel pre-fetcher
-  #else
+#else
     // Entity Ports
     // ------------
     sc_in<clock_type_t> clk{"clk"};
@@ -141,7 +141,7 @@ struct TopLevel : public sc_core::sc_module
     //!< Select output signal for virtual channel pre-fetcher
     sc_out<ack_type_t> ch_ack{"ch_prefetcher_ack"};
     //!< Acknowledge signal from virtual channel pre-fetcher
-  #endif
+#endif
 
     // Forbidden constructors
     // ----------------------
@@ -202,25 +202,25 @@ struct TopLevel : public sc_core::sc_module
     friend void sc_core::sc_trace(sc_core::sc_trace_file *tf, const sc_core::sc_signal_in_if<T> &object,
                                   const std::string &name);
 
-  private:
+private:
 
-    #ifndef GSYSC
+#ifndef GSYSC
       // Internal signals:
       // -----------------
       sc_core::sc_signal<pe_config_type_t> s_pe_config{"pe_configuration"};
       //!< PE configuration signal binds VCGRA and PE configuration pre-fetcher
       sc_core::sc_signal<ch_config_type_t> s_ch_config{"ch_configuration"};
       //!< PE configuration signal binds VCGRA and virtual channel configuration pre-fetcher
-    #else
+#else
       // Internal signals:
       // -----------------
       sc_signal<pe_config_type_t> s_pe_config{"pe_configuration"};
       //!< PE configuration signal binds VCGRA and PE configuration pre-fetcher
       sc_signal<ch_config_type_t> s_ch_config{"ch_configuration"};
       //!< PE configuration signal binds VCGRA and virtual channel configuration pre-fetcher
-    #endif
+#endif
     
-  public:
+public:
     // Components:
     // -----------
     cgra::VCGRA vcgra{"vcgra"};

@@ -27,18 +27,18 @@ extern std::vector<char*> gsysc_renaming_strings;
 template<typename T, typename K = T>
 char* create_name(T part1, K part2)
 {
-		std::stringstream t_ss{""};
-		std::string t_str{""};
+    std::stringstream t_ss{""};
+    std::string t_str{""};
 
-		t_ss << part1 << part2;
-		t_str = t_ss.str();
+    t_ss << part1 << part2;
+    t_str = t_ss.str();
 
-		char* t_name = new char[t_str.length()];
-		strncpy(t_name, t_str.c_str(),t_str.length());
+    char* t_name = new char[t_str.length()];
+    strncpy(t_name, t_str.c_str(),t_str.length());
 
-		gsysc_renaming_strings.push_back(t_name);
+    gsysc_renaming_strings.push_back(t_name);
 
-		return gsysc_renaming_strings.back();
+    return gsysc_renaming_strings.back();
 }
 
 } // namespace CGRA

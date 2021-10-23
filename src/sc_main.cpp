@@ -189,35 +189,35 @@ int sc_main(int argc, char* argv[])
 
     //signals
 #ifndef GSYSC
-     sc_core::sc_clock clk{"clk", 200, sc_core::SC_NS};
-     sc_core::sc_signal<cgra::TopLevel::run_type_t> run{"run", true};
-     sc_core::sc_signal<cgra::TopLevel::reset_type_t> rst{"rst", false};
-     sc_core::sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"};
-     sc_core::sc_signal<cgra::TopLevel::pause_type_t> pause{"pause", false};
+    sc_core::sc_clock clk{"clk", 200, sc_core::SC_NS};
+    sc_core::sc_signal<cgra::TopLevel::run_type_t> run{"run", true};
+    sc_core::sc_signal<cgra::TopLevel::reset_type_t> rst{"rst", false};
+    sc_core::sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"};
+    sc_core::sc_signal<cgra::TopLevel::pause_type_t> pause{"pause", false};
 #else
-     sc_clock clk{"clk", 200, SC_NS};
-     sc_signal<cgra::TopLevel::run_type_t> run{"run"}; 
-     sc_signal<cgra::TopLevel::reset_type_t> rst{"rst"}; 
-     sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"}; 
-     sc_signal<cgra::TopLevel::pause_type_t> pause{"pause"}; 
+    sc_clock clk{"clk", 200, SC_NS};
+    sc_signal<cgra::TopLevel::run_type_t> run{"run"}; 
+    sc_signal<cgra::TopLevel::reset_type_t> rst{"rst"}; 
+    sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"}; 
+    sc_signal<cgra::TopLevel::pause_type_t> pause{"pause"}; 
 #endif
 
 //#############################################################################
 
     //Port bindings
 
-     //clock
-     toplevel->clk.bind(clk);
+    //clock
+    toplevel->clk.bind(clk);
     tb_toplevel->clk.bind(clk);
 
     //control signals
-     toplevel->run.bind(run);
-     toplevel->finish.bind(finish);
-     toplevel->rst.bind(rst);
+    toplevel->run.bind(run);
+    toplevel->finish.bind(finish);
+    toplevel->rst.bind(rst);
     toplevel->pause.bind(pause);
-     tb_toplevel->run.bind(run);
-     tb_toplevel->finish.bind(finish);
-     tb_toplevel->rst.bind(rst);
+    tb_toplevel->run.bind(run);
+    tb_toplevel->finish.bind(finish);
+    tb_toplevel->rst.bind(rst);
     tb_toplevel->pause.bind(pause);
     
 //#############################################################################
@@ -283,9 +283,8 @@ int sc_main(int argc, char* argv[])
     std::array<uint16_t, 64*64> tdataValues;
     tdataValues.fill(0x0000);
     if(!readPgm("../demo/lena.pgm", tdataValues.data(), 64, 64))
-    {
         return EXIT_FAILURE;
-    }
+
     toplevel->mmu.write_shared_memory(0x200, tdataValues.data(), tdataValues.max_size() * sizeof(uint16_t));
     std::vector<uint8_t> tPeConfig1 = {0x33, 0x33, 0x01, 0x01, 0x00, 0x10, 0x00, 0x80};
     std::vector<uint8_t> tPeConfig2 = {0x38, 0x80, 0x01, 0x80, 0x00, 0x10, 0x00, 0x80};
@@ -300,11 +299,11 @@ int sc_main(int argc, char* argv[])
   }
 
   // Run simulation
-  #ifndef GSYSC
-	sc_core::sc_start(750, sc_core::SC_MS);
-  #else
-	sc_start(750);
-  #endif
+#ifndef GSYSC
+    sc_core::sc_start(750, sc_core::SC_MS);
+#else
+    sc_start(750);
+#endif
 
   {
       std::array<int16_t, 62*62> t_result;
