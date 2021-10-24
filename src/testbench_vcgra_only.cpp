@@ -231,7 +231,7 @@ void Testbench::stimuli()
      * number of bytes to transmit.
      */
     auto calcDelay = [](std::size_t numbytesA) -> sc_core::sc_time {
-        constexpr double cDelayPerByte = 500.0 /*ns*/;
+        constexpr double cDelayPerByte = 625.0 /*ns*/;
 
         return sc_core::sc_time(numbytesA * cDelayPerByte, sc_core::SC_NS);
     };
