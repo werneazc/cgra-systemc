@@ -12,7 +12,6 @@
 
 #ifdef GSYSC
 #include <gsysc.h>
-#include "utils.hpp"
 #endif
 
 namespace
@@ -108,33 +107,33 @@ int sc_main(int argc, char **argv)
     testbench.ready.bind(s_ready);
     vcgra.ready.bind(s_ready);
 
-    #ifdef GSYSC
-            RENAME_SIGNAL(&s_clk,
-                (cgra::create_name<std::string,uint32_t>("p_clk_", 0)));
-            RENAME_SIGNAL(&s_peConfig,
-                (cgra::create_name<std::string,uint32_t>("s_peConfig_", 0)));
-            RENAME_SIGNAL(&s_chConfig,
-                (cgra::create_name<std::string,uint32_t>("s_chConfig_", 0)));
-            RENAME_SIGNAL(&s_start,
-                (cgra::create_name<std::string,uint32_t>("s_start_", 0)));
-            RENAME_SIGNAL(&s_rst,
-                (cgra::create_name<std::string,uint32_t>("s_rst_", 0)));
-            RENAME_SIGNAL(&s_ready,
-                (cgra::create_name<std::string,uint32_t>("s_ready_", 0)));
+#ifdef GSYSC
+    RENAME_SIGNAL(&s_clk,
+        (cgra::create_name<std::string,uint32_t>("s_clk_", 0)));
+    RENAME_SIGNAL(&s_peConfig,
+        (cgra::create_name<std::string,uint32_t>("s_peConfig_", 0)));
+    RENAME_SIGNAL(&s_chConfig,
+        (cgra::create_name<std::string,uint32_t>("s_chConfig_", 0)));
+    RENAME_SIGNAL(&s_start,
+        (cgra::create_name<std::string,uint32_t>("s_start_", 0)));
+    RENAME_SIGNAL(&s_rst,
+        (cgra::create_name<std::string,uint32_t>("s_rst_", 0)));
+    RENAME_SIGNAL(&s_ready,
+        (cgra::create_name<std::string,uint32_t>("s_ready_", 0)));
 
-            REG_PORT(&vcgra.clk,           &vcgra,     &s_clk);
-            REG_PORT(&testbench.clk,       &testbench, &s_clk);
-            REG_PORT(&vcgra.pe_config,     &vcgra,     &s_peConfig);
-            REG_PORT(&testbench.pe_config, &testbench, &s_peConfig);
-            REG_PORT(&vcgra.ch_config,     &vcgra,     &s_chConfig);
-            REG_PORT(&testbench.ch_config, &testbench, &s_chConfig);
-            REG_PORT(&vcgra.start,         &vcgra,     &s_start);
-            REG_PORT(&testbench.start,     &testbench, &s_start);
-            REG_PORT(&vcgra.rst,           &vcgra,     &s_rst);
-            REG_PORT(&testbench.rst,       &testbench, &s_rst);
-            REG_PORT(&testbench.ready,     &testbench, &s_ready);
-            REG_PORT(&vcgra.ready,         &vcgra,     &s_ready);
-    #endif
+    REG_PORT(&vcgra.clk,           &vcgra,     &s_clk);
+    REG_PORT(&testbench.clk,       &testbench, &s_clk);
+    REG_PORT(&vcgra.pe_config,     &vcgra,     &s_peConfig);
+    REG_PORT(&testbench.pe_config, &testbench, &s_peConfig);
+    REG_PORT(&vcgra.ch_config,     &vcgra,     &s_chConfig);
+    REG_PORT(&testbench.ch_config, &testbench, &s_chConfig);
+    REG_PORT(&vcgra.start,         &vcgra,     &s_start);
+    REG_PORT(&testbench.start,     &testbench, &s_start);
+    REG_PORT(&vcgra.rst,           &vcgra,     &s_rst);
+    REG_PORT(&testbench.rst,       &testbench, &s_rst);
+    REG_PORT(&testbench.ready,     &testbench, &s_ready);
+    REG_PORT(&vcgra.ready,         &vcgra,     &s_ready);
+#endif
 
     for (std::size_t iter = 0; iter < vcgra.data_inputs.size(); ++iter) {
         vcgra.data_inputs.at(iter).bind(s_inputs.at(iter));

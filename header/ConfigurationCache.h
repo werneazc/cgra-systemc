@@ -14,8 +14,13 @@
 #include <iostream>
 #include <iomanip>
 #include "Typedef.h"
+
 #ifdef MCPAT
 #include "McPatCacheAccessCounter.hpp"
+#endif
+
+#ifdef GSYSC
+#include <gsysc.h>
 #endif
 
 namespace cgra {
@@ -27,14 +32,14 @@ class ConfigurationCache;
 //Cache Definitions for VCGRA instance
 //------------------------------------
 typedef ConfigurationCache<cgra::pe_config_type_t,
-		cgra::cSelectLineBitwidthPeConfCache,
-		cgra::cNumberOfPeCacheLines,
-		cgra::cBitWidthOfSerialInterfacePeConfCache> pe_config_cache_type_t;
+        cgra::cSelectLineBitwidthPeConfCache,
+        cgra::cNumberOfPeCacheLines,
+        cgra::cBitWidthOfSerialInterfacePeConfCache> pe_config_cache_type_t;
 //!< \brief Type definition for Processing_Element configuration cache
 typedef ConfigurationCache<cgra::ch_config_type_t,
-		cgra::cSelectLineBitwidthVChConfCache,
-		cgra::cNumberOfVChCacheLines,
-		cgra::cBitWidthOfSerialInterfaceVChConfCache> ch_config_cache_type_t;
+        cgra::cSelectLineBitwidthVChConfCache,
+        cgra::cNumberOfVChCacheLines,
+        cgra::cBitWidthOfSerialInterfaceVChConfCache> ch_config_cache_type_t;
 //!< \brief Type definition for VirtualChannel configuration cache
 
 
@@ -64,215 +69,233 @@ typedef ConfigurationCache<cgra::ch_config_type_t,
 template <typename T, uint8_t M = 2, uint8_t L = 4, uint8_t N = 8>
 class ConfigurationCache : public sc_core::sc_module
 #ifdef MCPAT
-	,					protected cgra::McPatCacheAccessCounter
+    ,                    protected cgra::McPatCacheAccessCounter
 #endif
 {
 public:
-	typedef T config_type_t;
-	//!< \brief Type for stored configuration data per line
-	typedef cgra::clock_type_t clock_type_t;
-	//!< \brief Clock type
-	typedef sc_dt::sc_lv<M> select_type_t;
-	//!< \brief Type for line selector
-	typedef cgra::cache_write_type_t write_enable_type_t;
-	//!< \brief Type for write enable signal
-	typedef sc_dt::sc_lv<N> stream_type_t;
-	//!< \brief Type for streaming input data to fill cache line
-	typedef cgra::cache_ack_type_t ack_type_t;
-	//!< \brief Acknowledge data type
+    typedef T config_type_t;
+    //!< \brief Type for stored configuration data per line
+    typedef cgra::clock_type_t clock_type_t;
+    //!< \brief Clock type
+    typedef sc_dt::sc_lv<M> select_type_t;
+    //!< \brief Type for line selector
+    typedef cgra::cache_write_type_t write_enable_type_t;
+    //!< \brief Type for write enable signal
+    typedef sc_dt::sc_lv<N> stream_type_t;
+    //!< \brief Type for streaming input data to fill cache line
+    typedef cgra::cache_ack_type_t ack_type_t;
+    //!< \brief Acknowledge data type
 
-	//Entity Ports
-	sc_core::sc_in<stream_type_t> dataInStream{"data_in_stream"};
-	//!< \brief New configuration data to be stored in a cache line
-	sc_core::sc_in<clock_type_t> clk{"clk"};
-	//!< \brief Clock of configuration cache
-	sc_core::sc_in<write_enable_type_t> write{"write_new_cache_line"};
-	//!< \brief If a positive edge occurs, datum from data-in-stream is copied into cache line
-	sc_core::sc_in<select_type_t> slt_in{"data_in_cache_line"};
-	//!< \brief Select cache line to store datum from data-in-stream
-	sc_core::sc_in<select_type_t> slt_out{"data_out_cache_line"};
-	//!< \brief Select current cache line for current-configuration
-	sc_core::sc_out<config_type_t> currentConfig{"current_configuration"};
-	//!< \brief Currently set configuration
-	sc_core::sc_out<ack_type_t> ack{"acknowledge"};
-	//!< \brief Acknowledges the income of a new data-stream
+    //Entity Ports
 
-	//Ctor
-	SC_HAS_PROCESS(ConfigurationCache);
-	/*!
-	 * \brief General Constructor
-	 *
-	 * \details
-	 * The number of configuration bits defines the size of the cache lines.
-	 *
-	 * \param[in] nameA 				SystemC module name for ConfigurationCache instance
-	 * \param[in] configBitStreamLength Number of configuration bits to cache
-	 */
-	ConfigurationCache(const sc_core::sc_module_name& nameA, uint32_t configBitStreamLength ) :
-		sc_core::sc_module(nameA), m_numOfBytes(cgra::calc_numOfBytes(configBitStreamLength))
-	{
-		SC_METHOD(storeCacheLine);
-		sensitive << clk.pos();
-		SC_METHOD(switchCacheLine);
-		sensitive << clk.pos();
-	}
-
-
-	virtual ~ConfigurationCache() = default;
-	//!< \brief Destructor
-
-	/*!
-	 * \brief Initialize output signals of module
-	 */
-	void end_of_elaboration() override
-	{
-		currentConfig.write(0);
-		for (uint32_t i = 0; i < L; ++i){
-			m_cachelines[i].write(0);
-		}
-		ack.write(false);
-	}
-
-	/*!
-	 * \brief Store streamed data within cache line
-	 *
-	 * \details
-	 * Function raises a warning, if a cache line should be
-	 * written which is currently used as the output.
-	 * The configuration line won't be changed.
-	 */
-	void storeCacheLine()
-	{
-#ifdef MCPAT
-		++this->m_writeAccessCounter;
+#ifndef GSYSC
+    sc_core::sc_in<stream_type_t> dataInStream{"data_in_stream"};
+    //!< \brief New configuration data to be stored in a cache line
+    sc_core::sc_in<clock_type_t> clk{"clk"};
+    //!< \brief Clock of configuration cache
+    sc_core::sc_in<write_enable_type_t> write{"write_new_cache_line"};
+    //!< \brief If a positive edge occurs, datum from data-in-stream is copied into cache line
+    sc_core::sc_in<select_type_t> slt_in{"data_in_cache_line"};
+    //!< \brief Select cache line to store datum from data-in-stream
+    sc_core::sc_in<select_type_t> slt_out{"data_out_cache_line"};
+    //!< \brief Select current cache line for current-configuration
+    sc_core::sc_out<config_type_t> currentConfig{"current_configuration"};
+    //!< \brief Currently set configuration
+    sc_core::sc_out<ack_type_t> ack{"acknowledge"};
+    //!< \brief Acknowledges the income of a new data-stream
+#else
+    sc_in<stream_type_t> dataInStream{"data_in_stream"};
+    //!< \brief New configuration data to be stored in a cache line
+    sc_in<clock_type_t> clk{"clk"};
+    //!< \brief Clock of configuration cache
+    sc_in<write_enable_type_t> write{"write_new_cache_line"};
+    //!< \brief If a positive edge occurs, datum from data-in-stream is copied into cache line
+    sc_in<select_type_t> slt_in{"data_in_cache_line"};
+    //!< \brief Select cache line to store datum from data-in-stream
+    sc_in<select_type_t> slt_out{"data_out_cache_line"};
+    //!< \brief Select current cache line for current-configuration
+    sc_out<config_type_t> currentConfig{"current_configuration"};
+    //!< \brief Currently set configuration
+    sc_out<ack_type_t> ack{"acknowledge"};
+    //!< \brief Acknowledges the income of a new data-stream
 #endif
-		if(write.read() && !ack.read())
-		{
-			if(slt_in.read().to_uint() != slt_out.read().to_uint())
-			{
-				auto tmp_cacheline = m_cachelines[slt_in.read().to_uint()].read();
-				tmp_cacheline = tmp_cacheline.lrotate(N);
-				tmp_cacheline |= dataInStream.read();
-				m_cachelines[slt_in.read().to_uint()].write(tmp_cacheline);
-				ack.write(true);
-			}
-			else {
-				SC_REPORT_WARNING("Configuration Warning", "Selected cache-line currently in use. Configuration is unchanged");
-			}
-		}
 
-		if (ack.read() && !write.read()) {
-			ack.write(false);
-		}
-	}
+    //Ctor
+    SC_HAS_PROCESS(ConfigurationCache);
+    /*!
+     * \brief General Constructor
+     *
+     * \details
+     * The number of configuration bits defines the size of the cache lines.
+     *
+     * \param[in] nameA                 SystemC module name for ConfigurationCache instance
+     * \param[in] configBitStreamLength Number of configuration bits to cache
+     */
+    ConfigurationCache(const sc_core::sc_module_name& nameA, uint32_t configBitStreamLength ) :
+        sc_core::sc_module(nameA), m_numOfBytes(cgra::calc_numOfBytes(configBitStreamLength))
+    {
+        SC_METHOD(storeCacheLine);
+        sensitive << clk.pos();
+        SC_METHOD(switchCacheLine);
+        sensitive << clk.pos();
+    }
 
-	/*!
-	 * \brief Switch current configuration cache line
-	 */
-	void switchCacheLine()
-	{
+
+    virtual ~ConfigurationCache() = default;
+    //!< \brief Destructor
+
+    /*!
+     * \brief Initialize output signals of module
+     */
+    void end_of_elaboration() override
+    {
+        currentConfig.write(0);
+        for (uint32_t i = 0; i < L; ++i){
+            m_cachelines[i].write(0);
+        }
+        ack.write(false);
+    }
+
+    /*!
+     * \brief Store streamed data within cache line
+     *
+     * \details
+     * Function raises a warning, if a cache line should be
+     * written which is currently used as the output.
+     * The configuration line won't be changed.
+     */
+    void storeCacheLine()
+    {
 #ifdef MCPAT
-		++this->m_readAccessCounter;
+        ++this->m_writeAccessCounter;
 #endif
-		auto tmp_cacheline = slt_out.read().to_uint();
+        if(write.read() && !ack.read())
+        {
+            if(slt_in.read().to_uint() != slt_out.read().to_uint())
+            {
+                auto tmp_cacheline = m_cachelines[slt_in.read().to_uint()].read();
+                tmp_cacheline = tmp_cacheline.lrotate(N);
+                tmp_cacheline |= dataInStream.read();
+                m_cachelines[slt_in.read().to_uint()].write(tmp_cacheline);
+                ack.write(true);
+            }
+            else {
+                SC_REPORT_WARNING("Configuration Warning", "Selected cache-line currently in use. Configuration is unchanged");
+            }
+        }
 
-//		if(slt_in.read().to_uint() != tmp_cacheline)
+        if (ack.read() && !write.read()) {
+            ack.write(false);
+        }
+    }
+
+    /*!
+     * \brief Switch current configuration cache line
+     */
+    void switchCacheLine()
+    {
+#ifdef MCPAT
+        ++this->m_readAccessCounter;
+#endif
+        auto tmp_cacheline = slt_out.read().to_uint();
+
+//        if(slt_in.read().to_uint() != tmp_cacheline)
 //#Todo: This line is currently disabled. Otherwise MU cannot switch cache lines!
-		currentConfig.write(m_cachelines[tmp_cacheline].read());
-	}
+        currentConfig.write(m_cachelines[tmp_cacheline].read());
+    }
 
-	/*!
-	 * \brief Print kind of SystemC module
-	 */
-	const char* kind() const override {
-		return "Configuration Cache";
-	}
+    /*!
+     * \brief Print kind of SystemC module
+     */
+    const char* kind() const override {
+        return "Configuration Cache";
+    }
 
-	/*!
-	 * \brief Print configuration cache name
-	 *
-	 * \param[out] os Define used outstream [default: std::cout]
-	 */
-	void print(std::ostream& os = std::cout) const override
-	{
-		os << name();
-	}
+    /*!
+     * \brief Print configuration cache name
+     *
+     * \param[out] os Define used outstream [default: std::cout]
+     */
+    void print(std::ostream& os = std::cout) const override
+    {
+        os << name();
+    }
 
-	/*!
-	 * \brief Dump configuration cache information
-	 *
-	 * \param[out] os Define used outstream [default: std::cout]
-	 */
-	void dump(std::ostream& os = std::cout) const override
-	{
-		os << name() << "\t\t" << kind() << std::endl;
-		os << "Number of cache lines:\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
-		os << "Cache line length:\t\t" << std::setw(3) << static_cast<uint32_t>(size()) << std::endl;
-		os << "Bitwidth serial input:\t\t" << std::setw(3) << static_cast<uint32_t>(N) << std::endl;
-		os << "Selected input cache line:\t" << std::setw(3) << slt_in.read().to_string() << std::endl;
-		os << "Selected output cache line:\t" << std::setw(3) << slt_out.read().to_string() << std::endl;
+    /*!
+     * \brief Dump configuration cache information
+     *
+     * \param[out] os Define used outstream [default: std::cout]
+     */
+    void dump(std::ostream& os = std::cout) const override
+    {
+        os << name() << "\t\t" << kind() << std::endl;
+        os << "Number of cache lines:\t\t" << std::setw(3) << static_cast<uint32_t>(L) << std::endl;
+        os << "Cache line length:\t\t" << std::setw(3) << static_cast<uint32_t>(size()) << std::endl;
+        os << "Bitwidth serial input:\t\t" << std::setw(3) << static_cast<uint32_t>(N) << std::endl;
+        os << "Selected input cache line:\t" << std::setw(3) << slt_in.read().to_string() << std::endl;
+        os << "Selected output cache line:\t" << std::setw(3) << slt_out.read().to_string() << std::endl;
 
-		os << "Cache content\n";
-		os << "=============\n";
+        os << "Cache content\n";
+        os << "=============\n";
 
-		uint32_t line_iter = 1; //Running index for cache line
-		for(auto& line : m_cachelines)
-		{
-			os << line_iter++ << std::setw(3) <<":\t";
-			os << line.read().to_string(sc_dt::SC_HEX);
-			os << "\n";
-		}
-	}
+        uint32_t line_iter = 1; //Running index for cache line
+        for(auto& line : m_cachelines)
+        {
+            os << line_iter++ << std::setw(3) <<":\t";
+            os << line.read().to_string(sc_dt::SC_HEX);
+            os << "\n";
+        }
+    }
 
-	/*!
-	 * \brief Print content of a cache line
-	 *
-	 * \param[in] 	line 	Select cache line to print
-	 * \param[out] 	os 		Select out stream to write (default std::cout)
-	 */
-	void print_cache_line(uint32_t line, std::ostream& os = std::cout) const
-	{
-		sc_assert(L > line);
-		os << m_cachelines.at(line).read().to_string(sc_dt::SC_HEX) << std::endl;
-	}
+    /*!
+     * \brief Print content of a cache line
+     *
+     * \param[in]     line     Select cache line to print
+     * \param[out]     os         Select out stream to write (default std::cout)
+     */
+    void print_cache_line(uint32_t line, std::ostream& os = std::cout) const
+    {
+        sc_assert(L > line);
+        os << m_cachelines.at(line).read().to_string(sc_dt::SC_HEX) << std::endl;
+    }
 
-	/*!
-	 * \brief Return the size of a cache line
-	 */
-	uint16_t size() const { return m_numOfBytes; }
+    /*!
+     * \brief Return the size of a cache line
+     */
+    uint16_t size() const { return m_numOfBytes; }
 
-	/*!
-	 * \brief Return number of cache lines
-	 */
-	uint8_t cache_size() const { return m_cachelines.size(); }
+    /*!
+     * \brief Return number of cache lines
+     */
+    uint8_t cache_size() const { return m_cachelines.size(); }
 
 #ifdef MCPAT
-	/**
-	 * @brief Dump statistics for McPAT simulation
-	 *
-	 * @param[out] os Out stream to write results to
-	 */
-	void dumpMcpatStatistics(std::ostream &os = ::std::cout) const override
-	{
-		os << name() << "\t\t" << kind() << "\n";
-		os << "read accesses: " << this->m_readAccessCounter << "\n";
-		os << "write accesses: " << this->m_writeAccessCounter << "\n";
-		os << std::endl;
-	}
+    /**
+     * @brief Dump statistics for McPAT simulation
+     *
+     * @param[out] os Out stream to write results to
+     */
+    void dumpMcpatStatistics(std::ostream &os = ::std::cout) const override
+    {
+        os << name() << "\t\t" << kind() << "\n";
+        os << "read accesses: " << this->m_readAccessCounter << "\n";
+        os << "write accesses: " << this->m_writeAccessCounter << "\n";
+        os << std::endl;
+    }
 #endif
 
 private:
-	std::array<sc_core::sc_buffer<config_type_t>, L> m_cachelines;
-	//!< \brief Cache lines to store a configuration
-	uint16_t m_numOfBytes;
-	//!< \brief Size of the cache in bytes
+    std::array<sc_core::sc_buffer<config_type_t>, L> m_cachelines;
+    //!< \brief Cache lines to store a configuration
+    uint16_t m_numOfBytes;
+    //!< \brief Size of the cache in bytes
 
-	//Forbidden constructors
-	ConfigurationCache() = delete;
-	ConfigurationCache(const ConfigurationCache& src) = delete;
-	ConfigurationCache& operator=(const ConfigurationCache& src) = delete;
-	ConfigurationCache(ConfigurationCache&& src) = delete;
-	ConfigurationCache& operator=(ConfigurationCache&& src) = delete;
+    //Forbidden constructors
+    ConfigurationCache() = delete;
+    ConfigurationCache(const ConfigurationCache& src) = delete;
+    ConfigurationCache& operator=(const ConfigurationCache& src) = delete;
+    ConfigurationCache(ConfigurationCache&& src) = delete;
+    ConfigurationCache& operator=(ConfigurationCache&& src) = delete;
 };
 
 

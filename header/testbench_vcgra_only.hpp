@@ -9,11 +9,6 @@
 #include <systemc>
 #include <vector>
 
-#ifdef GSYSC
-#include "utils.hpp"
-#include <gsysc.h>
-#endif
-
 namespace cgra
 {
 
