@@ -51,7 +51,7 @@ std::vector<char*> gsysc_renaming_strings{};
 }
 #endif
 
-int sc_main(int argc, char **argv)
+auto sc_main([[maybe_unused]] int argc, [[maybe_unused]] char ** argv) -> int
 {
     cgra::Testbench testbench("vcgra_testbench", "../demo/lena.pgm");
     cgra::VCGRA vcgra("VCGRA_Instance");
@@ -61,11 +61,11 @@ int sc_main(int argc, char **argv)
 #endif
 
     // Load configurations into testbench
-    for (auto &peConf : cPeConfigs) {
+    for (const auto &peConf : cPeConfigs) {
         testbench.appendPeConfiguration(peConf);
     }
 
-    for (auto &chConf : cChConfigs) {
+    for (const auto &chConf : cChConfigs) {
         testbench.appendChConfiguration(chConf);
     }
 
@@ -154,19 +154,19 @@ int sc_main(int argc, char **argv)
     }
 
     // create and setup trace file;
-    auto fp = sc_core::sc_create_vcd_trace_file("vcgra_only");
+    auto * file_ptr = sc_core::sc_create_vcd_trace_file("vcgra_only");
 
-    sc_core::sc_trace(fp, s_clk, s_clk.basename());
-    sc_core::sc_trace(fp, s_peConfig, s_peConfig.basename());
-    sc_core::sc_trace(fp, s_chConfig, s_chConfig.basename());
-    sc_core::sc_trace(fp, s_rst, s_rst.basename());
-    sc_core::sc_trace(fp, s_ready, s_ready.basename());
-    sc_core::sc_trace(fp, s_start, s_start.basename());
-    for (auto &in : s_inputs) {
-        sc_core::sc_trace(fp, in, in.basename());
+    sc_core::sc_trace(file_ptr, s_clk, s_clk.basename());
+    sc_core::sc_trace(file_ptr, s_peConfig, s_peConfig.basename());
+    sc_core::sc_trace(file_ptr, s_chConfig, s_chConfig.basename());
+    sc_core::sc_trace(file_ptr, s_rst, s_rst.basename());
+    sc_core::sc_trace(file_ptr, s_ready, s_ready.basename());
+    sc_core::sc_trace(file_ptr, s_start, s_start.basename());
+    for (const auto &in : s_inputs) {
+        sc_core::sc_trace(file_ptr, in, in.basename());
     }
-    for (auto &out : s_outputs) {
-        sc_core::sc_trace(fp, out, out.basename());
+    for (const auto &out : s_outputs) {
+        sc_core::sc_trace(file_ptr, out, out.basename());
     }
 
     // Start simulation
@@ -185,7 +185,7 @@ int sc_main(int argc, char **argv)
     fp_mcpatStats.close();
 #endif
     // Close trace file
-    sc_core::sc_close_vcd_trace_file(fp);
+    sc_core::sc_close_vcd_trace_file(file_ptr);
 
     return EXIT_SUCCESS;
 }
