@@ -31,6 +31,17 @@ OPTION (
   OFF
 )
 
+#Enable/disable warnings
+OPTION (
+   CLANG_TIDY_ENABLED
+  "Enable/disable clang-tidy static checks"
+  OFF
+)
+
+# Disable compiler specific extensions
+SET(CMAKE_CXX_EXTENSION OFF)
+
+
 # Create new compile target with small optimizations
 SET (CMAKE_CXX_FLAGS_OPTIMIZED -O1 -DNGEBUG)
 SET(CMAKE_CXX_FLAGS_OPTIMIZED "-O1 -DNDEBUG" CACHE STRING
@@ -84,6 +95,10 @@ ADD_LIBRARY(project_warnings INTERFACE)
 # Standard compiler warnings
 set_project_warnings(project_warnings)
 
+IF(CLANG_TIDY_ENABLED)
+# Enable clang-tidy check during build
+SET(CMAKE_CXX_CLANG_TIDY clang-tidy )
+ENDIF()
 
 # Create VCGRA with all its components
 ADD_EXECUTABLE (vcgra_only
