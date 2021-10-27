@@ -27,7 +27,7 @@ namespace
  * \return true: Read from PGM successfull
  * \return false: Read from PGM has an error (file path wrong, target array to small)
  */
-bool readPgm(const std::string &file_p, uint16_t *dest_p, const uint32_t xsize_p, const uint32_t ysize_p)
+auto readPgm(const std::string &file_p, uint16_t *dest_p, const uint32_t xsize_p, const uint32_t ysize_p) -> bool
 {
 
     uint32_t width{0};
@@ -95,8 +95,8 @@ bool readPgm(const std::string &file_p, uint16_t *dest_p, const uint32_t xsize_p
  * @return true     Success
  * @return false    Failure
  */
-bool writePgm(const std::string &file_p, const int16_t *image, const uint32_t size_y, const uint32_t size_x,
-              uint16_t max_p = INT16_MAX)
+auto writePgm(const std::string &file_p, const int16_t *image, const uint32_t size_y, const uint32_t size_x,
+              uint16_t max_p = INT16_MAX) -> bool
 {
     uint32_t iter_x{0}; // image iterator x direction
     uint32_t iter_y{0}; // image iterator y direction
@@ -142,7 +142,7 @@ bool writePgm(const std::string &file_p, const int16_t *image, const uint32_t si
  * @param[in] indexA    Index of configuration to use from configuration byte array
  * @return sc_dt::sc_lv<bw>     Logic vector with configuration
  */
-template <uint32_t bw, typename T> sc_dt::sc_lv<bw> prepareConfig(T &configA, uint8_t indexA)
+template <uint32_t bw, typename T> auto prepareConfig(T &configA, uint8_t indexA) -> sc_dt::sc_lv<bw> 
 {
 
     sc_dt::sc_lv<bw> config{0};
@@ -177,15 +177,15 @@ Testbench::Testbench(const sc_core::sc_module_name &nameA, std::string imagePath
     SC_THREAD(stimuli);
 }
 
-std::size_t Testbench::appendPeConfiguration(std::vector<uint8_t> peConfigA)
+std::size_t Testbench::appendPeConfiguration(std::vector<uint8_t> peConfA)
 {
-    mPeConfigs.emplace_back(std::move(peConfigA));
+    mPeConfigs.emplace_back(std::move(peConfA));
     return mPeConfigs.size() - 1;
 }
 
-std::size_t Testbench::appendChConfiguration(std::vector<uint8_t> chConfigA)
+std::size_t Testbench::appendChConfiguration(std::vector<uint8_t> chConfA)
 {
-    mChConfigs.emplace_back(std::move(chConfigA));
+    mChConfigs.emplace_back(std::move(chConfA));
     return mChConfigs.size() - 1;
 }
 
