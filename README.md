@@ -7,25 +7,25 @@ SystemC implementation of a parameterizable CGRA
 
 The architecture is designed in [SystemC](https://accellera.org/downloads/standards/systemc). It is compiled with different
 Linux distributions like Debian, Ubuntu or OpenSuse. The CMakeLists.txt contains an automatic mechanism to find the
-SystemC dependencies. Therefore please provide `SYSTEMC_ROOT` environment variable to point to the root directory of your SystemC
+SystemC dependencies. Therefore, please provide `SYSTEMC_ROOT` environment variable to point to the root directory of your SystemC
 installation.
 ## Architecture variants
 
 - VCGRA: A processing system acts directly with an accelerator (VCGRA). The virtual CGRA consists of processing elements
 and virtual channels. The processing system needs to control the calculation the whole runtime.
-- VCGRA & Pre-Fetchers: A processing systems is has access to configuration pre-fetchers for processing elements and
+- VCGRA & Pre-Fetchers: A processing systems has access to configuration pre-fetchers for processing elements and
 virtual channels to prepare runtime configurations for the VCGRA before switching.
 - Full Architecture: The full architecture is an accelerator with a Central Control Unit, a Memory Management Unit,
 pre-fetchers for configurations, input and output data and a shared scratchpad memory between the accelerator and
-the processing system. The Central Control Unit is programmable with a special assembler and can work autark with
-data stored at the shared memory. The processing system does not need to perform any control during processing of
+the processing system. The Central Control Unit is programmable with a special assembler and can work independently with
+data stored in shared memory. The processing system does not need to perform any control during  processing of
 data of the VCGRA accelerator architecture. The VCGRA assembler is available [here](https://github.com/werneazc/cgra_assembler.git).
 
 ## Evaluation
 
 ### Demo
 
-Evaluation is performed processing an edge detection of an image of Lena. The configuration files for
+Evaluation is performed by processing an edge detection of an image of Lena. The configuration files for
 [McPAT](https://github.com/werneazc/mcpat.git) are stored in the repository in the `mcpat` directory.
 An adapted version of McPAT is necessary to overcome the limitations of McPAT that is meanly created to
 simulate big multicore systems. Because of this limitations this is a very rough estimation for area
