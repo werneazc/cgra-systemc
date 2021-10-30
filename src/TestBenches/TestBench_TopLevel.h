@@ -20,8 +20,8 @@
 #define TESTBENCH_TOPLEVEL_H
 
 #include <systemc>
-#include "Typedef.h"
-#include "TopLevel.h"
+#include "../Typedef.h"
+#include "../TopLevel.h"
 
 namespace cgra {
 /*!

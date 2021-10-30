@@ -9,7 +9,7 @@
  *
  */
 
-#include "Testbench_VcgraPreloaders.hpp"
+#include "TestBench_VcgraPreloaders.hpp"
 #include <algorithm>
 #include <fstream>
 

@@ -17,7 +17,7 @@
  *
  */
 
-#include "Testbench_TopLevel.h"
+#include "TestBench_TopLevel.h"
 
 namespace cgra {
 

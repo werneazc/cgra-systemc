@@ -5,7 +5,7 @@
  *      Author: andrewerner
  */
 
-#include "testbench_vcgra_only.hpp"
+#include "TestBench_vcgra_only.hpp"
 #include <algorithm>
 #include <fstream>
 

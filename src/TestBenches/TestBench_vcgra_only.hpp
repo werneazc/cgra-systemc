@@ -5,7 +5,7 @@
  *      Author: andrewerner
  */
 
-#include "VCGRA.h"
+#include "../VCGRA.h"
 #include <systemc>
 #include <vector>
 

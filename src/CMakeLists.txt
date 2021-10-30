@@ -1,7 +1,7 @@
 TARGET_SOURCES(vcgra_only
     PRIVATE
         ./vcgra_only.cpp
-        ./testbench_vcgra_only.cpp
+        ./TestBenches/TestBench_vcgra_only.cpp
         ./VCGRA.cpp
 )
 TARGET_INCLUDE_DIRECTORIES (vcgra_only
@@ -36,7 +36,7 @@ ENDIF(GSYSC_ENABLED)
 TARGET_SOURCES(vcgra_prefetchers
     PRIVATE
         ./TopLevel_VcgraPreloaders.cpp
-        ./Testbench_VcgraPreloaders.cpp
+        ./TestBenches/TestBench_VcgraPreloaders.cpp
         ./vcgra_prefetchers.cpp
         ./VCGRA.cpp
 )
@@ -73,7 +73,7 @@ TARGET_SOURCES(full_architecture
     PRIVATE
         ./sc_main.cpp
         ./TopLevel.cpp
-        ./Testbench_TopLevel.cpp
+        ./TestBenches/TestBench_TopLevel.cpp
         ./VCGRA.cpp
         ./Management_Unit.cpp
         ./MMU.cpp

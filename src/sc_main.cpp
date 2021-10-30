@@ -11,7 +11,7 @@
 #include <vector>
 #include <fstream>
 #include "TopLevel.h"
-#include "Testbench_TopLevel.h"
+#include "TestBenches/TestBench_TopLevel.h"
 #include "Assembler.hpp"
 
 #ifdef GSYSC

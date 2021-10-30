@@ -12,7 +12,7 @@
 #ifndef TESTBENCH_VCGRAPRELOADERS_H_
 #define TESTBENCH_VCGRAPRELOADERS_H_
 
-#include "TopLevel_VcgraPreloaders.hpp"
+#include "../TopLevel_VcgraPreloaders.hpp"
 #include <systemc>
 
 #ifdef GSYSC
