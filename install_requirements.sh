@@ -41,16 +41,44 @@ if [[ $DISTRO == 'Ubuntu' ]]; then
     echo "CC_FOR_BUILD=${CC_FOR_BUILD:-clang}" >> ~/.bashrc
     echo
 
-    read -p "Restart now to complete the setup? " ANSWER
+# Manjaro support
+elif [[ $DISTRO == 'Manjaro Linux' ]]; then
+    sudo pacman -Syu
+    sudo pacman -Sy clang qt5-base git cmake base-devel --noconfirm
 
-    if [ $ANSWER == "y" ] ||
-       [ $ANSWER == "yes" ] ||
-       [ $ANSWER == "Y" ] ||
-       [ $ANSWER == "YES" ] ||
-       [ $ANSWER == "Yes" ] ||
-       [ $ANSWER == "" ] 
-    then
-        reboot
-    fi
+    wget https://www.accellera.org/images/downloads/standards/systemc/systemc-2.3.3.tar.gz -O /tmp/systemc-2.3.3.tar.gz
+    tar -C /opt -xvf /tmp/systemc-2.3.3.tar.gz 
+    sudo ln -s /usr/bin/make /usr/bin/gmake
+    pushd /opt/systemc-2.3.3 && sudo chmod -R 777 /opt/systemc-2.3.3 mkdir objdir && cd objdir && ../configure --prefix=/opt/systemc-2 --with-unix-layout --enable-pthreads && gmake && sudo gmake install && popd
+    sudo git clone https://github.com/werneazc/gsysc.git /opt/gsysc && sudo chmod -R 777 /opt/gsysc
+    mkdir -p /opt/gsysc/build
+    pushd /opt/gsysc && cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
+    cmake --build ./build -- -j2 && popd
+
+    echo "" >> ~/.profile
+    echo "#Environment variables:" >> ~/.profile
+    echo "export SYSTEMC_ROOT=/opt/systemc-2" >> ~/.profile
+    echo "export GSYSC_ROOT=/opt/gsysc" >> ~/.profile
+    echo "export CXX=${CXX:-clang++}" >> ~/.profile
+    echo "export CXX_FOR_BUILD=${CXX_FOR_BUILD:-clang++}" >> ~/.profile
+    echo "export CC=${CC:-clang}" >> ~/.profile
+    echo "export CC_FOR_BUILD=${CC_FOR_BUILD:-clang}" >> ~/.profile
+    echo
+
+else
+    echo "Unfortunately, your OS is not supported by this script."
+    exit 1
 fi
 
+# Restart to load the environment variables
+read -p "Restart now to complete the setup? " ANSWER
+
+if [ $ANSWER == "y" ] ||
+   [ $ANSWER == "yes" ] ||
+   [ $ANSWER == "Y" ] ||
+   [ $ANSWER == "YES" ] ||
+   [ $ANSWER == "Yes" ] ||
+   [ $ANSWER == "" ] 
+then
+    reboot
+fi
