@@ -3,13 +3,14 @@
 # Automatically install required packages, gSysC, SystemC and
 # set environment variables. 
 
-# Make sure that the whole script is running with root privileges  
-#if [[ $EUID -ne 0 ]]; then
-#    echo "Please run this setup script with root privileges."
-#    exit 1
-#fi
+# Make sure that the whole script is running without root privileges  
+if [[ $EUID -eq 0 ]]; then
+    echo    "Please run do not run the whole script with root privileges."
+    echo -e "Use something like [bash install_requirements.sh] instead.\n"
+    exit 1
+fi
 
-echo "Running setup, this may take some time..."
+echo "Running setup. This may take some time..."
 sleep 2
 
 DISTRO=$(cat /etc/os-release \
@@ -19,7 +20,7 @@ DISTRO=$(cat /etc/os-release \
 # Ubuntu support
 if [[ $DISTRO == 'Ubuntu' ]]; then
     sudo apt update -y || sudo apt upgrade -y
-    sudo apt install build-essential libssl-dev clang qt5-default git  #cmake
+    sudo apt install build-essential libssl-dev clang qt5-default git cmake
 
     wget https://www.accellera.org/images/downloads/standards/systemc/systemc-2.3.3.tar.gz -O /tmp/systemc-2.3.3.tar.gz
     tar -C /opt -xvf /tmp/systemc-2.3.3.tar.gz 
@@ -40,7 +41,7 @@ if [[ $DISTRO == 'Ubuntu' ]]; then
     echo "CC_FOR_BUILD=${CC_FOR_BUILD:-clang}" >> ~/.bashrc
     echo
 
-    read -p "Restart now complete the setup? " ANSWER
+    read -p "Restart now to complete the setup? " ANSWER
 
     if [ $ANSWER == "y" ] ||
        [ $ANSWER == "yes" ] ||
