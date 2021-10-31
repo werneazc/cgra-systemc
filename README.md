@@ -55,7 +55,7 @@ and power.
 - Linux CMD-line variable `GSYSC_ROOT` pointing to the root directory of your gSysC clone and
   `SYSTEMC_LIBRARIES` pointing to library file of SystemC. 
 
-You can run `install_requirements.sh` to set up the requirements automatically. (Ubuntu support only at this point) 
+You can run `install_requirements.sh` to set up the requirements automatically. (Ubuntu and support only at this point) 
 
 ### Usability
 
