@@ -10,7 +10,7 @@
 
 #include <systemc>
 #include <iostream>
-#include "VirtualChannel.h"
+#include "../VirtualChannel.h"
 
 namespace cgra {
 

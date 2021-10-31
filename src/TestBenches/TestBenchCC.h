@@ -10,8 +10,8 @@
 
 #include <systemc.h>
 #include <iostream>
-#include "ConfigurationCache.h"
-#include "VirtualChannel.h"
+#include "../ConfigurationCache.h"
+#include "../VirtualChannel.h"
 
 namespace cgra {
 

@@ -11,7 +11,7 @@
 
 #ifdef GSYSC
 #include <gsysc.h>
-#include "utils.hpp"
+#include "../utils.hpp"
 #endif
 
 namespace

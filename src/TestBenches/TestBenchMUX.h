@@ -11,7 +11,7 @@
 #include <systemc>
 #include <cstdint>
 #include <array>
-#include "Multiplexer.h"
+#include "../Multiplexer.h"
 
 namespace cgra {
 

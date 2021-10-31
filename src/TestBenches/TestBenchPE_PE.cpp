@@ -1,6 +1,6 @@
 
 #include <TestBenchPE_PE.h>
-#include "ProcessingElement.h"
+#include "../ProcessingElement.h"
 
 
 
