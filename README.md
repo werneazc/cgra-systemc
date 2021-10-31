@@ -55,6 +55,8 @@ and power.
 - Linux CMD-line variable `GSYSC_ROOT` pointing to the root directory of your gSysC clone and
   `SYSTEMC_LIBRARIES` pointing to library file of SystemC. 
 
+You can run `install_requirements.sh` to set up the requirements automatically. (Ubuntu support only at this point) 
+
 ### Usability
 
 Please add the following option to your CMake configuration command: `DGSYSC_ENABLED=ON`.
