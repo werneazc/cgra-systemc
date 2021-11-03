@@ -43,13 +43,13 @@ if [[ $DISTRO == 'Ubuntu' ]]; then
 
 # Manjaro support
 elif [[ $DISTRO == 'Manjaro Linux' ]]; then
-    sudo pacman -Syu
-    sudo pacman -Sy clang qt5-base git cmake base-devel --noconfirm
+    #sudo pacman -Syu
+    #sudo pacman -Sy clang qt5-base git cmake base-devel --noconfirm
 
     wget https://www.accellera.org/images/downloads/standards/systemc/systemc-2.3.3.tar.gz -O /tmp/systemc-2.3.3.tar.gz
-    tar -C /opt -xvf /tmp/systemc-2.3.3.tar.gz 
+    sudo tar -C /opt -xvf /tmp/systemc-2.3.3.tar.gz 
     sudo ln -s /usr/bin/make /usr/bin/gmake
-    pushd /opt/systemc-2.3.3 && sudo chmod -R 777 /opt/systemc-2.3.3 mkdir objdir && cd objdir && ../configure --prefix=/opt/systemc-2 --with-unix-layout --enable-pthreads && gmake && sudo gmake install && popd
+    pushd /opt/systemc-2.3.3 && sudo chmod -R 777 /opt/systemc-2.3.3 && mkdir objdir && cd objdir && ../configure --prefix=/opt/systemc-2 --with-unix-layout --enable-pthreads && gmake && sudo gmake install && popd
     sudo git clone https://github.com/werneazc/gsysc.git /opt/gsysc && sudo chmod -R 777 /opt/gsysc
     mkdir -p /opt/gsysc/build
     pushd /opt/gsysc && cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
