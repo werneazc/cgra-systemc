@@ -1,0 +1,10 @@
+---
+Checks:          'cppcoreguidelines-*,misc-*,modernize-*,readability-*'
+WarningsAsErrors: ''
+HeaderFilterRegex: '^sc_.*'
+AnalyzeTemporaryDtors: false
+FormatStyle:     none
+User:            anonymous
+CheckOptions:
+...
+

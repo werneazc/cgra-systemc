@@ -14,6 +14,10 @@
 #include "Testbench_TopLevel.h"
 #include "Assembler.hpp"
 
+#ifdef GSYSC
+#include <gsysc.h>
+#endif
+
 namespace {
 
 /*!
@@ -129,7 +133,28 @@ bool writePgm(const std::string& file_p, const int16_t* image, const uint32_t si
 
 } // namespace
 
-int sc_main(int argc, char* arcv[])
+
+#ifdef GSYSC
+namespace cgra {
+//gSysC renaming vector
+//--------------------------------------------------
+
+/*!
+ * \var gsysc_renaming_strings
+ *
+ * \brief Stored pointer to strings for port and signal renaming
+ *
+ * \details
+ * gSysC ports and signals store its corresponding name as a pointer to a char-array.
+ * If a string name needs to be constructed dynamically, it needs to be stored somewhere during
+ * simulation run. The strings are constructed on the heap and the pointer to the char-arrays
+ * are stored within this vector. They are deleted at the end of the simulation run.
+ */
+std::vector<char*> gsysc_renaming_strings{};
+}
+#endif
+
+int sc_main(int argc, char* argv[])
 {
 
 //#############################################################################
@@ -163,28 +188,36 @@ int sc_main(int argc, char* arcv[])
 //#############################################################################
 
     //signals
-     sc_core::sc_clock clk{"clk", 200, sc_core::SC_NS};
-     sc_core::sc_signal<cgra::TopLevel::run_type_t> run{"run", true};
-     sc_core::sc_signal<cgra::TopLevel::reset_type_t> rst{"rst", false};
-     sc_core::sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"};
-     sc_core::sc_signal<cgra::TopLevel::pause_type_t> pause{"pause", false};
+#ifndef GSYSC
+    sc_core::sc_clock clk{"clk", 200, sc_core::SC_NS};
+    sc_core::sc_signal<cgra::TopLevel::run_type_t> run{"run", true};
+    sc_core::sc_signal<cgra::TopLevel::reset_type_t> rst{"rst", false};
+    sc_core::sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"};
+    sc_core::sc_signal<cgra::TopLevel::pause_type_t> pause{"pause", false};
+#else
+    sc_clock clk{"clk", 200, SC_NS};
+    sc_signal<cgra::TopLevel::run_type_t> run{"run"}; 
+    sc_signal<cgra::TopLevel::reset_type_t> rst{"rst"}; 
+    sc_signal<cgra::TopLevel::finish_type_t> finish{"finish"}; 
+    sc_signal<cgra::TopLevel::pause_type_t> pause{"pause"}; 
+#endif
 
 //#############################################################################
 
     //Port bindings
 
-     //clock
-     toplevel->clk.bind(clk);
+    //clock
+    toplevel->clk.bind(clk);
     tb_toplevel->clk.bind(clk);
 
     //control signals
-     toplevel->run.bind(run);
-     toplevel->finish.bind(finish);
-     toplevel->rst.bind(rst);
+    toplevel->run.bind(run);
+    toplevel->finish.bind(finish);
+    toplevel->rst.bind(rst);
     toplevel->pause.bind(pause);
-     tb_toplevel->run.bind(run);
-     tb_toplevel->finish.bind(finish);
-     tb_toplevel->rst.bind(rst);
+    tb_toplevel->run.bind(run);
+    tb_toplevel->finish.bind(finish);
+    tb_toplevel->rst.bind(rst);
     tb_toplevel->pause.bind(pause);
     
 //#############################################################################
@@ -250,9 +283,8 @@ int sc_main(int argc, char* arcv[])
     std::array<uint16_t, 64*64> tdataValues;
     tdataValues.fill(0x0000);
     if(!readPgm("../demo/lena.pgm", tdataValues.data(), 64, 64))
-    {
         return EXIT_FAILURE;
-    }
+
     toplevel->mmu.write_shared_memory(0x200, tdataValues.data(), tdataValues.max_size() * sizeof(uint16_t));
     std::vector<uint8_t> tPeConfig1 = {0x33, 0x33, 0x01, 0x01, 0x00, 0x10, 0x00, 0x80};
     std::vector<uint8_t> tPeConfig2 = {0x38, 0x80, 0x01, 0x80, 0x00, 0x10, 0x00, 0x80};
@@ -267,7 +299,11 @@ int sc_main(int argc, char* arcv[])
   }
 
   // Run simulation
-  sc_core::sc_start(750, sc_core::SC_MS);
+#ifndef GSYSC
+    sc_core::sc_start(750, sc_core::SC_MS);
+#else
+    sc_start(750);
+#endif
 
   {
       std::array<int16_t, 62*62> t_result;

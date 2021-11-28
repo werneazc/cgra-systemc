@@ -21,6 +21,7 @@ class Testbench : public sc_core::sc_module
     typedef typename VCGRA::data_output_type_t data_output_type_t;
     //!< \brief VCGRA data output type
 
+#ifndef GSYSC
     // Entity ports
     sc_core::sc_in<cgra::clock_type_t> clk{"clk"};
     //!< \brief VCGRA clock port
@@ -38,6 +39,25 @@ class Testbench : public sc_core::sc_module
     //!< \brief VCGRA ready port
     std::array<sc_core::sc_in<data_output_type_t>, cgra::cPeLevels.back()> data_outputs;
     //!< \brief VCGRA data outputs
+#else
+    // Entity ports
+    sc_in<cgra::clock_type_t> clk{"clk"};
+    //!< \brief VCGRA clock port
+    sc_out<cgra::start_type_t> start{"start"};
+    //!< \brief VCGRA start port
+    sc_out<cgra::reset_type_t> rst{"rst"};
+    //!< \brief VCGRA reset port
+    sc_out<cgra::pe_config_type_t> pe_config{"pe_config"};
+    //!< \brief VCGRA PE configuration port
+    sc_out<cgra::ch_config_type_t> ch_config{"ch_config"};
+    //!< \brief VCGRA VirtualChannel configuration port
+    std::array<sc_out<data_input_type_t>, cgra::cInputChannel_NumOfInputs> data_inputs;
+    //!< \brief VCGRA data inputs to first VirtualChannel level
+    sc_in<cgra::ready_type_t> ready{"ready"};
+    //!< \brief VCGRA ready port
+    std::array<sc_in<data_output_type_t>, cgra::cPeLevels.back()> data_outputs;
+    //!< \brief VCGRA data outputs
+#endif
 
     // Member functions
     //-----------------
@@ -88,7 +108,7 @@ class Testbench : public sc_core::sc_module
 
     /**
      * @brief Write result image as pgm-file
-     * 
+     *
      * @param pathA Path to the target file
      * @return true Success
      * @return false Failure
@@ -138,7 +158,7 @@ class Testbench : public sc_core::sc_module
     //!< Input image dimension
     std::array<uint16_t, cInputSize * cInputSize> mInputValues;
     //!< Input image values
-    
+
     static constexpr uint8_t cOutputSize{64};
     //!< Output image dimension
     std::array<int16_t, cOutputSize * cOutputSize> mSobelxValues;

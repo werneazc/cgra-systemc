@@ -5,6 +5,10 @@ install:
   - tar -C /tmp -xvf /tmp/systemc-2.3.3.tar.gz
   - sudo ln -s /usr/bin/make /usr/bin/gmake
   - pushd /tmp/systemc-2.3.3 && mkdir objdir && cd objdir && ../configure --prefix=/tmp/systemc --with-unix-layout --enable-pthreads && gmake && sudo gmake install && popd
+  - git clone https://github.com/werneazc/gsysc.git /tmp/gsysc
+  - mkdir -p /tmp/gsysc/build
+  - pushd /tmp/gsysc && cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
+  - cmake --build ./build -- -j2 && popd
 
 jobs:
   include:
@@ -13,16 +17,31 @@ jobs:
     compiler: clang
     env:
      - SYSTEMC_ROOT="/tmp/systemc"
+     - GSYSC_ROOT="/tmp/gsysc"
 
     addons:
       apt:
         packages:
           - cmake
           - doxygen
+          - qt5-default
 
 script:
-  - mkdir build
-  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles"
-  - cd build && cmake --build ./ --config Release --target vcgra_only -- -j2
-  - cmake --build ./ --config Release --target vcgra_prefetchers -- -j2
-  - cmake --build ./ --config Release --target full_architecture  -- -j2
+  - mkdir build{,_full}
+  - cmake -B build -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles"
+  - cmake --build ./build --target vcgra_only -- -j2
+  - cmake --build ./build  --target vcgra_prefetchers -- -j2
+  - cmake -B build_full -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles"
+  - cmake --build ./build_full --target full_architecture  -- -j2
+  - mkdir build_gui{,_full}
+  - cmake -B build_gui -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -DGSYSC_ENABLED=ON -G "Unix Makefiles"
+  - cmake --build ./build_gui --target vcgra_only -- -j2
+  - cmake --build ./build_gui  --target vcgra_prefetchers -- -j2
+  - cmake -B build_gui_full -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Debug -DGSYSC_ENABLED=ON -G "Unix Makefiles"
+  - cmake --build ./build_gui_full --target full_architecture  -- -j2
+  - mkdir build_mcpat{,_full}
+  - cmake -B build_mcpat -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Release -DMCPAT_ENABLED=ON -G "Unix Makefiles"
+  - cmake --build ./build_mcpat --target vcgra_only -- -j2
+  - cmake --build ./build_mcpat  --target vcgra_prefetchers -- -j2
+  - cmake -B build_mcpat_full -S ./ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=14 -DCMAKE_BUILD_TYPE=Debug -DMCPAT_ENABLED=ON -G "Unix Makefiles"
+  - cmake --build ./build_mcpat_full --target full_architecture  -- -j2

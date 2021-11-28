@@ -1,0 +1,138 @@
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.Input_Channel.Multiplexers_0.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.Input_Channel.Multiplexers_1.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.Input_Channel.Multiplexers_2.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.Input_Channel.Multiplexers_3.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.Input_Channel.Multiplexers_4.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.Input_Channel.Multiplexers_5.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.Input_Channel.Multiplexers_6.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.Input_Channel.Multiplexers_7.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_0.Multiplexers_0.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_0.Multiplexers_1.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_0.Multiplexers_2.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_0.Multiplexers_3.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_0.Multiplexers_4.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_0.Multiplexers_5.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_0.Multiplexers_6.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_0.Multiplexers_7.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_1.Multiplexers_0.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_1.Multiplexers_1.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_1.Multiplexers_2.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_1.Multiplexers_3.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_1.Multiplexers_4.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_1.Multiplexers_5.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_1.Multiplexers_6.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_1.Multiplexers_7.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_2.Multiplexers_0.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_2.Multiplexers_1.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_2.Multiplexers_2.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_2.Multiplexers_3.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_2.Multiplexers_4.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_2.Multiplexers_5.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_2.Multiplexers_6.multiplex @ 0 s
+
+Warning: (W206) vector contains 4-value logic
+In file: /opt/systemc-2.3.2/include/sysc/datatypes/bit/sc_proxy.h:1457
+In process: VCGRA_Instance.VCGRA_Channels_2.Multiplexers_7.multiplex @ 0 s
+
+Info: (I702) default timescale unit used for tracing: 1 ps (vcgra_only.vcd)
+
+
+Simulation timings: 
+overall: 908721500 ns
+sobel x-direction: 454360700 ns
+sobel y-direction: 454360800 ns
+
+Info: /OSCI/SystemC: Simulation stopped by user.

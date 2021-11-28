@@ -1,4 +1,8 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 3.14)
+
+INCLUDE(cmake/Modules/PreventInSourceBuilds.cmake)
+INCLUDE(cmake/Modules/CompilerWarnings.cmake)
+
 PROJECT (
   cgra_systemc
   VERSION 0.1.1
@@ -13,6 +17,32 @@ OPTION (
   OFF
 )
 
+# Enable/disable GUI using gSysC
+OPTION (
+  GSYSC_ENABLED
+  "Enable gSysC GUI. Requires gSysC libary."
+  OFF
+)
+
+#Enable/disable warnings
+OPTION (
+  WARNINGS_ENABLED
+  "Enable/disable warnings during compiling"
+  OFF
+)
+
+#Enable/disable warnings
+OPTION (
+   CLANG_TIDY_ENABLED
+  "Enable/disable clang-tidy static checks"
+  OFF
+)
+
+# Disable compiler specific extensions
+SET(CMAKE_CXX_EXTENSION OFF)
+
+
+# Create new compile target with small optimizations
 SET (CMAKE_CXX_FLAGS_OPTIMIZED -O1 -DNGEBUG)
 SET(CMAKE_CXX_FLAGS_OPTIMIZED "-O1 -DNDEBUG" CACHE STRING
  "Flags used by the C++ compiler during maintainer builds."
@@ -35,7 +65,7 @@ MARK_AS_ADVANCED(
   CMAKE_SHARED_LINKER_FLAGS_OPTIMIZED)
 # Update the documentation string of CMAKE_BUILD_TYPE for GUIs
 SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
-  "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel Maintainer."
+  "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel Optimized."
   FORCE)
 
 IF(CMAKE_CONFIGURATION_TYPES)
@@ -50,70 +80,62 @@ ENDIF()
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
                        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules
 )
+
 FIND_PACKAGE (SystemC REQUIRED)
 
-ADD_SUBDIRECTORY (src/)
+IF(GSYSC_ENABLED)
+    FIND_PACKAGE (Threads REQUIRED)
+    FIND_PACKAGE(GsysC)
+    SET(CMAKE_AUTOMOC ON)
+    FIND_PACKAGE(Qt5 COMPONENTS Core Gui Widgets REQUIRED )
+ENDIF(GSYSC_ENABLED)
 
-# Create full_architecture with all its components
-ADD_EXECUTABLE (
-  full_architecture
-  src/sc_main.cpp
-  src/TopLevel.cpp
-  src/Testbench_TopLevel.cpp
-)
-TARGET_INCLUDE_DIRECTORIES (
-  full_architecture
-  PUBLIC header/
-  PRIVATE ${SYSTEMC_INCLUDE_DIRS}
-)
-TARGET_COMPILE_FEATURES (full_architecture PUBLIC cxx_std_14)
-TARGET_LINK_LIBRARIES (
-  full_architecture
-  PRIVATE COMPONENTS
-  PRIVATE "${SYSTEMC_LIBRARIES}"
-)
-IF (MCPAT_ENABLED)
-  ADD_COMPILE_DEFINITIONS (MCPAT)
-ENDIF (MCPAT_ENABLED)
+# Link this 'library' to use the warnings specified in CompilerWarnings.cmake
+ADD_LIBRARY(project_warnings INTERFACE)
+# Standard compiler warnings
+set_project_warnings(project_warnings)
+
+IF(CLANG_TIDY_ENABLED)
+# Enable clang-tidy check during build
+SET(CMAKE_CXX_CLANG_TIDY clang-tidy )
+ENDIF()
 
 # Create VCGRA with all its components
-ADD_EXECUTABLE (vcgra_only src/vcgra_only.cpp src/testbench_vcgra_only.cpp)
-TARGET_INCLUDE_DIRECTORIES (
-  vcgra_only
-  PUBLIC header/
-  PRIVATE ${SYSTEMC_INCLUDE_DIRS}
+ADD_EXECUTABLE (vcgra_only
+    ""
 )
-TARGET_COMPILE_FEATURES (vcgra_only PUBLIC cxx_std_14)
-TARGET_LINK_LIBRARIES (
-  vcgra_only
-  PRIVATE COMPONENTS
-  PRIVATE "${SYSTEMC_LIBRARIES}"
+IF(WARNINGS_ENABLED)
+TARGET_LINK_LIBRARIES(vcgra_only
+    PRIVATE
+        project_warnings
 )
-IF (MCPAT_ENABLED)
-  ADD_COMPILE_DEFINITIONS (MCPAT)
-ENDIF (MCPAT_ENABLED)
+ENDIF()
 
 # Create VCGRA and pre-fetchers with all its components
 ADD_EXECUTABLE (
   vcgra_prefetchers
-  src/TopLevel_VcgraPreloaders.cpp
-  src/Testbench_VcgraPreloaders.cpp
-  src/vcgra_prefetchers.cpp
+  ""
 )
-TARGET_INCLUDE_DIRECTORIES (
-  vcgra_prefetchers
-  PUBLIC header/
-  PRIVATE ${SYSTEMC_INCLUDE_DIRS}
+IF(WARNINGS_ENABLED)
+TARGET_LINK_LIBRARIES(vcgra_prefetchers
+    PRIVATE
+        project_warnings
 )
-TARGET_COMPILE_FEATURES (vcgra_prefetchers PUBLIC cxx_std_14)
-TARGET_LINK_LIBRARIES (
-  vcgra_prefetchers
-  PRIVATE COMPONENTS
-  PRIVATE "${SYSTEMC_LIBRARIES}"
+ENDIF()
+
+# Create full_architecture with all its components
+ADD_EXECUTABLE (
+  full_architecture
+  ""
 )
-IF (MCPAT_ENABLED)
-  ADD_COMPILE_DEFINITIONS (MCPAT)
-ENDIF (MCPAT_ENABLED)
+IF(WARNINGS_ENABLED)
+TARGET_LINK_LIBRARIES(full_architecture
+    PRIVATE
+        project_warnings
+)
+ENDIF()
+
+ADD_SUBDIRECTORY (src/)
 
 # Add doxygen documentation
 FIND_PACKAGE (Doxygen)

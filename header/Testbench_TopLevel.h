@@ -36,6 +36,8 @@ class Testbench_TopLevel :  sc_core::sc_module
 {
 public:
     //Component ports
+
+#ifndef GSYSC
     sc_core::sc_in<cgra::clock_type_t> clk{"clock"};
     //!< \brief Clock input port for Testbench
     sc_core::sc_in<cgra::TopLevel::finish_type_t> finish{"finish"};
@@ -46,6 +48,18 @@ public:
     //!< \brief Pause execution of the architecture.
     sc_core::sc_out<cgra::reset_type_t> rst{"reset"};
     //!< \brief Reset VirtualChannels and assembler program.
+#else
+    sc_in<cgra::clock_type_t> clk{"clock"};
+    //!< \brief Clock input port for Testbench
+    sc_in<cgra::TopLevel::finish_type_t> finish{"finish"};
+    //!< \brief Finish signal of TopLevel to show a finished execution of the assembler code.
+    sc_out<cgra::TopLevel::run_type_t> run{"run"};
+    //!< \brief Start execution of architecture.
+    sc_out<cgra::TopLevel::pause_type_t> pause{"pause"};
+    //!< \brief Pause execution of the architecture.
+    sc_out<cgra::reset_type_t> rst{"reset"};
+    //!< \brief Reset VirtualChannels and assembler program.
+#endif
     
     
     
