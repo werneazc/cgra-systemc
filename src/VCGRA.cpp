@@ -148,17 +148,22 @@ VCGRA::VCGRA(const sc_core::sc_module_name& nameA) :
         {
             pe.clk.bind(clk);
             pe.conf.bind(s_pe_configurations.at(t_pe_idx));
+#ifdef GSYSC
+            REG_PORT(&pe.enable.at(0), &pe, &s_enables.at(t_en_idx));
+#endif
             pe.enable.at(0).bind(s_enables.at(t_en_idx++));
+#ifdef GSYSC
+            REG_PORT(&pe.enable.at(1), &pe, &s_enables.at(t_en_idx));
+#endif
             pe.enable.at(1).bind(s_enables.at(t_en_idx++));
+#ifdef GSYSC
+            REG_PORT(&pe.in1,          &pe, &s_pe_data_input_signals.at(t_in_idx));
+#endif
             pe.in1.bind(s_pe_data_input_signals.at(t_in_idx++));
 
 #ifdef GSYSC
-            REG_PORT(&pe.enable.at(0), &pe, &s_enables.at(t_en_idx));
-            REG_PORT(&pe.enable.at(1), &pe, &s_enables.at(t_en_idx));
-            REG_PORT(&pe.in1,          &pe, &s_pe_data_input_signals.at(t_in_idx));
             REG_PORT(&pe.in2,          &pe, &s_pe_data_input_signals.at(t_in_idx));
 #endif
-
             pe.in2.bind(s_pe_data_input_signals.at(t_in_idx++));
             pe.valid.bind(s_pe_valid_signals.at(t_pe_idx));
 
