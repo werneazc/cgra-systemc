@@ -285,7 +285,7 @@ int sc_main(int argc, char* argv[])
     if(!readPgm("../demo/lena.pgm", tdataValues.data(), 64, 64))
         return EXIT_FAILURE;
 
-    toplevel->mmu.write_shared_memory(0x200, tdataValues.data(), tdataValues.max_size() * sizeof(uint16_t));
+    toplevel->mmu.write_shared_memory<uint16_t>(0x200, tdataValues.data(), tdataValues.max_size());
     std::vector<uint8_t> tPeConfig1 = {0x33, 0x33, 0x01, 0x01, 0x00, 0x10, 0x00, 0x80};
     std::vector<uint8_t> tPeConfig2 = {0x38, 0x80, 0x01, 0x80, 0x00, 0x10, 0x00, 0x80};
     toplevel->mmu.write_shared_memory(0x00, tPeConfig1.data(), tPeConfig1.size());
