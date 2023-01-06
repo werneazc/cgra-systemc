@@ -51,7 +51,7 @@ std::vector<char*> gsysc_renaming_strings{};
 }
 #endif
 
-auto sc_main(int /*argc*/, char ** /*argv*/) -> int
+auto sc_main(int argc, char ** argv) -> int
 {
     cgra::Testbench testbench("vcgra_testbench", "../demo/lena.pgm");
     cgra::VCGRA vcgra("VCGRA_Instance");
