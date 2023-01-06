@@ -99,9 +99,9 @@ int sc_main(int argc, char **argv)
     }
 
     // Signals
+#ifndef GSYSC
     sc_core::sc_clock s_clk("clk", 200, sc_core::SC_NS);
 
-#ifndef GSYSC
     sc_core::sc_signal<cgra::start_type_t> s_start("start");
     sc_core::sc_signal<cgra::reset_type_t> s_rst("rst");
     sc_core::sc_signal<cgra::ready_type_t> s_ready("ready");
@@ -120,6 +120,7 @@ int sc_main(int argc, char **argv)
     sc_core::sc_signal<cgra::TopLevel::ch_select_type_t> s_pe_slct_in("pe_select_in");
     sc_core::sc_signal<cgra::TopLevel::ch_select_type_t> s_pe_slct_out("pe_select_out");
 #else
+    sc_clock s_clk("clk", 200, sc_core::SC_NS);
     sc_signal<cgra::start_type_t> s_start("start");
     sc_signal<cgra::reset_type_t> s_rst("rst");
     sc_signal<cgra::ready_type_t> s_ready("ready");
